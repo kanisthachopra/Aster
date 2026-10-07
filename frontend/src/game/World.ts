@@ -1,0 +1,205 @@
+import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
+import { Vector3 } from '@babylonjs/core/Maths/math.vector';
+import { Engine } from '@babylonjs/core/Engines/engine';
+import { Scene } from '@babylonjs/core/scene';
+import { FreeCamera } from '@babylonjs/core/Cameras/freeCamera';
+import { DirectionalLight } from '@babylonjs/core/Lights/directionalLight';
+import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
+import { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
+import { GlowLayer } from '@babylonjs/core/Layers/glowLayer';
+import '@babylonjs/core/Lights/Shadows/shadowGeneratorSceneComponent';
+import { Environment } from './Environment';
+import { Park } from './Park';
+import { createHands, createAvatar } from './Characters';
+import { MouseLook } from './MouseLook';
+import { EXERCISES, type ExerciseId, type Phase, type LookMode, type Survey } from './types';
+import { HABITAT, LANDING, clamp, smooth, terrainHeight } from './terrain';
+
+export type ArrivalBeat = 'threshold' | 'lights' | 'machine' | 'robot' | 'greeting';
+type Events = {
+  arrived: () => void; opened: () => void; introduced: () => void;
+  station: (id: ExerciseId) => void; proximity: (id: ExerciseId | null, distance: number) => void;
+  capture: (mode: LookMode) => void; survey: (survey: Survey) => void;
+  beat: (beat: ArrivalBeat) => void; step: () => void;
+};
+
+export class World {
+  private engine: Engine;
+  private scene: Scene;
+  private camera: FreeCamera;
+  private environment: Environment;
+  private park: Park;
+  private hands: ReturnType<typeof createHands>;
+  private avatar: ReturnType<typeof createAvatar>;
+  private look: MouseLook;
+  private phase: Phase = 'title';
+  private phaseTime = 0;
+  private clock = 0;
+  private paused = false;
+  private reduced = false;
+  private keys = new Set<string>();
+  private speed = 0;
+  private height = 0;
+  private vertical = 0;
+  private selected: ExerciseId | null = null;
+  private near: ExerciseId | null = null;
+  private discovered = false;
+  private inside = false;
+  private lastSurvey = 0;
+  private lastStep = 0;
+  private lastBeat = '';
+  private lastPhaseEvent = false;
+  private cleanups: Array<() => void> = [];
+
+  constructor(canvas: HTMLCanvasElement, private events: Events) {
+    this.engine = new Engine(canvas, true, { stencil: true, preserveDrawingBuffer: true });
+    this.engine.renderEvenInBackground = false;
+    this.engine.setHardwareScalingLevel(Math.max(1, window.devicePixelRatio / 1.5));
+    this.scene = new Scene(this.engine); this.scene.clearColor = new Color4(.006, .012, .02, 1);
+    this.scene.fogMode = Scene.FOGMODE_EXP2; this.scene.fogDensity = .0018; this.scene.fogColor = new Color3(.065, .085, .105);
+    this.scene.imageProcessingConfiguration.toneMappingEnabled = true;
+    this.scene.imageProcessingConfiguration.exposure = 1.2;
+    this.scene.imageProcessingConfiguration.contrast = 1.12;
+    this.camera = new FreeCamera('player', new Vector3(-64, 24, -2), this.scene);
+    this.camera.inputs.clear(); this.camera.minZ = .025; this.camera.maxZ = 1800; this.camera.fov = 1.02;
+    this.camera.setTarget(new Vector3(0, 14, 65));
+    const sky = new HemisphericLight('ambient-sky', Vector3.Up(), this.scene);
+    sky.intensity = .4; sky.diffuse = new Color3(.55, .69, .82); sky.groundColor = new Color3(.05, .065, .085);
+    const sun = new DirectionalLight('distant-sun', new Vector3(.65, -.7, .35), this.scene);
+    sun.position.set(-80, 120, -60); sun.diffuse = new Color3(1, .86, .69); sun.intensity = 1.5;
+    const glow = new GlowLayer('atmospheric-lights', this.scene, { mainTextureRatio: .5, blurKernelSize: 48 }); glow.intensity = .42;
+    this.environment = new Environment(this.scene); this.park = new Park(this.scene);
+    this.hands = createHands(this.scene, this.camera); this.avatar = createAvatar(this.scene);
+    this.avatar.root.setEnabled(false);
+    const shadows = new ShadowGenerator(2048, sun); shadows.usePercentageCloserFiltering = true; shadows.filteringQuality = ShadowGenerator.QUALITY_LOW; shadows.bias = .002;
+    for (const mesh of this.scene.meshes) {
+      if (mesh.name.includes('boulder') || mesh.name.includes('pylon') || mesh.name.includes('barbell') || mesh.name.includes('support') || mesh.isDescendantOf(this.avatar.root)) shadows.addShadowCaster(mesh);
+    }
+    this.look = new MouseLook(canvas, () => !this.paused && ['guided', 'park'].includes(this.phase), (dx, dy) => {
+      this.camera.rotation.y += dx * .0022;
+      this.camera.rotation.x = clamp(this.camera.rotation.x + dy * .0022, -1.25, 1.25);
+    }, events.capture);
+    this.bindKeys();
+    this.engine.runRenderLoop(() => { const dt = Math.min(this.engine.getDeltaTime() / 1000, .08); this.update(dt); this.scene.render(); });
+    const resize = () => this.engine.resize(); window.addEventListener('resize', resize); this.cleanups.push(() => window.removeEventListener('resize', resize));
+  }
+  private bindKeys() {
+    const down = (event: KeyboardEvent) => {
+      if (event.code === 'Escape') { this.keys.clear(); this.speed = 0; }
+      if (this.paused || !['guided', 'park'].includes(this.phase)) return;
+      if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'Space', 'KeyE', 'ArrowLeft', 'ArrowRight'].includes(event.code)) event.preventDefault();
+      this.keys.add(event.code);
+      if (event.code === 'Space' && this.height === 0 && !event.repeat) this.vertical = 4.2;
+      if (event.code === 'KeyE' && this.near && this.phase === 'park' && !event.repeat) this.events.station(this.near);
+    };
+    const up = (event: KeyboardEvent) => this.keys.delete(event.code);
+    const blur = () => { this.keys.clear(); this.speed = 0; };
+    window.addEventListener('keydown', down); window.addEventListener('keyup', up); window.addEventListener('blur', blur);
+    this.cleanups.push(() => { window.removeEventListener('keydown', down); window.removeEventListener('keyup', up); window.removeEventListener('blur', blur); });
+  }
+  setPhase(phase: Phase) {
+    const previous = this.phase;
+    this.phase = phase; this.phaseTime = 0; this.keys.clear(); this.speed = 0; this.height = 0; this.vertical = 0; this.lastPhaseEvent = false;
+    if (phase === 'opening' || phase === 'guided') {
+      this.inside = false; this.discovered = false; this.park.setInside(false);
+      this.camera.position.set(LANDING.x, terrainHeight(LANDING.x, LANDING.z) + 1.73, LANDING.z);
+      this.camera.rotation.set(phase === 'opening' ? .5 : -.025, 0, 0);
+    }
+    if (phase === 'arrival') { this.discovered = true; this.lastBeat = ''; this.avatar.root.setEnabled(true); }
+    if (phase === 'park' && previous !== 'station') {
+      this.inside = true; this.park.setInside(true); this.camera.position.set(0, 1.85, 32); this.camera.rotation.set(0, 0, 0);
+    }
+    if (!['guided', 'park'].includes(phase)) this.releasePointer();
+    this.avatar.root.setEnabled(phase === 'arrival');
+  }
+  pause(value: boolean) { this.paused = value; this.keys.clear(); this.speed = 0; if (value) this.releasePointer(); }
+  setReducedMotion(value: boolean) { this.reduced = value; }
+  releasePointer() { this.look?.release(); }
+  select(id: ExerciseId) { this.selected = id; }
+  private once(callback: () => void) { if (!this.lastPhaseEvent) { this.lastPhaseEvent = true; callback(); } }
+  private arrival() {
+    const time = this.reduced ? this.phaseTime * 2 : this.phaseTime;
+    const third = time < 5.5;
+    this.avatar.root.setEnabled(third);
+    this.avatar.root.position.set(0, .2, 16 + smooth(time / 5.5) * 16);
+    this.avatar.legs.forEach((leg, i) => { leg.rotation.x = Math.sin(time * 6 + i * Math.PI) * .3; });
+    this.avatar.arms.forEach((arm, i) => { arm.rotation.x = -Math.sin(time * 6 + i * Math.PI) * .24; });
+    this.inside = time > 2; this.park.openEntrance(time / 1.5);
+    if (third) {
+      this.camera.position.copyFrom(Vector3.Lerp(new Vector3(7, 4.1, 12), new Vector3(2, 2.6, 28), smooth(time / 5.5)));
+      this.camera.setTarget(this.avatar.root.position.add(new Vector3(0, 1.4, 1)));
+    } else {
+      this.camera.position.set(0, 1.85, 32);
+      const focus = time < 9 ? new Vector3(Math.sin((time - 5.5) * .5) * 13, 12 - (time - 5.5), 60) : this.park.robot.position;
+      this.camera.setTarget(focus);
+    }
+    const beat: ArrivalBeat = time < 5.5 ? 'threshold' : time < 9 ? 'lights' : time < 12 ? 'machine' : time < 17 ? 'robot' : 'greeting';
+    if (beat !== this.lastBeat) { this.lastBeat = beat; this.events.beat(beat); }
+    if (time >= 20) this.once(this.events.introduced);
+    return { power: smooth((time - 5.5) / 4), robot: smooth((time - 9) / 8) };
+  }
+  private update(dt: number) {
+    this.clock += dt; if (!this.paused) this.phaseTime += dt;
+    this.environment.update(this.clock, this.reduced);
+    this.look.update(dt);
+    let power = this.inside ? 1 : 0, robot = this.inside ? 1 : 0;
+    if (this.phase === 'arrival') { const state = this.arrival(); power = state.power; robot = state.robot; }
+    const firstPerson = ['opening', 'guided', 'park', 'station'].includes(this.phase) || (this.phase === 'arrival' && this.phaseTime * (this.reduced ? 2 : 1) > 5.5);
+    this.hands.root.setEnabled(firstPerson);
+    this.hands.root.position.y = (this.phase === 'opening' ? .13 : -.08) + (this.reduced ? 0 : Math.sin(this.clock * (this.speed > .1 ? 8 : 1.6)) * (this.speed > .1 ? .008 : .003));
+    this.hands.fingers.forEach((finger, i) => { finger.rotation.x = this.phase === 'opening' ? Math.sin(this.phaseTime * .7 + i * .15) * .11 : .12; });
+    if (this.phase === 'title') {
+      this.camera.position.set(-64 + (this.reduced ? 0 : Math.sin(this.clock * .045) * 2), 24, -2);
+      this.camera.setTarget(new Vector3(0, 15, 65));
+    }
+    if (!this.paused && this.phase === 'opening') {
+      this.camera.rotation.x = .5 - smooth((this.phaseTime - 3) / 7) * .68;
+      if (this.phaseTime >= (this.reduced ? 3 : 12)) this.once(this.events.opened);
+    }
+    if (!this.paused && ['guided', 'park'].includes(this.phase)) this.move(dt);
+    this.park.update(this.clock, power, robot, this.camera.position, this.phase === 'park' ? this.selected : null, this.reduced);
+    if (this.clock - this.lastSurvey > .12) {
+      this.lastSurvey = this.clock;
+      let nearest: ExerciseId | null = null, distance = Infinity;
+      for (const ex of EXERCISES) {
+        const d = Math.hypot(this.camera.position.x - ex.position[0], this.camera.position.z - ex.position[1]);
+        if (d < distance) { distance = d; nearest = ex.id; }
+      }
+      this.near = this.phase === 'park' && distance < 6 ? nearest : null; this.events.proximity(this.near, distance);
+      // Discovery requires a clear terrain line of sight, not just a distance threshold.
+      if (!this.discovered && this.phase === 'guided' && Math.hypot(this.camera.position.x, this.camera.position.z - 60) < 110) {
+        let clear = true;
+        for (let i = 1; i < 16; i++) {
+          const p = Vector3.Lerp(this.camera.position, new Vector3(0, 20, 60), i / 16);
+          if (terrainHeight(p.x, p.z) > p.y) clear = false;
+        }
+        this.discovered = clear;
+      }
+      this.events.survey({ x: this.camera.position.x, z: this.camera.position.z, bearing: ((this.camera.rotation.y * 180 / Math.PI) % 360 + 360) % 360, discovered: this.discovered, inside: this.inside });
+    }
+  }
+  private move(dt: number) {
+    const forward = Number(this.keys.has('KeyW')) - Number(this.keys.has('KeyS'));
+    const strafe = Number(this.keys.has('KeyD')) - Number(this.keys.has('KeyA'));
+    this.camera.rotation.y += (Number(this.keys.has('ArrowRight')) - Number(this.keys.has('ArrowLeft'))) * dt * 1.1;
+    const moving = forward !== 0 || strafe !== 0;
+    this.speed = moving ? Math.min(this.speed + dt * 4, this.phase === 'guided' ? 8 : 5.5) : 0;
+    const yaw = this.camera.rotation.y, length = Math.hypot(forward, strafe) || 1;
+    let x = this.camera.position.x + (Math.sin(yaw) * forward + Math.cos(yaw) * strafe) / length * this.speed * dt;
+    let z = this.camera.position.z + (Math.cos(yaw) * forward - Math.sin(yaw) * strafe) / length * this.speed * dt;
+    this.vertical -= 8.5 * dt; this.height = Math.max(0, this.height + this.vertical * dt); if (this.height === 0) this.vertical = 0;
+    if (this.phase === 'guided') {
+      x = clamp(x, -185, 185); z = clamp(z, -160, 175);
+      if (this.park.contains(x, z)) { x = this.camera.position.x; z = this.camera.position.z; }
+      this.camera.position.set(x, terrainHeight(x, z) + 1.73 + this.height, z);
+      if (Math.hypot(x, z - 15.5) < 5) this.once(this.events.arrived);
+    } else {
+      // The sealed rear sectors and habitat shell are physical movement boundaries.
+      z = Math.min(z, 82.5);
+      if (Math.hypot(x, z - HABITAT.z) > 39.5) { x = this.camera.position.x; z = this.camera.position.z; }
+      this.camera.position.set(x, 1.85 + this.height, z);
+    }
+    if (moving && this.height === 0 && this.clock - this.lastStep > (this.speed > 5 ? .38 : .55)) { this.lastStep = this.clock; this.events.step(); }
+  }
+  dispose() { this.look.dispose(); this.cleanups.forEach(fn => fn()); this.engine.stopRenderLoop(); this.scene.dispose(); this.engine.dispose(); }
+}

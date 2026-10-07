@@ -1,0 +1,14 @@
+/devpost/learner-profile.md
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+test-results/
+playwright-report/
+__pycache__/
+.venv/
+*.sqlite3
+private-media/
+artifacts/
+.tools/
