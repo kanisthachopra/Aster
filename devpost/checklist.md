@@ -9,7 +9,7 @@ The learner approved the architecture and explicitly authorized starting impleme
 
 ## Slices
 
-- [ ] **1. Enter the world and reach an exercise station**
+- [x] **1. Enter the world and reach an exercise station**
   Becomes usable: A playable desktop world with silent title, opening, exploration and discovery, dome arrival, robot, three stations, settings and a private local clip preview.
   Why now: Tests the browser's immersive experience and gives concrete visual feedback before committing to final asset production.
   PRD ref: `prd.md > Game Title Screen`, `Guided Arrival`, `Exercise Choice, Navigation, and Station Entry`, `Exercise Video Submission`
@@ -61,7 +61,7 @@ The learner approved the architecture and explicitly authorized starting impleme
 
 ## Hands-on Checkpoints
 
-Current state (2026-10-07): The learner tried slice 1 and supplied extensive feedback. They approved the direction and typography while identifying broken mouse look, a short prescribed path, cramped park, primitive hands, missing dome/robot startup detail and insufficient sound. Exploration build 0.2 implements that revision. Final mechanical verification and the checkpoint commit are being completed. Accounts, real analysis and reward flows remain explicitly unavailable.
+Current state (2026-10-07): The learner tried slice 1 and supplied extensive feedback. They approved the direction and typography while identifying broken mouse look, a short prescribed path, cramped park, primitive hands, missing dome/robot startup detail and insufficient sound. Exploration build 0.2 implements that revision. Production build and all five browser scenarios passed; checkpoint commit: `653754c`. See `verification-0.2.md`. Accounts, real analysis and reward flows remain explicitly unavailable.
 
 The revised browser suite covers title silence; actual movement to all three station identities; cancellation; invalid-file and decoded local playback handling; sealed-sector boundaries; settings persistence; returning-user boundary; exploration and line-of-sight discovery without the bypass; arrival and callsign; native pointer capture; deliberately denied capture, no-button look, Escape and modal release. The in-app browser was also manually exercised: a look gesture changed the displayed heading from 000 to 018 degrees using fallback mode.
 
