@@ -1,6 +1,6 @@
 # Aster — Outpost 07
 
-A desktop-browser exercise park on a distant moon. Version **0.3** connects the explorable world to real local motion analysis, robot orientation, a guest journal and Energy Credits. The complete cinematic product and persistent private accounts remain in development.
+A desktop-browser exercise park on a distant moon. Version **0.4** adds scanned terrain, solid objects, neural character dialogue, broader local movement analysis and three playable recreation stations. The complete cinematic product and persistent private accounts remain in development.
 
 ## Try it
 
@@ -16,28 +16,31 @@ Open **http://127.0.0.1:5174** in Edge or Chrome for unrestricted FPS mouse capt
 1. Select **Begin expedition**. The silent title starts audio only on that interaction. The full opening lasts 12 seconds; skipping is optional.
 2. Choose **New to this world**. Explore with WASD, Space to jump, click the world to capture the mouse, Escape to release. Arrow keys also turn. If an embedded browser blocks capture, hold and drag to look; there is no edge panning. Settings includes mouse sensitivity.
 3. Find the dome using the terrain survey. Enter its southern airlock for the connected 29-second arrival: traveller enters, perspective returns to first person, lights start, ORBIT emerges and approaches. **Preview dome arrival** is a repeat-testing shortcut.
-4. Give an optional callsign. ORBIT introduces reviews, missions, energy and settings. Choose one of three stations and follow the blue floor markers. Press **E** near a station.
-5. Choose a steady side-view recording with one person and a full movement, **2–60 seconds**, under 150 MB. Press **Analyze movement**. Local MediaPipe inference produces measured observations, timestamp buttons and actual pose landmarks, or explains why the footage is insufficient.
-6. Read the findings and limitations, acknowledge them, then **Finish review & return**. Only that final return records activity and awards the daily energy. Leaving or cancelling earns nothing.
+4. Give an optional callsign. ORBIT introduces reviews, missions, energy, recreation and settings. Choose one of three exercise stations and follow the blue floor markers. Press **E** near a station.
+5. Choose a recording with one person, **2–120 seconds**, under 150 MB. A side or three-quarter view is helpful, but other views can provide observations too. Press **Analyze movement**. The local Full pose model measures visible joint chains independently and explains missing evidence.
+6. Read the findings and limitations, acknowledge them, then **Finish review & return**. Only that final return records qualifying activity and awards daily energy. Partial observations can be saved to the journal without rewards. Leaving or cancelling earns nothing.
 7. Open **Missions** for rules and progress, or **Journal** for the source recording, findings and Master Control deletion.
+8. Visit a recreation console or select **Play** for Signal response, Echo sequence or Orbital alignment. These games do not award workout credits.
 
 ## What this build does
 
 - Low 84m-wide geodesic glass dome inspired by the user's reference: triangular panes, warm frame, translucent exterior and clear outward views.
+- Locally served CC0 scanned boulders and surface maps, physically based materials, geological skyline, lighting and post-processing. Solid boulders, poles and fixtures use collision with sliding and small movement substeps.
 - Continuous opening/entry cameras; human facial features and articulated limbs; staged robot lift and approach. Characters are procedural and stylized, not photoreal assets.
 - Direct relative mouse look with raw-input preference and a plain-pointer-lock compatibility retry. Drag-only fallback in capture-blocking windows.
 - North-up terrain relief from actual world elevations; floor plan with numbered stations, entrance, scale and locked sectors.
 - Real MediaPipe pose measurements in a background worker; pinned model/runtime served locally. No video leaves the computer and no API key is needed.
 - Timestamped observed motion, visible-joint overlays and source links. No invented safe-form score, reference-video match or clinical diagnosis.
 - Guest review completion, daily rewards, weekly resets, reserve cap and missed-day protection. The first five activity days award 5, 5, 5, 2.5 and 2.5 credits. All seven actual days without protection earn 2.5 reserve at rollover, capped at 100. Protection costs 10; at most three per week.
-- Four-step robot orientation, journal with selective media/review removal, first-mission cue and sound/mouse/motion preferences.
-- Original temporary music/effects, local synthesized dialogue auditions, subtitles and reading-time audio reduction.
+- Five-step robot orientation, journal with selective media/review removal, first-mission cue and sound/mouse/motion preferences.
+- Rewritten conversational dialogue generated locally with Kokoro neural voices. The opening starts with speech; the former surf-like breathing loop is removed. Original temporary music/effects, subtitles and reading-time audio reduction remain.
+- Three playable recreation games, keyboard controls, reduced-motion alternatives and focus restoration. All 14 official Emil Kowalski skills reviewed, with relevant browser guidance applied.
 
 **Guest limitation:** callsign, video files, feedback and progress live in this tab's memory and clear on reload. Only sound, mouse and motion preferences persist. Account creation is deferred at the user's request. This is not a secure server reward ledger or durable private journal.
 
 ## Analysis evidence and limits
 
-The real model processed a public-domain seven-second Navy push-up clip: 26/28 usable samples and two estimated movement cycles. It rejected the same clip at incompatible squat and pull-up stations. Tests also cover no-person footage, cancellation, pose initialization, projected-angle math, incomplete cycles and tracking gaps. Positive real squat/pull-up validation and a representative accuracy evaluation remain outstanding. Measurements are two-dimensional projections; they cannot establish safe range, pain, load suitability or hidden joint positions.
+The Full model processed an independent public-domain seven-second Navy push-up clip: 28/28 measurable samples and one estimated visible cycle. The same clip cannot earn completion at incompatible stations. Additional private, locally inspected examples produced useful squat and pull-up reviews; a severely cropped push-up recording produced partial observations and specific tracking-gap guidance. No private media are shipped or uploaded, and no filename-specific behavior was added. Tests cover no-person footage, cancellation, projected-angle math, incomplete cycles, cropped joints and tracking gaps. These checks do not establish representative accuracy. Measurements are two-dimensional projections; they cannot establish safe range, pain, load suitability or hidden joint positions.
 
 See [model provenance and fixture instructions](frontend/public/models/README.md). Test exercise media are ignored local artifacts, not shipped assets.
 
@@ -48,11 +51,11 @@ npm --prefix frontend run build
 npm --prefix frontend test
 ```
 
-The build typechecks and bundles production assets. Browser tests use installed Microsoft Edge; change the Playwright browser setting if unavailable. Tests reuse the running local server. Optional real-media checks require the documented fixtures; they skip when those files are absent. Screenshots and traces are ignored. See [0.3 verification](devpost/verification-0.3.md) for this machine's results.
+The build typechecks and bundles production assets. Browser tests use installed Microsoft Edge; change the Playwright browser setting if unavailable. Tests reuse the running local server. Optional real-media checks require the documented fixtures; they skip when those files are absent. Screenshots and traces are ignored. See [0.4 verification](devpost/verification-0.4.md) and the [skills review](devpost/skills-review-0.4.md).
 
 ## Remaining product work
 
-Persistent accounts/recovery/private storage; qualified exercise-feedback validation; licensed professional reference-video comparison; avatar replay driven by supported evidence; finished character models, original score and human-quality voices. These remain tracked in the [checklist](devpost/checklist.md), [PRD](devpost/prd.md), [technical plan](devpost/spec.md) and [sound brief](devpost/sound-design.md).
+Persistent accounts/recovery/private storage; qualified exercise-feedback validation; licensed professional reference-video comparison; avatar replay driven by supported evidence; finished character models, composed score and final voice direction. Neural voices are synthetic, not recordings of human actors. These remain tracked in the [checklist](devpost/checklist.md), [PRD](devpost/prd.md), [technical plan](devpost/spec.md) and [sound brief](devpost/sound-design.md).
 
 ## Source map
 
@@ -65,4 +68,4 @@ Persistent accounts/recovery/private storage; qualified exercise-feedback valida
 - `frontend/src/components/RobotTour.tsx`, `Missions.tsx`, `Journal.tsx`: guided systems and records.
 - `frontend/src/game/AudioDirector.ts`: adaptive temporary sound and local dialogue.
 
-Scene geometry, textures and musical/effect cues are generated by project code. Dialogue provenance is in `frontend/public/audio/README.md`. MediaPipe license and model provenance are bundled alongside their assets. No film/game soundtrack or third-party character is bundled. No deployment has been performed.
+Scene assets combine original procedural work with attributed CC0 Poly Haven scans; provenance is bundled in `frontend/public/textures` and `frontend/public/models/boulder`. Dialogue provenance is in `frontend/public/audio/README.md`. MediaPipe license and model provenance are bundled alongside their assets. No film/game soundtrack or third-party character is bundled. No deployment has been performed.

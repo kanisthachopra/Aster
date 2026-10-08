@@ -16,7 +16,8 @@ export function settleWeek(journey: Journey, day = dayKey()): Journey {
 }
 export function finishReview(journey: Journey, report: AnalysisReport, file: File | null, day = dayKey()): Journey {
   const current = settleWeek(journey, day);
-  if (report.status !== 'usable' || current.entries.some(entry => entry.id === report.id)) return current;
+  if (report.status === 'insufficient' || current.entries.some(entry => entry.id === report.id)) return current;
+  if (report.status === 'partial') return { ...current, entries: [...current.entries, { id: report.id, day, exercise: report.exercise, report, file }] };
   const alreadyToday = current.activity.includes(day);
   const completed = current.activity.filter(date => weekKey(date) === current.week).length;
   return { ...current, entries: [...current.entries, { id: report.id, day, exercise: report.exercise, report, file }],

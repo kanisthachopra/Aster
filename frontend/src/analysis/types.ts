@@ -1,14 +1,21 @@
 import type { ExerciseId } from '../game/types';
 
 export interface Landmark { x: number; y: number; z: number; visibility: number; }
-export interface FrameMetrics { elbow: number; knee: number; hip: number; bodyTilt: number; side: 'left' | 'right'; orientationMatches: boolean; }
+export type Side = 'left' | 'right';
+export interface JointAngles { elbow: number | null; knee: number | null; hip: number | null; }
+export interface FrameMetrics extends JointAngles {
+  bodyTilt: number | null; side: Side; orientationMatches: boolean;
+  orientation?: 'compatible' | 'uncertain' | 'incompatible';
+  sides?: Record<Side, JointAngles>; visibleJoints?: number[];
+}
 export interface EvidenceFrame { timestamp: number; landmarks: Landmark[]; metrics: FrameMetrics | null; }
 export interface Finding { id: string; title: string; observation: string; suggestion: string; timestamp: number; }
 export interface AnalysisReport {
-  id: string; exercise: ExerciseId; status: 'usable' | 'insufficient'; duration: number;
+  id: string; exercise: ExerciseId; status: 'usable' | 'partial' | 'insufficient'; duration: number;
   width: number; height: number; sampledFrames: number; usableFrames: number; coverage: number;
   findings: Finding[]; frames: EvidenceFrame[]; summary: string; limitations: string[];
   sources: { title: string; url: string }[]; estimatedRepetitions: number;
+  poseFrames?: number; measurementCoverage?: { elbow: number; knee: number; hip: number }; captureNotes?: string[];
 }
 export interface AnalysisProgress {
   stage: 'loading' | 'sampling' | 'summarizing'; completed: number; total: number; message: string; frame?: EvidenceFrame;

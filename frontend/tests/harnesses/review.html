@@ -1,0 +1,9 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Recording layout verification</title><link rel="stylesheet" href="/src/styles.css"></head><body><div id="harness" class="app"></div><script type="module">
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import Panel from '/src/components/Panel.tsx';
+import ClipPreview from '/src/components/ClipPreview.tsx';
+import { EXERCISES } from '/src/game/types.ts';
+const exercise = EXERCISES.find(item => item.id === new URLSearchParams(location.search).get('exercise')) || EXERCISES[1];
+createRoot(document.querySelector('#harness')).render(React.createElement(Panel, {title:exercise.name, eyebrow:'TRAINING STATION', wide:true, onClose:()=>{}}, React.createElement(ClipPreview,{exercise,onFinish:()=>{},onSpeak:()=>{}})));
+</script></body></html>

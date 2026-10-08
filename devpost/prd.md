@@ -519,3 +519,11 @@ The station now uses actual browser-local pose inference and a guest journal/ene
 The reference dome becomes a low geodesic translucent cap rather than an opaque metallic shell. Entry preserves camera continuity, and reduced motion retains the entire introduction. Robot orientation explicitly covers analysis, completion, credits, journal deletion and settings. Native pointer capture uses relative motion; capture-denied windows use hold-and-drag rather than edge turning.
 
 Measurements must remain distinct from proven safe technique. The current rules detect visible motion and projected angles; they do not compare the person to a professional reference video or establish that an exercise is safe. Those later capabilities require representative validation and licensed references.
+
+## Revision 0.4 — learner feedback, October 8
+
+The learner requested a substantial visual redesign, solid-object collisions, casual traveller dialogue with a more human voice, a spoken opening replacing the noise-like breathing effect, directed cinematics, playable recreation stations and broader exercise-video understanding. These are authorized changes. The mini-games move from future scope into the current build; they remain separate from exercise activity and energy.
+
+Analysis must not require a perfect full-body side view to say anything useful. A useful result states which movement is observable and which is hidden; incomplete observations can be retained without claiming a completed exercise or awarding energy. Three supplied private recordings are diagnostic examples only, kept outside Git and never uploaded. The algorithm must generalize through joint visibility, camera geometry and temporal evidence rather than recognizing filenames or memorizing the examples. The recording ceiling becomes two minutes to accommodate short sets with setup time.
+
+The user's request for every skill in Emil Kowalski's public repository is handled by fetching the actual repository, reading its complete SKILL.md inventory and recording relevance in skills-review-0.4.md. Desktop-web-compatible guidance is applied; Expo-only APIs do not change the approved browser platform.

@@ -4,6 +4,7 @@ import { TransformNode } from '@babylonjs/core/Meshes/transformNode';
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';
+import { VertexBuffer } from '@babylonjs/core/Buffers/buffer';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { DynamicTexture } from '@babylonjs/core/Materials/Textures/dynamicTexture';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
@@ -108,18 +109,34 @@ export function createAvatar(scene: Scene) {
   ], suit);
   // A readable human face inside a clear pressure helmet, rather than an opaque robot visor.
   ellipsoid(scene, 'neck', root, [.105, .16, .1], [0, 1.43, .015], skin);
-  ellipsoid(scene, 'head', root, [.224, .29, .222], [0, 1.64, .025], skin);
-  ellipsoid(scene, 'jaw', root, [.166, .105, .15], [0, 1.557, .033], skin);
-  ellipsoid(scene, 'nose-bridge', root, [.024, .058, .026], [0, 1.638, .127], skin);
-  ellipsoid(scene, 'nose-tip', root, [.028, .022, .026], [0, 1.612, .141], skin);
-  ellipsoid(scene, 'upper-lip', root, [.054, .006, .007], [0, 1.580, .123], lips);
-  ellipsoid(scene, 'lower-lip', root, [.050, .006, .008], [0, 1.571, .122], lips);
+  // Sculpt the brow, eye sockets, nose and cheeks into one smooth skin surface.
+  const head = MeshBuilder.CreateSphere('sculpted-human-head', { diameter: 1, segments: 64, updatable: true }, scene);
+  head.parent = root; head.position.set(0, 1.64, .025); head.material = skin;
+  const headPositions = head.getVerticesData(VertexBuffer.PositionKind)!;
+  const gaussian = (x: number, y: number, cx: number, cy: number, sx: number, sy: number) => Math.exp(-((x - cx) ** 2 / sx ** 2 + (y - cy) ** 2 / sy ** 2));
+  for (let i = 0; i < headPositions.length; i += 3) {
+    let x = headPositions[i] * .222; const y = headPositions[i + 1] * .292; let z = headPositions[i + 2] * .219;
+    x *= 1 - Math.max(0, -y - .04) * 2;
+    if (z > 0) {
+      const forward = Math.min(1, z / .05);
+      const nose = .028 * gaussian(x, y, 0, -.027, .017, .025) + .011 * gaussian(x, y, 0, .009, .014, .035);
+      const sockets = -.009 * (gaussian(x, y, -.043, .021, .026, .016) + gaussian(x, y, .043, .021, .026, .016));
+      const brow = .006 * (gaussian(x, y, -.04, .047, .038, .011) + gaussian(x, y, .04, .047, .038, .011));
+      const cheeks = .006 * (gaussian(x, y, -.06, -.022, .026, .026) + gaussian(x, y, .06, -.022, .026, .026));
+      z += forward * (nose + sockets + brow + cheeks);
+    }
+    headPositions[i] = x; headPositions[i + 1] = y; headPositions[i + 2] = z;
+  }
+  const headNormals: number[] = []; VertexData.ComputeNormals(headPositions, head.getIndices()!, headNormals);
+  head.updateVerticesData(VertexBuffer.PositionKind, headPositions); head.updateVerticesData(VertexBuffer.NormalKind, headNormals);
+  ellipsoid(scene, 'upper-lip', root, [.051, .005, .005], [0, 1.582, .126], lips);
+  ellipsoid(scene, 'lower-lip', root, [.048, .005, .006], [0, 1.574, .124], lips);
   for (const side of [-1, 1]) {
     ellipsoid(scene, 'ear', root, [.033, .065, .035], [side * .113, 1.637, .019], skin);
-    ellipsoid(scene, 'human-eye', root, [.041, .013, .007], [side * .046, 1.66, .127], white);
-    ellipsoid(scene, 'iris', root, [.012, .012, .004], [side * .046, 1.66, .132], iris);
-    ellipsoid(scene, 'pupil', root, [.005, .006, .002], [side * .046, 1.66, .135], pupil);
-    segment(scene, 'eyebrow', root, new Vector3(side * .026, 1.681, .128), new Vector3(side * .072, 1.676, .117), .0035, hair);
+    ellipsoid(scene, 'human-eye', root, [.040, .012, .008], [side * .043, 1.66, .117], white);
+    ellipsoid(scene, 'iris', root, [.011, .011, .004], [side * .043, 1.66, .122], iris);
+    ellipsoid(scene, 'pupil', root, [.005, .006, .002], [side * .043, 1.66, .125], pupil);
+    segment(scene, 'eyebrow', root, new Vector3(side * .023, 1.685, .127), new Vector3(side * .07, 1.68, .108), .0025, hair);
   }
   const crop = MeshBuilder.CreateSphere('cropped-hair', { diameter: 1, segments: 32, slice: .39 }, scene);
   crop.parent = root; crop.scaling.set(.229, .29, .228); crop.position.set(0, 1.645, .014); crop.material = hair;

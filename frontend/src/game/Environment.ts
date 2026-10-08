@@ -5,11 +5,13 @@ import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial';
-import { DynamicTexture } from '@babylonjs/core/Materials/Textures/dynamicTexture';
 import { Color3 } from '@babylonjs/core/Maths/math.color';
 import { Matrix, Quaternion, Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { TransformNode } from '@babylonjs/core/Meshes/transformNode';
-import { terrainHeight } from './terrain';
+import { terrainHeight, noise } from './terrain';
+import { CollisionWorld } from './Collision';
+import { surfaceMaterial, applyScannedSurface } from './SurfaceMaterials';
+import { loadHeroBoulders } from './HeroBoulders';
 import '@babylonjs/core/Meshes/thinInstanceMesh';
 
 export const material = (scene: Scene, name: string, color: string, glow = 0) => {
@@ -28,44 +30,30 @@ float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(ha
 float fbm(vec2 p){float a=.5,v=0.;for(int i=0;i<5;i++){v+=a*noise(p);p=p*2.03+17.3;a*=.5;}return v;}`;
 
 export class Environment {
+  readonly collisions = new CollisionWorld();
+  readonly ready: Promise<void>;
   creatures: Array<{ root: TransformNode; legs: TransformNode[]; x: number; z: number; offset: number }> = [];
   private planet: Mesh;
   private stars: ShaderMaterial;
   constructor(scene: Scene) {
     let seed = 9173;
     const random = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
-    const surface = material(scene, 'mineral-regolith', '#817d75');
-    surface.specularColor.set(.025, .026, .027);
-    const texture = new DynamicTexture('mineral-grain', { width: 1024, height: 1024 }, scene, false);
-    const ctx = texture.getContext(), pixels = new ImageData(1024, 1024);
-    for (let y = 0; y < 1024; y++) for (let x = 0; x < 1024; x++) {
-      const i = (y * 1024 + x) * 4;
-      const fine = random() * 33, wave = Math.sin(x * .08 + Math.sin(y * .04) * 4) * 5;
-      const value = 104 + fine + wave;
-      pixels.data[i] = value + 3; pixels.data[i + 1] = value; pixels.data[i + 2] = value - 6; pixels.data[i + 3] = 255;
-    }
-    ctx.putImageData(pixels, 0, 0); texture.update(); texture.uScale = texture.vScale = 100;
-    texture.wrapU = texture.wrapV = 1;
-    surface.diffuseTexture = texture;
-    const bump = new DynamicTexture('regolith-normal', { width: 1024, height: 1024 }, scene, true);
-    const normalPixels = new ImageData(1024, 1024);
-    for (let y = 0; y < 1024; y++) for (let x = 0; x < 1024; x++) {
-      const i = (y * 1024 + x) * 4;
-      const dx = (pixels.data[(y * 1024 + (x + 1) % 1024) * 4] - pixels.data[i]) / 255;
-      const dy = (pixels.data[(((y + 1) % 1024) * 1024 + x) * 4] - pixels.data[i]) / 255;
-      const n = new Vector3(-dx, -dy, 1).normalize();
-      normalPixels.data.set([(n.x + 1) * 127.5, (n.y + 1) * 127.5, (n.z + 1) * 127.5, 255], i);
-    }
-    bump.getContext().putImageData(normalPixels, 0, 0); bump.update();
-    bump.wrapU = bump.wrapV = 1; bump.uScale = bump.vScale = 100; bump.level = .5; surface.bumpTexture = bump;
+    const surface = surfaceMaterial(scene, 'mineral-regolith', '#be9b7d', .96);
+    applyScannedSurface(scene, surface, 'aerial_rocks_02', 24);
     const ground = MeshBuilder.CreateGround('explorable-regolith', { width: 760, height: 760, subdivisions: 250, updatable: true }, scene);
     const positions = ground.getVerticesData(VertexBuffer.PositionKind)!;
     for (let i = 0; i < positions.length; i += 3) positions[i + 1] = terrainHeight(positions[i], positions[i + 2]);
     ground.updateVerticesData(VertexBuffer.PositionKind, positions);
+    const groundColors: number[] = [];
+    for (let i = 0; i < positions.length; i += 3) {
+      const patch = noise(positions[i] * .037, positions[i + 2] * .037), ridge = Math.min(1, positions[i + 1] / 22);
+      groundColors.push(.72 + patch * .28, .70 + patch * .25 - ridge * .08, .69 + patch * .22 - ridge * .12, 1);
+    }
+    ground.setVerticesData(VertexBuffer.ColorKind, groundColors);
     const normals: number[] = []; VertexData.ComputeNormals(positions, ground.getIndices()!, normals);
     ground.updateVerticesData(VertexBuffer.NormalKind, normals); ground.material = surface; ground.receiveShadows = true;
-    const rockMat = material(scene, 'weathered-basalt', '#686762');
-    rockMat.diffuseTexture = texture; rockMat.bumpTexture = bump;
+    const rockMat = surfaceMaterial(scene, 'weathered-basalt', '#7c7067', .88);
+    applyScannedSurface(scene, rockMat, 'rock_boulder_dry', 1.5);
     const rock = MeshBuilder.CreateIcoSphere('weathered-boulders', { radius: 1, subdivisions: 2, flat: false }, scene);
     const rp = rock.getVerticesData(VertexBuffer.PositionKind)!;
     for (let i = 0; i < rp.length; i += 3) {
@@ -80,9 +68,31 @@ export class Environment {
       const x = (random() - .5) * 470, z = (random() - .5) * 460;
       if (Math.hypot(x, z - 60) < 48 || Math.hypot(x + 94, z + 76) < 4) continue;
       const scale = .13 + Math.pow(random(), 3) * 5;
-      matrices.push(...Matrix.Compose(new Vector3(scale * 1.4, scale * .6, scale), Quaternion.FromEulerAngles(random(), random() * 6, random() * .3), new Vector3(x, terrainHeight(x, z) - .1, z)).asArray());
+      const transform = Matrix.Compose(new Vector3(scale * 1.4, scale * .6, scale), Quaternion.FromEulerAngles(random(), random() * 6, random() * .3), new Vector3(x, terrainHeight(x, z) - .1, z));
+      if (scale > .45) {
+        let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity, bottom = Infinity, top = -Infinity;
+        for (let v = 0; v < rp.length; v += 3) {
+          const point = Vector3.TransformCoordinates(new Vector3(rp[v], rp[v + 1], rp[v + 2]), transform);
+          minX = Math.min(minX, point.x); maxX = Math.max(maxX, point.x); minZ = Math.min(minZ, point.z); maxZ = Math.max(maxZ, point.z);
+          bottom = Math.min(bottom, point.y); top = Math.max(top, point.y);
+        }
+        this.collisions.add({ id: `rock-${i}`, kind: 'box', x: (minX + maxX) / 2, z: (minZ + maxZ) / 2, halfX: (maxX - minX) / 2, halfZ: (maxZ - minZ) / 2, bottom, top });
+      }
+      matrices.push(...transform.asArray());
     }
     rock.thinInstanceSetBuffer('matrix', new Float32Array(matrices), 16);
+    this.ready = loadHeroBoulders(scene, this.collisions).catch(error => console.warn('Scanned rock detail could not load; procedural terrain remains available.', error));
+    // Small debris gives human scale without adding hundreds of individual draw calls.
+    const gravel = MeshBuilder.CreateIcoSphere('regolith-pebbles', { radius: 1, subdivisions: 1, flat: true }, scene);
+    gravel.material = rockMat;
+    const pebbles: number[] = [];
+    for (let i = 0; i < 4800; i++) {
+      const x = (random() - .5) * 360, z = (random() - .5) * 340;
+      if (Math.hypot(x, z - 60) < 45) continue;
+      const s = .015 + random() * .10;
+      pebbles.push(...Matrix.Compose(new Vector3(s * 1.4, s * .6, s), Quaternion.FromEulerAngles(0, random() * 6, 0), new Vector3(x, terrainHeight(x, z) + .015, z)).asArray());
+    }
+    gravel.thinInstanceSetBuffer('matrix', new Float32Array(pebbles), 16);
 
     const sky = MeshBuilder.CreateSphere('deep-space', { diameter: 1600, segments: 32, sideOrientation: Mesh.BACKSIDE }, scene);
     this.stars = new ShaderMaterial('starfield-and-dust', scene, { vertexSource: vertex, fragmentSource: `precision highp float; varying vec2 vUV; uniform float time; ${noiseGL}
@@ -107,16 +117,23 @@ export class Environment {
       void main(){vec3 n=normalize(vNormal);vec3 light=normalize(vec3(-.8,.3,-.5));float diffuse=max(dot(n,light),0.);float swirls=fbm(vUV*vec2(22.,38.));float bands=sin(vUV.y*150.+swirls*9.);vec3 col=mix(vec3(.12,.22,.28),vec3(.63,.73,.74),bands*.35+swirls*.45+.25);float rim=pow(1.-max(dot(n,normalize(cameraPosition-vPosition)),0.),4.);col*=.055+diffuse*.9;col+=vec3(.09,.23,.34)*rim*sqrt(diffuse+.05);gl_FragColor=vec4(col,1.);}` }, { attributes: ['position', 'normal', 'uv'], uniforms: ['world', 'worldViewProjection', 'cameraPosition'] });
     this.planet.material = planetMaterial; this.planet.applyFog = false;
     scene.onBeforeRenderObservable.add(() => planetMaterial.setVector3('cameraPosition', scene.activeCamera!.position));
-    const ringTex = new DynamicTexture('ring-bands', { width: 512, height: 64 }, scene, false);
-    const rc = ringTex.getContext();
-    for (let x = 0; x < 512; x++) { const shade = 100 + random() * 90; rc.fillStyle = `rgb(${shade},${shade},${shade})`; rc.fillRect(x, 0, 1, 64); }
-    ringTex.update();
-    for (const [radius, thickness, alpha] of [[92, 11, .42], [108, 5, .27], [82, 4, .2]]) {
-      const ring = MeshBuilder.CreateTorus('planetary-ring', { diameter: radius * 2, thickness, tessellation: 192 }, scene);
-      ring.position.copyFrom(this.planet.position); ring.rotation.set(.05, 0, -.28); ring.scaling.y = .005;
-      const m = material(scene, `ring-${radius}`, '#a3aaa3', .35); m.diffuseTexture = ringTex; m.backFaceCulling = false;
-      m.alpha = alpha; ring.material = m; ring.applyFog = false;
+    const ring = new Mesh('fine-ice-planetary-rings', scene), ringData = new VertexData();
+    const ringPositions: number[] = [], ringIndices: number[] = [], ringColors: number[] = [], ringNormals: number[] = [];
+    const bands = 128, sectors = 192;
+    for (let band = 0; band <= bands; band++) {
+      const radius = 70 + band / bands * 45, gap = radius > 94 && radius < 97;
+      const density = gap ? .015 : .18 + random() * .37;
+      for (let sector = 0; sector <= sectors; sector++) {
+        const a = sector / sectors * Math.PI * 2;
+        ringPositions.push(Math.cos(a) * radius, 0, Math.sin(a) * radius); ringNormals.push(0, 1, 0);
+        ringColors.push(.68, .67, .60, density);
+        if (band < bands && sector < sectors) { const n = band * (sectors + 1) + sector; ringIndices.push(n, n + 1, n + sectors + 1, n + 1, n + sectors + 2, n + sectors + 1); }
+      }
     }
+    ringData.positions = ringPositions; ringData.indices = ringIndices; ringData.colors = ringColors; ringData.normals = ringNormals; ringData.applyToMesh(ring);
+    const ringMat = material(scene, 'ice-ring-dust', '#d3c4ac', .25); ringMat.backFaceCulling = false; ringMat.alpha = .8;
+    ring.material = ringMat; ring.hasVertexAlpha = true; ring.applyFog = false;
+    ring.position.copyFrom(this.planet.position); ring.rotation.set(.05, 0, -.28);
     const moon = MeshBuilder.CreateIcoSphere('companion-moon', { radius: 11, subdivisions: 5 }, scene);
     moon.position.set(-200, 135, 490); moon.material = surface; moon.applyFog = false;
 

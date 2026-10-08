@@ -8,6 +8,7 @@ function Entry({ entry, onDelete }: { entry: JournalEntry; onDelete: (id: string
   useEffect(() => { if (!entry.file) { setUrl(''); return; } const value = URL.createObjectURL(entry.file); setUrl(value); return () => URL.revokeObjectURL(value); }, [entry.file]);
   return <details className="journal-entry"><summary><span>{EXERCISES.find(ex => ex.id === entry.exercise)?.name}</span><small>{entry.day} · {entry.report.findings.length} observations</small></summary>
     <p>{entry.report.summary}</p>
+    {entry.report.status === 'partial' && <p className="status-note">Limited observations · saved for reference, without activity or energy credit.</p>}
     {url ? <video src={url} controls preload="metadata" aria-label="Journal source recording" /> : <p className="fine-print">Source recording removed. Retained observations remain below.</p>}
     {entry.report.findings.map(item => <div className="journal-finding" key={item.id}><strong>{item.timestamp.toFixed(1)}s · {item.title}</strong><p>{item.observation}</p><p>{item.suggestion}</p></div>)}
     <details className="master-controls"><summary>Master Control · manage this entry</summary>

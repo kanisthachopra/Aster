@@ -11,14 +11,17 @@ import Missions from './components/Missions';
 import Journal from './components/Journal';
 import { createJourney, dayKey, finishReview, protectDay, settleWeek } from './game/journey';
 import type { AnalysisReport } from './analysis/types';
+import dialogueScript from './game/dialogue.json';
+import MiniGames from './components/MiniGames';
+import { GAME_STATIONS, type MiniGameId } from './game/miniGames';
 
-type Overlay = 'settings' | 'robot' | 'onboarding' | 'tour' | 'review' | 'access' | 'journal' | 'missions' | null;
+type Overlay = 'settings' | 'robot' | 'onboarding' | 'tour' | 'review' | 'access' | 'journal' | 'missions' | 'games' | null;
 const ARRIVAL_LINES: Record<ArrivalBeat, { speaker: string; line: string; label: string }> = {
-  threshold: { speaker: 'TRAVELLER', line: 'Okay… still standing. Let’s see what’s in here.', label: 'HABITAT DISCOVERED' },
-  lights: { speaker: 'TRAVELLER', line: 'Oh. Look at this place.', label: 'RESTORING HABITAT POWER' },
-  machine: { speaker: 'TRAVELLER', line: 'Hang on… did that thing just move?', label: 'SERVICE BAY / INITIALIZING' },
-  robot: { speaker: 'ORBIT', line: 'Oh! A visitor. Give me a second—it’s been quiet here.', label: 'ORBIT / ACTIVATING' },
-  greeting: { speaker: 'ORBIT', line: 'I’m ORBIT. You look like you’ve had quite a walk.', label: 'FIRST CONTACT' },
+  threshold: { speaker: 'TRAVELLER', line: dialogueScript.threshold.text, label: 'HABITAT DISCOVERED' },
+  lights: { speaker: 'TRAVELLER', line: dialogueScript.lights.text, label: 'RESTORING HABITAT POWER' },
+  machine: { speaker: 'TRAVELLER', line: dialogueScript.machine.text, label: 'SERVICE BAY / INITIALIZING' },
+  robot: { speaker: 'ORBIT', line: dialogueScript.robot.text, label: 'ORBIT / ACTIVATING' },
+  greeting: { speaker: 'ORBIT', line: dialogueScript.greeting.text, label: 'FIRST CONTACT' },
 };
 
 export default function App() {
@@ -29,6 +32,8 @@ export default function App() {
   const [overlay, setOverlay] = useState<Overlay>(null);
   const [selected, setSelected] = useState<ExerciseId>('pullup');
   const [near, setNear] = useState<ExerciseId | null>(null);
+  const [nearGame, setNearGame] = useState<MiniGameId | null>(null);
+  const [selectedGame, setSelectedGame] = useState<MiniGameId>('signal');
   const [lookMode, setLookMode] = useState<LookMode>('off');
   const [survey, setSurvey] = useState<Survey>({ ...LANDING, bearing: 0, discovered: false, inside: false });
   const [mapExpanded, setMapExpanded] = useState(false);
@@ -43,20 +48,23 @@ export default function App() {
   const speakGuide = useCallback((key: string) => audio.current?.guide(key), []);
   const exercise = EXERCISES.find(item => item.id === selected)!;
   const nearbyExercise = EXERCISES.find(item => item.id === near);
+  const nearbyGame = GAME_STATIONS.find(item => item.id === nearGame);
 
   useEffect(() => {
     try {
       world.current = new World(canvas.current!, {
+        ready: () => setReady(true),
         opened: () => setPhase('entry'), arrived: () => setPhase('arrival'),
         introduced: () => { setPhase('park'); setOverlay('onboarding'); },
         station: id => { setSelected(id); setPhase('station'); setOverlay('review'); },
         proximity: id => setNear(previous => previous === id ? previous : id),
+        game: id => { setSelectedGame(id); setOverlay('games'); },
+        gameProximity: id => setNearGame(previous => previous === id ? previous : id),
         capture: setLookMode, survey: setSurvey,
         beat: next => { setBeat(next); audio.current?.arrivalBeat(next); },
         step: () => audio.current?.footstep(),
       });
       audio.current = new AudioDirector(loadSettings());
-      setReady(true);
     } catch (error) { setFailure(error instanceof Error ? error.message : 'Graphics unavailable'); }
     return () => { world.current?.dispose(); audio.current?.dispose(); };
   }, []);
@@ -83,17 +91,23 @@ export default function App() {
     setPhase('opening');
   }
   function closePanel() {
+    audio.current?.stopDialogue();
     if (overlay === 'review') {
       setPhase('park');
-      setMessage('Your station will be here when you’re ready. Another exercise, perhaps?');
+      setMessage('No problem. Your station’s still here if you want another go.');
     }
     setOverlay(null);
   }
   function choose(id: ExerciseId) { setSelected(id); setOverlay(null); setMessage('Follow the blue markers. I’ll meet you at the station.'); }
   function completeReview(report: AnalysisReport, file: File) {
-    if (report.status !== 'usable') return;
+    if (report.status === 'insufficient') return;
     const updated = finishReview(journey, report, file);
-    setJourney(updated); setOverlay(null); setPhase('park'); audio.current?.cue();
+    setJourney(updated); setOverlay(null); setPhase('park');
+    if (report.status === 'partial') {
+      setMessage('Saved those observations in your journal. There’s not enough evidence for an activity credit yet; the recording tips explain what would help.');
+      speakGuide('analysis-partial'); return;
+    }
+    audio.current?.cue();
     const earned = Math.max(0, updated.regular - settleWeek(journey).regular);
     setMessage(journey.activity.length === 0 ? `First mission complete. ${earned ? `+${earned} Energy Credits. ` : ''}Your review is in the Journal. Master Control lets you manage it.` : `Review added to your guest journal. ${earned ? `+${earned} Energy Credits.` : 'Today’s activity was already recorded.'}`);
     speakGuide(journey.activity.length === 0 ? 'first-review' : 'analysis-ready');
@@ -114,17 +128,17 @@ export default function App() {
             <button disabled={!ready} onClick={() => setOverlay('settings')}><span className="menu-number">02</span>Settings<span className="menu-arrow">↗</span></button>
           </nav>
         </div>
-        <div className="title-bottom"><span><i className="tiny-light" /> SYSTEMS ONLINE</span><span>MOVEMENT LAB / 0.3</span></div>
+        <div className="title-bottom"><span role="status"><i className="tiny-light" /> {ready ? 'SYSTEMS ONLINE' : 'PREPARING THE OUTPOST'}</span><span>MOVEMENT LAB / 0.4</span></div>
         <div className="coordinate-label"><span>SECTOR 07</span><strong>Somewhere worth<br />starting again.</strong><small>24° 18′ N &nbsp; / &nbsp; 61° 07′ E</small></div>
       </section>}
 
       {phase !== 'title' && <header className="hud-header">
         <div className="hud-brand">✧ <span>ASTER<small>OUTPOST 07</small></span></div>
         <div className="hud-location"><span className="status-dot" />{['guided', 'opening', 'entry'].includes(phase) ? 'ARRIVAL SECTOR' : 'TRAINING HABITAT'}<small>DEVELOPMENT PREVIEW</small></div>
-        <div className="hud-actions">{['park', 'station'].includes(phase) && <><button className={journey.activity.length ? 'mission-unlocked' : ''} onClick={() => setOverlay('missions')}>Missions <span>◇ {journey.regular + journey.reserve}</span></button><button onClick={() => setOverlay('journal')}>Journal <span>▤</span></button></>}<button onClick={() => setOverlay('settings')}>Settings <span>☷</span></button></div>
+        <div className="hud-actions">{['park', 'station'].includes(phase) && <><button className={journey.activity.length ? 'mission-unlocked' : ''} onClick={() => setOverlay('missions')}>Missions <span>◇ {journey.regular + journey.reserve}</span></button><button onClick={() => setOverlay('journal')}>Journal <span>▤</span></button><button onClick={() => setOverlay('games')}>Play <span>✧</span></button></>}<button onClick={() => setOverlay('settings')}>Settings <span>☷</span></button></div>
       </header>}
 
-      {phase === 'opening' && <><div className="cinematic-bars" aria-hidden="true" /><div className="cinematic-caption"><p className="eyebrow">SURFACE CONTACT ESTABLISHED</p><p>A long way from home.</p></div><button className="skip-button" onClick={() => setPhase('entry')}>Skip opening →</button></>}
+      {phase === 'opening' && <><div className="cinematic-bars" aria-hidden="true" /><div className="cinematic-caption"><p className="eyebrow">SURFACE CONTACT ESTABLISHED</p><p><small>TRAVELLER</small>{dialogueScript.opening.text}</p></div><button className="skip-button" onClick={() => setPhase('entry')}>Skip opening →</button></>}
 
       {phase === 'entry' && <section className="entry-panel">
         <p className="eyebrow">EARTHAN INTERGALACTIC EMPIRE / ARRIVALS</p><h2>Every journey<br />begins somewhere.</h2><p className="subtle">The outpost is waiting.</p>
@@ -142,6 +156,7 @@ export default function App() {
         <div className="objective"><p className="eyebrow">YOUR NEXT STEP / {exercise.number}</p><h2>{exercise.name}</h2><p>Follow the blue floor markers.</p><button className="text-button" onClick={() => setOverlay('robot')}>Choose another station ↗</button></div>
         <div className="crosshair" aria-hidden="true">·</div>
         {nearbyExercise && <button className="station-prompt" onClick={() => { setSelected(nearbyExercise.id); setPhase('station'); setOverlay('review'); }}><kbd>E</kbd><span>Enter {nearbyExercise.name.toLowerCase()} station<small>{nearbyExercise.label}</small></span></button>}
+        {!nearbyExercise && nearbyGame && <button className="station-prompt" onClick={() => { setSelectedGame(nearbyGame.id); setOverlay('games'); }}><kbd>E</kbd><span>Play {nearbyGame.label}<small>RECREATION / TAKE A BREAK</small></span></button>}
         <div className="control-strip"><span><kbd>W A S D</kbd> Move</span><span><kbd>SPACE</kbd> Jump</span><span>{lookHint}</span></div>
       </>}
       {['guided', 'park'].includes(phase) && !overlay && <SurveyMap survey={survey} expanded={mapExpanded} onToggle={() => { world.current?.releasePointer(); setMapExpanded(value => !value); }} />}
@@ -151,7 +166,7 @@ export default function App() {
     </>}
 
     {overlay === 'onboarding' && <Panel title="What should I call you?" eyebrow="ORBIT / FIRST CONTACT" onClose={() => setOverlay('robot')}>
-      <p className="dialogue-line">“You made it. I’m ORBIT. Before we get into all the training stuff… what should I call you?”</p>
+      <p className="dialogue-line">“Before I start calling you ‘hey, you’… what’s your name?”</p>
       <form onSubmit={event => { event.preventDefault(); setOverlay('tour'); }}>
         <label className="callsign-field">Your callsign<input autoComplete="off" maxLength={32} value={callsign} onChange={event => setCallsign(event.target.value)} placeholder="How should ORBIT address you?" /></label>
         <p className="fine-print">Guest expedition: no account needed. Your callsign, recordings and progress stay in this visit and clear on reload.</p>
@@ -162,7 +177,7 @@ export default function App() {
     {overlay === 'tour' && <Panel title="Let me show you around." eyebrow="ORBIT / YOUR FIRST EXPEDITION" onClose={() => setOverlay('robot')}><RobotTour onDone={() => setOverlay('robot')} onSpeak={speakGuide} /></Panel>}
 
     {overlay === 'robot' && <Panel title="There you are, traveller." eyebrow="ORBIT / YOUR OUTPOST COMPANION" onClose={closePanel}>
-      <p className="dialogue-line">“{callsign.trim() || 'Traveller'}, a whole moon, and you found the one place with a pull-up bar. I think we’ll get along.”</p>
+      <p className="dialogue-line">“{callsign.trim() || 'Traveller'}, pick something you’d like to work on. I’ll meet you there.”</p>
       <p className="subtle">Where shall we begin?</p>
       <div className="exercise-options">{EXERCISES.map(item => <button className="choice-button" key={item.id} onClick={() => choose(item.id)}><span><small>{item.number} / {item.label}</small>{item.name}</span><b>↗</b></button>)}</div>
       <button className="text-button" onClick={() => setOverlay('tour')}>Walk me through the outpost again</button>
@@ -178,11 +193,11 @@ export default function App() {
     {overlay === 'settings' && <Panel title="Make yourself at home." eyebrow="OUTPOST / SETTINGS" onClose={closePanel}>
       <p className="subtle">A little more space. A little less noise.</p>
       <label className="setting-row"><span>Music<small>Original temporary sound sketch</small></span><input aria-label="Music volume" type="range" min="0" max="1" step="0.05" value={settings.music} onChange={e => setSettings(s => ({ ...s, music: Number(e.target.value) }))} /><output>{Math.round(settings.music * 100)}%</output></label>
-      <label className="setting-row"><span>World sounds<small>Breathing and interface cues</small></span><input aria-label="World sounds volume" type="range" min="0" max="1" step="0.05" value={settings.effects} onChange={e => setSettings(s => ({ ...s, effects: Number(e.target.value) }))} /><output>{Math.round(settings.effects * 100)}%</output></label>
-      <label className="setting-row"><span>Dialogue<small>Local voice audition · subtitles stay visible</small></span><input aria-label="Dialogue volume" type="range" min="0" max="1" step="0.05" value={settings.dialogue} onChange={e => setSettings(s => ({ ...s, dialogue: Number(e.target.value) }))} /><output>{Math.round(settings.dialogue * 100)}%</output></label>
+      <label className="setting-row"><span>World sounds<small>Footsteps, machinery and interface cues</small></span><input aria-label="World sounds volume" type="range" min="0" max="1" step="0.05" value={settings.effects} onChange={e => setSettings(s => ({ ...s, effects: Number(e.target.value) }))} /><output>{Math.round(settings.effects * 100)}%</output></label>
+      <label className="setting-row"><span>Dialogue<small>Traveller & ORBIT · subtitles stay visible</small></span><input aria-label="Dialogue volume" type="range" min="0" max="1" step="0.05" value={settings.dialogue} onChange={e => setSettings(s => ({ ...s, dialogue: Number(e.target.value) }))} /><output>{Math.round(settings.dialogue * 100)}%</output></label>
       <label className="setting-row"><span>Mouse sensitivity<small>Direct aim, without camera smoothing</small></span><input aria-label="Mouse sensitivity" type="range" min="0.3" max="2" step="0.1" value={settings.lookSensitivity} onChange={e => setSettings(s => ({ ...s, lookSensitivity: Number(e.target.value) }))} /><output>{settings.lookSensitivity.toFixed(1)}×</output></label>
       <label className="setting-row"><span>Reduced motion<small>Gentler scenery and camera movement; full introduction</small></span><input type="checkbox" checked={settings.reducedMotion} onChange={e => setSettings(s => ({ ...s, reducedMotion: e.target.checked }))} /></label>
-      <p className="preview-note">Click the world to capture the mouse. Escape releases it. If this embedded window blocks capture, use Edge or Chrome for unrestricted game-style look. Character voices are locally synthesized auditions.</p>
+      <p className="preview-note">Click the world to capture the mouse. Escape releases it. If this embedded window blocks capture, use Edge or Chrome for unrestricted game-style look. Original dialogue uses locally generated neural voices.</p>
       <button className="primary" onClick={closePanel}>Return ↗</button>
     </Panel>}
 
@@ -195,5 +210,6 @@ export default function App() {
       <Journal entries={journey.entries} onSettings={() => setOverlay('settings')} onDelete={(id, mediaOnly) => setJourney(previous => ({ ...previous, entries: mediaOnly ? previous.entries.map(entry => entry.id === id ? { ...entry, file: null } : entry) : previous.entries.filter(entry => entry.id !== id) }))} /><button className="primary" onClick={closePanel}>Back to the park ↗</button>
     </Panel>}
     {overlay === 'missions' && <Panel title="A little better, each time." eyebrow={`ORBIT / MISSIONS / ${dayKey()}`} onClose={closePanel}><Missions journey={settleWeek(journey)} onProtect={day => setJourney(previous => protectDay(previous, day))} /><button className="primary" onClick={closePanel}>Back to the park ↗</button></Panel>}
+    {overlay === 'games' && <Panel title="Recreation deck." eyebrow="OUTPOST / OFF DUTY" onClose={closePanel} wide><MiniGames initialGame={selectedGame} onExit={closePanel} reducedMotion={settings.reducedMotion} /></Panel>}
   </main>;
 }

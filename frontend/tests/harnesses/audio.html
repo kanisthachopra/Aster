@@ -1,0 +1,8 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Audio transition test</title><button id="begin">Begin</button><button id="skip">Skip</button><script type="module">
+import { AudioDirector } from '/src/game/AudioDirector.ts';
+import { DEFAULT_SETTINGS } from '/src/game/types.ts';
+const audio = new AudioDirector(DEFAULT_SETTINGS);
+document.querySelector('#begin').onclick = async () => { await audio.start(); audio.setPhase('opening'); };
+document.querySelector('#skip').onclick = () => audio.setPhase('entry');
+window.addEventListener('pagehide', () => audio.dispose());
+</script></html>

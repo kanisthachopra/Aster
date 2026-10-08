@@ -1,5 +1,6 @@
 import type { Phase, Settings } from './types';
 import type { ArrivalBeat } from './World';
+import dialogueScript from './dialogue.json';
 
 /** Original temporary synthesis for timing review, not the finished cinematic score. */
 export class AudioDirector {
@@ -41,6 +42,7 @@ export class AudioDirector {
       this.timer = setInterval(() => this.tick(), 350);
     }
     await this.context.resume();
+    await this.loadVoice('opening');
   }
   applySettings(settings: Settings) {
     this.settings = settings;
@@ -51,11 +53,12 @@ export class AudioDirector {
   }
   setReading(reading: boolean) { this.reading = reading; this.applySettings(this.settings); }
   setPhase(phase: Phase) {
+    if (this.phase === 'opening' && phase !== 'opening') this.stopDialogue();
     this.phase = phase;
     this.startTime = this.context?.currentTime ?? 0;
     this.nextPhrase = this.startTime;
     this.phrase = 0;
-    if (phase === 'arrival') this.cue();
+    if (phase === 'opening') void this.speak('opening');
   }
   private tone(frequency: number, at: number, duration: number, volume: number, effect = false, warm = false) {
     const ctx = this.context, bus = effect ? this.effects : this.music;
@@ -71,24 +74,13 @@ export class AudioDirector {
     oscillator.onended = () => { oscillator.disconnect(); filter.disconnect(); envelope.disconnect(); this.active.delete(oscillator); };
     oscillator.start(at); oscillator.stop(at + duration + .05);
   }
-  private breathe() {
-    const ctx = this.context;
-    if (!ctx || !this.effects) return;
-    const buffer = ctx.createBuffer(1, ctx.sampleRate * 2.6, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(Math.sin(i / data.length * Math.PI), 2);
-    const source = ctx.createBufferSource(), filter = ctx.createBiquadFilter(), gain = ctx.createGain();
-    source.buffer = buffer; filter.type = 'bandpass'; filter.frequency.value = 380; filter.Q.value = .55;
-    gain.gain.value = .12; source.connect(filter); filter.connect(gain); gain.connect(this.effects);
-    this.active.add(source); source.onended = () => { source.disconnect(); filter.disconnect(); gain.disconnect(); this.active.delete(source); };
-    source.start();
-  }
   private tick() {
     const ctx = this.context;
     if (!ctx || ctx.state !== 'running' || this.phase === 'title') return;
     const now = ctx.currentTime;
     if (now < this.nextPhrase) return;
-    if (this.phase === 'opening' && now - this.startTime < 4) { this.breathe(); this.nextPhrase = now + 3.2; return; }
+    // The traveller speaks first. No repeated noise envelope posing as breathing.
+    if (this.phase === 'opening' && now - this.startTime < 7) { this.nextPhrase = this.startTime + 7; return; }
     // Original motif: D–A–E–F# with a softer B minor / G variation between discoveries.
     const grand = this.phase === 'entry' || this.phase === 'opening';
     const sparse = this.reading || this.phase === 'station';
@@ -136,18 +128,28 @@ export class AudioDirector {
   }
   greet() { void this.speak('guide'); }
   guide(key: string) {
-    if (['tour-review', 'tour-missions', 'tour-energy', 'tour-settings', 'analysis-start', 'analysis-ready', 'analysis-insufficient', 'first-review'].includes(key)) void this.speak(key);
+    if (Object.hasOwn(dialogueScript, key)) void this.speak(key);
+  }
+  stopDialogue() { this.voiceVersion++; this.voice?.stop(); this.voice = null; this.applySettings(this.settings); }
+  private async loadVoice(key: string) {
+    const ctx = this.context;
+    if (!ctx || !Object.hasOwn(dialogueScript, key)) return null;
+    let buffer = this.voiceCache.get(key);
+    if (!buffer) {
+      const response = await fetch(`/audio/${key}.wav`);
+      if (!response.ok) throw new Error(`Dialogue unavailable: ${key}`);
+      buffer = await ctx.decodeAudioData(await response.arrayBuffer());
+      this.voiceCache.set(key, buffer);
+    }
+    return buffer;
   }
   private async speak(key: string) {
     const ctx = this.context; if (!ctx || !this.dialogue) return;
     const version = ++this.voiceVersion;
     this.voice?.stop(); this.voice = null;
     try {
-      let buffer = this.voiceCache.get(key);
-      if (!buffer) {
-        const response = await fetch(`/audio/${key}.wav`);
-        if (!response.ok) return; buffer = await ctx.decodeAudioData(await response.arrayBuffer()); this.voiceCache.set(key, buffer);
-      }
+      const buffer = await this.loadVoice(key);
+      if (!buffer) return;
       if (version !== this.voiceVersion || ctx.state === 'closed') return;
       const voice = ctx.createBufferSource(); voice.buffer = buffer; voice.connect(this.dialogue);
       this.music?.gain.setTargetAtTime(this.settings.music * .12, ctx.currentTime, .08);

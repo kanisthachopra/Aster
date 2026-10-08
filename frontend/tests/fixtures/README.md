@@ -9,3 +9,5 @@ ffmpeg -f lavfi -i testsrc=size=320x240:rate=15 -t 2 -c:v libx264 -pix_fmt yuv42
 ```
 
 The application and normal test runs do not need FFmpeg; the small fixture is retained in the repository. The one-time generator was obtained from the npm package `@ffmpeg-installer/win32-x64@4.1.0` and is excluded from source control.
+
+`portrait.mp4` is the same original test pattern rotated 90 degrees with `-vf transpose=1`. It verifies portrait preview proportions and that Analyze movement stays visible. It contains no exercise or personal media.

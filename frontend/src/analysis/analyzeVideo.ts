@@ -35,12 +35,12 @@ export async function analyzeVideo(file: File, exercise: ExerciseId, onProgress:
   try {
     const loaded = mediaEvent(video,'loadeddata',signal); video.src = url; video.load(); await loaded;
     const { duration, videoWidth: width, videoHeight: height } = video;
-    if (!Number.isFinite(duration) || duration < 2 || duration > 60) throw new Error('Choose a video between 2 and 60 seconds, with one complete set.');
+    if (!Number.isFinite(duration) || duration < 2 || duration > 120) throw new Error('Choose a video between 2 and 120 seconds, with one complete set.');
     if (width < 240 || height < 180) throw new Error('This recording is too small to review. Use a clearer video of at least 240 × 180 pixels.');
     onProgress({ stage: 'loading', completed: 0, total: 0, message: 'Waking up the local motion model. Your video stays on this computer.' });
     worker = new Worker('/mediapipe/pose-worker.js');
     const ready = response(worker,signal); worker.postMessage({ type: 'init' }); await ready;
-    const total = Math.min(240,Math.floor(duration*4)), frames: EvidenceFrame[] = [];
+    const total = Math.min(360,Math.floor(duration*4)), frames: EvidenceFrame[] = [];
     for (let i = 0; i < total; i++) {
       aborted(signal);
       const timestamp = .02 + i * (duration-.08) / Math.max(1,total-1);

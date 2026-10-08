@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync, existsSync, writeFileSync } from 'node:fs';
-import { angle, measure, summarize, countCycles } from '../src/analysis/measurements';
+import { angle, measure, summarize, countCycles, stabilizeFrames } from '../src/analysis/measurements';
 import type { EvidenceFrame, Landmark } from '../src/analysis/types';
 
 const p = (x: number,y: number): Landmark => ({ x,y,z:0,visibility:1 });
@@ -19,19 +19,50 @@ test('projected angles respect aspect ratio; missing, clipped and degenerate joi
 
 test('synthetic rule tests reject stillness, incomplete cycles, tracking gaps and wrong orientation', () => {
   for (const values of [Array(16).fill(170),[170,160,150,140,120,100,90,80]]) {
-    expect(summarize(syntheticFrames(values),'squat',4,1280,720).status).toBe('insufficient');
+    expect(summarize(syntheticFrames(values),'squat',4,1280,720).status).toBe('partial');
   }
   const frames = syntheticFrames([170,165,140,110,80,100,130,165,170,165,140,110,80,100,130,165,170]);
   expect(countCycles(frames,'knee')).toBe(2);
   expect(summarize(frames,'squat',4.25,1280,720).status).toBe('usable');
   const wrong = frames.map(f=>({...f,metrics:{...f.metrics!,orientationMatches:false}}));
-  expect(summarize(wrong,'squat',4.25,1280,720).status).toBe('insufficient');
+  expect(summarize(wrong,'squat',4.25,1280,720).status).not.toBe('usable');
   const broken = syntheticFrames([170,165,140,110,80,100,130,165,170]);
   broken[4].metrics=null;
+  expect(countCycles(broken,'knee')).toBe(1);
+  broken[3].metrics=null;broken[5].metrics=null;broken[6].metrics=null;
   expect(countCycles(broken,'knee')).toBe(0);
   const spike=syntheticFrames(Array.from({length:24},(_,i)=>i===12?80:170));
   expect(countCycles(spike,'knee')).toBe(0);
   // These fixtures test our deterministic rules; they do not validate pose-model accuracy.
+});
+
+test('cropped head and feet preserve an observable arm; hidden shoulder never gets an angle',()=>{
+  const joints=Array.from({length:33},()=>({...p(.5,.5),visibility:.1}));
+  for(const[i,x,y]of[[11,.2,.3],[13,.3,.55],[15,.45,.7],[23,.65,.4]])joints[i]=p(x,y);
+  const result=measure(joints,'pushup',1280,720);
+  expect(result?.elbow).not.toBeNull();expect(result?.knee).toBeNull();expect(result?.hip).toBeNull();
+  joints[11]=p(.2,-.1);
+  expect(measure(joints,'pushup',1280,720)?.elbow).toBeNull();
+});
+
+test('dominant side is stable and generic partial observations do not need a completed cycle',()=>{
+  const frames=syntheticFrames(Array(12).fill(140)).map((f,i)=>({...f,metrics:{...f.metrics!,side:(i%2?'right':'left') as 'left'|'right',sides:{left:{elbow:140,knee:170,hip:null},right:{elbow:i%2?90:null,knee:null,hip:null}}}}));
+  expect(stabilizeFrames(frames,'pushup').every(f=>f.metrics?.side==='left')).toBe(true);
+  const report=summarize(frames,'pushup',3,1280,720);
+  expect(report.status).toBe('partial');expect(report.estimatedRepetitions).toBe(0);expect(report.findings.some(f=>f.id==='range')).toBe(true);
+});
+
+test('cycles can start bent, and a reaching hand is not counted as a pull-up',()=>{
+  expect(countCycles(syntheticFrames([80,90,120,160,170,160,120,90,80]),'knee')).toBe(1);
+  const values=[170,160,140,110,80,110,140,160,170];
+  const frames=syntheticFrames(values).map((frame,i)=>{
+    const landmarks=Array.from({length:33},()=>({...p(.5,.5),visibility:.1}));
+    landmarks[11]=p(.5,.5-(170-values[i])/450);landmarks[15]=p(.5,.1);
+    return {...frame,landmarks};
+  });
+  expect(countCycles(frames,'elbow','pullup')).toBe(1);
+  frames.forEach((frame,i)=>{frame.landmarks[15]=p(.5,.1+(170-values[i])/400);});
+  expect(countCycles(frames,'elbow','pullup')).toBe(0);
 });
 
 test('synthetic landmarks distinguish horizontal support from standing and overhead support',()=>{
@@ -131,6 +162,6 @@ for (const exercise of ['squat','pullup'] as const) test(`real push-up clip does
     const {analyzeVideo}=await import('/src/analysis/analyzeVideo.ts');
     return analyzeVideo(new File([blob],'navy-pushup.mp4',{type:'video/mp4'}),exercise,()=>{},new AbortController().signal);
   },{encoded:base64,exercise});
-  expect(report.status).toBe('insufficient');
+  expect(report.status).not.toBe('usable');
   expect(report.estimatedRepetitions).toBe(0);
 });

@@ -1,72 +1,138 @@
 [
   {
-    "Text": "Okay... still standing. Let's see what's in here.",
-    "Key": "threshold",
-    "Role": "avatar"
+    "key": "opening",
+    "role": "traveller",
+    "text": "Okay... suit's holding. That's a start. Hang on. Is that a light over there?",
+    "voice": "am_puck",
+    "model": "Kokoro-82M-v1.0",
+    "format": "24kHz mono WAV"
   },
   {
-    "Text": "Oh. Look at this place.",
-    "Key": "lights",
-    "Role": "avatar"
+    "key": "threshold",
+    "role": "traveller",
+    "text": "Hello? ... Anyone in here?",
+    "voice": "am_puck",
+    "model": "Kokoro-82M-v1.0",
+    "format": "24kHz mono WAV"
   },
   {
-    "Text": "Hang on... did that thing just move?",
-    "Key": "machine",
-    "Role": "avatar"
+    "key": "lights",
+    "role": "traveller",
+    "text": "Oh, wow. Someone built a whole gym out here.",
+    "voice": "am_puck",
+    "model": "Kokoro-82M-v1.0",
+    "format": "24kHz mono WAV"
   },
   {
-    "Text": "Oh! A visitor. Give me a second... it's been quiet here.",
-    "Key": "robot",
-    "Role": "robot"
+    "key": "machine",
+    "role": "traveller",
+    "text": "Uh... was that there a second ago?",
+    "voice": "am_puck",
+    "model": "Kokoro-82M-v1.0",
+    "format": "24kHz mono WAV"
   },
   {
-    "Text": "I'm Orbit. You look like you've had quite a walk.",
-    "Key": "greeting",
-    "Role": "robot"
+    "key": "robot",
+    "role": "robot",
+    "text": "Oh, hey. Give me a second. It's been quiet around here.",
+    "voice": "af_heart",
+    "model": "Kokoro-82M-v1.0",
+    "format": "24kHz mono WAV"
   },
   {
-    "Text": "A whole moon, and you found the one place with a pull up bar. I think we'll get along.",
-    "Key": "guide",
-    "Role": "robot"
+    "key": "greeting",
+    "role": "robot",
+    "text": "I'm Orbit. So... you found my gym. Want the quick tour?",
+    "voice": "af_heart",
+    "model": "Kokoro-82M-v1.0",
+    "format": "24kHz mono WAV"
   },
   {
-    "Text": "Here's the idea. Choose a station, show me a short clip, and we'll look at it together.",
-    "Key": "tour-review",
-    "Role": "robot"
+    "key": "guide",
+    "role": "robot",
+    "text": "Pick something you'd like to work on. I'll meet you there.",
+    "voice": "af_heart",
+    "model": "Kokoro-82M-v1.0",
+    "format": "24kHz mono WAV"
   },
   {
-    "Text": "Your first mission? Finish one review, then step out of the station. That's when it counts.",
-    "Key": "tour-missions",
-    "Role": "robot"
+    "key": "tour-review",
+    "role": "robot",
+    "text": "Bring me a clip from whichever angle you've got. I'll tell you what I can see, and what I'd need another look at.",
+    "voice": "af_heart",
+    "model": "Kokoro-82M-v1.0",
+    "format": "24kHz mono WAV"
   },
   {
-    "Text": "Reviews power this place. Your first five active days earn energy. Rest days are okay... we'll keep the rules in your journal.",
-    "Key": "tour-energy",
-    "Role": "robot"
+    "key": "tour-missions",
+    "role": "robot",
+    "text": "Have a look through the feedback, then finish and step back into the park. That's when I log your activity. No rush.",
+    "voice": "af_heart",
+    "model": "Kokoro-82M-v1.0",
+    "format": "24kHz mono WAV"
   },
   {
-    "Text": "And if I'm talking too much, your sound and comfort controls are right up there.",
-    "Key": "tour-settings",
-    "Role": "robot"
+    "key": "tour-energy",
+    "role": "robot",
+    "text": "Your practice keeps the lights on. That's our story, anyway. Five activity days earn twenty energy credits. The missions tab has the details.",
+    "voice": "af_heart",
+    "model": "Kokoro-82M-v1.0",
+    "format": "24kHz mono WAV"
   },
   {
-    "Text": "All right. Hold on a moment... I'm looking through your clip.",
-    "Key": "analysis-start",
-    "Role": "robot"
+    "key": "tour-settings",
+    "role": "robot",
+    "text": "Too loud? Too much movement? Settings is up there. Your journal keeps this visit's clips and notes. You can delete them whenever you like.",
+    "voice": "af_heart",
+    "model": "Kokoro-82M-v1.0",
+    "format": "24kHz mono WAV"
   },
   {
-    "Text": "I've got a few things we can look at. Let's take them one at a time.",
-    "Key": "analysis-ready",
-    "Role": "robot"
+    "key": "tour-play",
+    "role": "robot",
+    "text": "And those little consoles? They're for a break. Try the lights, the memory board, or the orbit dial. Just for fun. They don't count as a workout.",
+    "voice": "af_heart",
+    "model": "Kokoro-82M-v1.0",
+    "format": "24kHz mono WAV"
   },
   {
-    "Text": "Hmm. I can't see enough to be useful here. Let's try a clearer angle.",
-    "Key": "analysis-insufficient",
-    "Role": "robot"
+    "key": "analysis-start",
+    "role": "robot",
+    "text": "Got it. Let me watch that through.",
+    "voice": "af_heart",
+    "model": "Kokoro-82M-v1.0",
+    "format": "24kHz mono WAV"
   },
   {
-    "Text": "There we go. First review complete. Take a breath... I'll save this in your journal.",
-    "Key": "first-review",
-    "Role": "robot"
+    "key": "analysis-ready",
+    "role": "robot",
+    "text": "Okay, I've marked a few moments. Tap a time and we'll look at that bit.",
+    "voice": "af_heart",
+    "model": "Kokoro-82M-v1.0",
+    "format": "24kHz mono WAV"
+  },
+  {
+    "key": "analysis-partial",
+    "role": "robot",
+    "text": "I can see some of it. Let's look at those bits first. I've put down what would help me see the rest.",
+    "voice": "af_heart",
+    "model": "Kokoro-82M-v1.0",
+    "format": "24kHz mono WAV"
+  },
+  {
+    "key": "analysis-insufficient",
+    "role": "robot",
+    "text": "I'm not getting a clear view of you here. Check the recording tips below. We can try again.",
+    "voice": "af_heart",
+    "model": "Kokoro-82M-v1.0",
+    "format": "24kHz mono WAV"
+  },
+  {
+    "key": "first-review",
+    "role": "robot",
+    "text": "There you go. First one done. Your notes are in the journal if you want another look later.",
+    "voice": "af_heart",
+    "model": "Kokoro-82M-v1.0",
+    "format": "24kHz mono WAV"
   }
 ]

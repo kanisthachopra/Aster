@@ -1,0 +1,19 @@
+{
+  "opening": { "role": "traveller", "text": "Okay... suit's holding. That's a start. Hang on. Is that a light over there?" },
+  "threshold": { "role": "traveller", "text": "Hello? ... Anyone in here?" },
+  "lights": { "role": "traveller", "text": "Oh, wow. Someone built a whole gym out here." },
+  "machine": { "role": "traveller", "text": "Uh... was that there a second ago?" },
+  "robot": { "role": "robot", "text": "Oh, hey. Give me a second. It's been quiet around here." },
+  "greeting": { "role": "robot", "text": "I'm Orbit. So... you found my gym. Want the quick tour?" },
+  "guide": { "role": "robot", "text": "Pick something you'd like to work on. I'll meet you there." },
+  "tour-review": { "role": "robot", "text": "Bring me a clip from whichever angle you've got. I'll tell you what I can see, and what I'd need another look at." },
+  "tour-missions": { "role": "robot", "text": "Have a look through the feedback, then finish and step back into the park. That's when I log your activity. No rush." },
+  "tour-energy": { "role": "robot", "text": "Your practice keeps the lights on. That's our story, anyway. Five activity days earn twenty energy credits. The missions tab has the details." },
+  "tour-settings": { "role": "robot", "text": "Too loud? Too much movement? Settings is up there. Your journal keeps this visit's clips and notes. You can delete them whenever you like." },
+  "tour-play": { "role": "robot", "text": "And those little consoles? They're for a break. Try the lights, the memory board, or the orbit dial. Just for fun. They don't count as a workout." },
+  "analysis-start": { "role": "robot", "text": "Got it. Let me watch that through." },
+  "analysis-ready": { "role": "robot", "text": "Okay, I've marked a few moments. Tap a time and we'll look at that bit." },
+  "analysis-partial": { "role": "robot", "text": "I can see some of it. Let's look at those bits first. I've put down what would help me see the rest." },
+  "analysis-insufficient": { "role": "robot", "text": "I'm not getting a clear view of you here. Check the recording tips below. We can try again." },
+  "first-review": { "role": "robot", "text": "There you go. First one done. Your notes are in the journal if you want another look later." }
+}

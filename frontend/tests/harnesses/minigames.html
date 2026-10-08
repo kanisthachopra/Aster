@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Recreation component verification</title><link rel="stylesheet" href="/src/styles.css"></head>
+<body><div id="harness" class="app"></div><script type="module">
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import MiniGames from '/src/components/MiniGames.tsx';
+import Panel from '/src/components/Panel.tsx';
+function Harness() {
+  const [open, setOpen] = React.useState(true);
+  return React.createElement(React.Fragment, null, React.createElement('button', {onClick:()=>setOpen(true)}, 'Open recreation'), open ? React.createElement(Panel, { title:'Recreation deck.', eyebrow:'OUTPOST / OFF DUTY', wide:true, onClose:()=>setOpen(false) },
+    React.createElement(MiniGames, { onExit:()=>setOpen(false), reducedMotion:new URLSearchParams(location.search).has('reduce') }))
+    : React.createElement('p', {role:'status'}, 'Back in the park'));
+}
+createRoot(document.getElementById('harness')).render(React.createElement(Harness));
+</script></body></html>

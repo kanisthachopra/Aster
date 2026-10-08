@@ -2,6 +2,7 @@ import { useId, useMemo } from 'react';
 import type { Survey } from '../game/types';
 import { EXERCISES } from '../game/types';
 import { HABITAT, LANDING, terrainHeight } from '../game/terrain';
+import { GAME_STATIONS } from '../game/miniGames';
 import './controls-map.css';
 
 type Bounds = { left: number; north: number; span: number };
@@ -55,7 +56,7 @@ export default function SurveyMap({ survey, expanded = false, onToggle }: { surv
   return <button className={`survey-map terrain-survey ${expanded ? 'expanded' : ''}`} onClick={onToggle}
     aria-expanded={expanded} aria-label={expanded ? 'Minimize survey map' : 'Expand survey map'}>
     <span className="map-caption"><span>{survey.inside ? 'HABITAT / FLOOR PLAN' : 'SURFACE / TOPOGRAPHY'}</span><span aria-hidden="true">{expanded ? '−' : '+'}</span></span>
-    <svg viewBox="0 0 260 260" role="img" aria-label={survey.inside ? 'Habitat floor plan: three exercise stations, southern entrance, and a closed northern sector' : 'North-up terrain map showing landing site, habitat signal, and your position'}>
+    <svg viewBox="0 0 260 260" role="img" aria-label={survey.inside ? 'Habitat floor plan: three exercise stations, three recreation consoles, southern entrance, and a closed northern sector' : 'North-up terrain map showing landing site, habitat signal, and your position'}>
       <defs>
         <pattern id={`${id}-grid`} width="44" height="44" patternUnits="userSpaceOnUse"><path d="M44 0H0V44" fill="none" stroke="#bfded8" strokeWidth=".55" opacity=".18" /></pattern>
         <pattern id={`${id}-closed`} width="7" height="7" patternUnits="userSpaceOnUse"><path d="M0 7L7 0" stroke="#cbb48a" strokeWidth="1" opacity=".3" /></pattern>
@@ -87,6 +88,11 @@ export default function SurveyMap({ survey, expanded = false, onToggle }: { surv
           <text className="map-station-number" x={x(ex.position[0])} y={y(ex.position[1]) + 3} textAnchor="middle">{ex.number}</text>
           <text className="map-label map-exercise-label" x={x(ex.position[0])} y={y(ex.position[1]) + 19} textAnchor="middle">{ex.name}</text>
         </g>)}
+        {GAME_STATIONS.map((game, index) => <g key={game.id}>
+          <path d={`M${x(game.position[0])} ${y(game.position[1]) - 5}l5 5l-5 5l-5 -5Z`} fill={`${game.color}33`} stroke={game.color} strokeWidth="1.2" />
+          <text className="map-game-number" x={x(game.position[0])} y={y(game.position[1]) + 2} textAnchor="middle">{['S', 'M', 'O'][index]}</text>
+          {expanded && <text className="map-label map-game-label" x={x(game.position[0])} y={y(game.position[1]) + 15} textAnchor="middle">{['SIGNAL', 'MEMORY', 'ORBIT'][index]}</text>}
+        </g>)}
       </>}
       <g data-testid="map-player" data-x={survey.x.toFixed(1)} data-z={survey.z.toFixed(1)} transform={`translate(${x(survey.x)} ${y(survey.z)}) rotate(${survey.bearing})`}>
         <path d="M0 -8L-11 -26Q0 -31 11 -26Z" fill="#dafaf020" />
@@ -98,7 +104,7 @@ export default function SurveyMap({ survey, expanded = false, onToggle }: { surv
       <text className="map-scale" x={26 + metres / bounds.span * WIDTH} y="253">{metres} m</text>
       <text className="map-coordinate" x="239" y="253" textAnchor="end">{coordinate(survey.x, 'E', 'W')} · {coordinate(survey.z, 'N', 'S')}</text>
     </svg>
-    <span className="map-footer"><span>{survey.inside ? '03 ACTIVE STATIONS' : `${distance} m / ${survey.discovered ? 'HABITAT' : 'SIGNAL'}`}</span><span data-testid="heading">{bearing.toString().padStart(3, '0')}°</span></span>
-    {expanded && <span className="map-legend"><span><i />YOU / FACING</span><span>{survey.inside ? 'HATCHED / LOCKED' : 'SHADED / ELEVATION'}</span></span>}
+    <span className="map-footer"><span>{survey.inside ? '03 STATIONS · 03 GAMES' : `${distance} m / ${survey.discovered ? 'HABITAT' : 'SIGNAL'}`}</span><span data-testid="heading">{bearing.toString().padStart(3, '0')}°</span></span>
+    {expanded && <span className="map-legend"><span><i />YOU</span>{survey.inside && <span>◇ PLAY</span>}<span>{survey.inside ? 'HATCHED / LOCKED' : 'SHADED / ELEVATION'}</span></span>}
   </button>;
 }

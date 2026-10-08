@@ -1,7 +1,9 @@
-# Original local dialogue
+# Original neural dialogue — revision 0.4
 
-Updated 2026-10-08. These are locally generated Windows System.Speech readings by Microsoft David Desktop (Traveller) and Microsoft Zira Desktop (ORBIT), with original conversational wording and timed pauses. They are still synthesized voices, not a human performance. No user recording or text was sent to a cloud voice service.
+Generated locally on 2026-10-08 using the official [Kokoro](https://github.com/hexgrad/kokoro) JavaScript package `kokoro-js@1.2.1` and [Kokoro-82M-v1.0 ONNX](https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX), q8 on CPU. Traveller uses the model's `am_puck` voice; ORBIT uses `af_heart`. These are synthetic preset voices, not voice clones or recordings of a performer.
 
-`dialogue.json` records the exact original script, role and filename key for every clip. Arrival clips now have space to finish before the next beat. The tutorial and analysis use short situational lines instead of reusing the welcome speech.
+Canonical scripts live in `src/game/dialogue.json`; this folder's `dialogue.json` records the text, role, voice and model for each rendered file. The dialogue is original project writing. All generation ran on this computer. User video/audio was not used to train, clone, generate or upload speech. Model/package weights are Apache-2.0; license text is included as KOKORO-LICENSE.txt. The model is development tooling, not a download required by the app.
 
-No film/game soundtrack or dialogue is included. The musical motifs, breathing, footsteps, servo and power cues are procedural sounds from AudioDirector. A finished cinematic soundtrack and human character performances remain future production work, not completed assets.
+Files are 24 kHz mono PCM16 WAV, normalized to -19 LUFS with -2 dBTP ceiling. The browser fetches the generated files from this app and performs no cloud TTS request. The traveller is dry and close in the mix. Dialogue starts the opening; the former looping white-noise breathing effect has been removed. The score enters after the initial spoken moment. Skipping the opening stops its speech.
+
+The previous Microsoft system-voice recordings have been replaced. Naturalness and dramatic performance still require listening review; a neural voice is not a claim of human voice acting. No film/game soundtrack or actor imitation is included.

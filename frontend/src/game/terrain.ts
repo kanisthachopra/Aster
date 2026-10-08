@@ -16,5 +16,7 @@ export function terrainHeight(x: number, z: number) {
   const dunes = 6 * noise(x * .018, z * .018) + 2.5 * noise(x * .051, z * .051) + .4 * noise(x * .18, z * .18);
   const craterDistance = Math.hypot(x - 65, z + 50);
   const crater = 3 * Math.exp(-((craterDistance - 25) ** 2) / 30) - 2 * Math.exp(-(craterDistance ** 2) / 400);
-  return -.12 + habitatBlend * (dunes + ridges + crater);
+  const horizonDistance = Math.hypot(x, z), horizonBlend = smooth((horizonDistance - 205) / 95);
+  const escarpment = horizonBlend * (18 + 68 * noise(x * .014, z * .014) + 20 * noise(x * .042, z * .042));
+  return -.12 + habitatBlend * (dunes + ridges + crater + escarpment);
 }

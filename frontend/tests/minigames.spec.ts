@@ -1,0 +1,98 @@
+import { test, expect } from '@playwright/test';
+
+test('recreation signal has honest early / successful rounds and cancels on exit', async ({ page }) => {
+  await page.clock.install({time:new Date('2026-10-08T00:00:00Z')});
+  await page.addInitScript(() => { Math.random = () => .1; });
+  await page.goto('/tests/harnesses/minigames.html');
+  await page.clock.pauseAt(new Date('2026-10-08T00:01:00Z'));
+  await page.getByRole('button', { name:'Start signal trial' }).click();
+  await page.getByRole('button', { name:'Waiting for signal…' }).click();
+  await expect(page.getByRole('status')).toContainText('A little early');
+  await expect(page.locator('.game-console-header')).toContainText('SESSION BEST —');
+  await page.getByRole('button', { name:'Try again' }).click();
+  await page.clock.runFor(2000);
+  await expect(page.getByRole('button', { name:'Respond now' })).toBeVisible();
+  await page.getByRole('button', { name:'Respond now' }).focus();
+  await page.keyboard.press('Space');
+  await expect(page.getByRole('status')).toContainText('ms. Signal received');
+  await expect(page.locator('.game-console-header')).toContainText(/SESSION BEST \d+ ms/);
+  await page.screenshot({path:'artifacts/recreation-signal.png'});
+  await page.getByRole('button', { name:'Try again' }).click();
+  await page.getByRole('button', { name:/Return to the park/ }).click();
+  await page.clock.runFor(5000);
+  await expect(page.getByRole('status')).toHaveText('Back in the park');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+});
+
+test('memory sequence supports real keyboard repetition, advancement, and mistakes', async ({ page }) => {
+  await page.clock.install({time:new Date('2026-10-08T00:00:00Z')});
+  await page.addInitScript(() => { Math.random = () => .1; });
+  await page.goto('/tests/harnesses/minigames.html');
+  await page.clock.pauseAt(new Date('2026-10-08T00:01:00Z'));
+  await page.getByRole('button', { name:/Echo sequence/ }).click();
+  await page.getByRole('button', { name:'Start sequence' }).click();
+  await page.clock.runFor(650);
+  await expect(page.getByRole('button', {name:'1 North'})).toHaveClass(/lit/);
+  await page.screenshot({path:'artifacts/recreation-memory.png'});
+  await page.clock.runFor(950);
+  await expect(page.getByRole('status')).toContainText('Your turn');
+  await page.keyboard.press('1');
+  await expect(page.locator('.game-console-header')).toContainText('SESSION BEST 1 step');
+  await page.clock.runFor(2600);
+  await expect(page.getByRole('status')).toContainText('Repeat 2 signals');
+  await page.keyboard.press('1'); await page.keyboard.press('1');
+  await expect(page.locator('.game-console-header')).toContainText('SESSION BEST 2 steps');
+  await page.clock.runFor(3500);
+  await page.keyboard.press('3');
+  await expect(page.getByRole('status')).toContainText('Signal lost. You completed 2 steps');
+  await expect(page.getByRole('button', {name:'Try a new sequence'})).toBeEnabled();
+});
+
+test('orbit timing is playable without motion and respects narrow / long-text layout', async ({ page }) => {
+  await page.clock.install({time:new Date('2026-10-08T00:00:00Z')});
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await page.goto('/tests/harnesses/minigames.html?reduce');
+  await page.clock.pauseAt(new Date('2026-10-08T00:01:00Z'));
+  await expect(page.getByRole('heading', {name:'Recreation deck.'})).toBeFocused();
+  await page.getByRole('button', {name:/Orbital alignment/}).click();
+  await expect(page.locator('.timing-marker')).toHaveCount(0);
+  await page.getByRole('button', {name:'Start orbit'}).focus();
+  await page.keyboard.press('Space');
+  await page.clock.runFor(800);
+  await expect(page.locator('.timing-numeric strong')).toHaveText('50');
+  await page.keyboard.press('Space');
+  await expect(page.getByRole('status')).toContainText('100 / 100');
+  await expect(page.locator('.game-console-header')).toContainText('SESSION BEST 100 / 100');
+  await page.screenshot({path:'artifacts/recreation-timing-reduced.png'});
+  await page.setViewportSize({width:740,height:780});
+  await page.evaluate(() => { const title = document.querySelector('.panel-header h2')!; title.textContent = 'An extraordinarily long expedition name: 你好宇宙 ✦ Северный форпост'; });
+  const size = await page.getByRole('dialog').evaluate(element=>({client:element.clientWidth,scroll:element.scrollWidth}));
+  expect(size.scroll).toBeLessThanOrEqual(size.client + 1);
+  await page.screenshot({path:'artifacts/recreation-break-ui.png'});
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('status')).toHaveText('Back in the park');
+  await page.getByRole('button', {name:'Open recreation'}).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('dialog')).not.toHaveClass(/pointer-entry/);
+  await expect(page.getByRole('heading', {name:'Recreation deck.'})).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('button', {name:'Open recreation'})).toBeFocused();
+});
+
+test('normal orbit animates continuously and freezes at the submitted position', async ({ page }) => {
+  await page.goto('/tests/harnesses/minigames.html');
+  await page.getByRole('button', {name:/Orbital alignment/}).click();
+  await page.getByRole('button', {name:'Start orbit'}).click();
+  await page.waitForTimeout(350);
+  const marker = page.locator('.timing-marker');
+  expect(await marker.evaluate(element => element.getAnimations().length)).toBe(1);
+  const transform = await marker.evaluate(element => getComputedStyle(element).transform);
+  expect(transform).not.toBe('none');
+  await page.getByRole('button', {name:'Lock orbit'}).click();
+  await expect(page.getByRole('status')).toContainText(/\d+ \/ 100. Locked at \d+/);
+  expect(await marker.evaluate(element => element.getAnimations().length)).toBe(0);
+  const stopped = await marker.getAttribute('style');
+  await page.waitForTimeout(200);
+  expect(await marker.getAttribute('style')).toBe(stopped);
+  await page.screenshot({path:'artifacts/recreation-timing.png'});
+});

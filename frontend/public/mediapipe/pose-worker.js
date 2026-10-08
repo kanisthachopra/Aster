@@ -7,9 +7,9 @@ self.onmessage = async ({ data }) => {
     if (data.type === 'init') {
       const files = await self.exports.FilesetResolver.forVisionTasks('/mediapipe');
       landmarker = await self.exports.PoseLandmarker.createFromOptions(files, {
-        baseOptions: { modelAssetPath: '/models/pose_landmarker_lite.task', delegate: 'CPU' },
-        runningMode: 'VIDEO', numPoses: 2, minPoseDetectionConfidence: .6,
-        minPosePresenceConfidence: .6, minTrackingConfidence: .6,
+        baseOptions: { modelAssetPath: '/models/pose_landmarker_full.task', delegate: 'CPU' },
+        runningMode: 'VIDEO', numPoses: 2, minPoseDetectionConfidence: .5,
+        minPosePresenceConfidence: .5, minTrackingConfidence: .5,
       });
       self.postMessage({ type: 'ready' });
     } else if (data.type === 'frame') {

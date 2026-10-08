@@ -7,6 +7,9 @@ import { DirectionalLight } from '@babylonjs/core/Lights/directionalLight';
 import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
 import { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 import { GlowLayer } from '@babylonjs/core/Layers/glowLayer';
+import { PointLight } from '@babylonjs/core/Lights/pointLight';
+import { DefaultRenderingPipeline } from '@babylonjs/core/PostProcesses/RenderPipeline/Pipelines/defaultRenderingPipeline';
+import { ImageProcessingConfiguration } from '@babylonjs/core/Materials/imageProcessingConfiguration';
 import '@babylonjs/core/Lights/Shadows/shadowGeneratorSceneComponent';
 import '@babylonjs/core/Culling/ray';
 import { Environment } from './Environment';
@@ -15,6 +18,8 @@ import { createHands, createAvatar } from './Characters';
 import { MouseLook } from './MouseLook';
 import { EXERCISES, type ExerciseId, type Phase, type LookMode, type Survey } from './types';
 import { HABITAT, LANDING, clamp, smooth, terrainHeight } from './terrain';
+import { installEnvironmentLighting } from './SurfaceMaterials';
+import { GAME_STATIONS, type MiniGameId } from './miniGames';
 
 export type ArrivalBeat = 'threshold' | 'lights' | 'machine' | 'robot' | 'greeting';
 type Events = {
@@ -22,6 +27,8 @@ type Events = {
   station: (id: ExerciseId) => void; proximity: (id: ExerciseId | null, distance: number) => void;
   capture: (mode: LookMode) => void; survey: (survey: Survey) => void;
   beat: (beat: ArrivalBeat) => void; step: () => void;
+  game?: (id: MiniGameId) => void; gameProximity?: (id: MiniGameId | null, distance: number) => void;
+  ready?: () => void;
 };
 
 export class World {
@@ -46,6 +53,8 @@ export class World {
   private vertical = 0;
   private selected: ExerciseId | null = null;
   private near: ExerciseId | null = null;
+  private nearGame: MiniGameId | null = null;
+  private portraitLight: PointLight;
   private discovered = false;
   private inside = false;
   private lastSurvey = 0;
@@ -61,25 +70,32 @@ export class World {
     this.engine.renderEvenInBackground = false;
     this.engine.setHardwareScalingLevel(Math.max(1, window.devicePixelRatio / 1.5));
     this.scene = new Scene(this.engine); this.scene.clearColor = new Color4(.006, .012, .02, 1);
-    this.scene.fogMode = Scene.FOGMODE_EXP2; this.scene.fogDensity = .0018; this.scene.fogColor = new Color3(.065, .085, .105);
+    this.scene.fogMode = Scene.FOGMODE_EXP2; this.scene.fogDensity = .00135; this.scene.fogColor = new Color3(.12, .105, .092);
     this.scene.imageProcessingConfiguration.toneMappingEnabled = true;
-    this.scene.imageProcessingConfiguration.exposure = 1.2;
-    this.scene.imageProcessingConfiguration.contrast = 1.12;
+    this.scene.imageProcessingConfiguration.toneMappingType = ImageProcessingConfiguration.TONEMAPPING_ACES;
+    this.scene.imageProcessingConfiguration.exposure = 1.45;
+    this.scene.imageProcessingConfiguration.contrast = 1.07;
     this.camera = new FreeCamera('player', new Vector3(-64, 24, -2), this.scene);
     this.camera.inputs.clear(); this.camera.minZ = .025; this.camera.maxZ = 1800; this.camera.fov = 1.02;
     this.camera.setTarget(new Vector3(0, 14, 65));
+    installEnvironmentLighting(this.scene);
+    const pipeline = new DefaultRenderingPipeline('outpost-cinematic-render', true, this.scene, [this.camera]);
+    pipeline.fxaaEnabled = true; pipeline.bloomEnabled = true; pipeline.bloomThreshold = 1.2; pipeline.bloomWeight = .12; pipeline.bloomKernel = 48; pipeline.bloomScale = .35;
     const sky = new HemisphericLight('ambient-sky', Vector3.Up(), this.scene);
-    sky.intensity = .4; sky.diffuse = new Color3(.55, .69, .82); sky.groundColor = new Color3(.05, .065, .085);
+    sky.intensity = .5; sky.diffuse = new Color3(.55, .69, .82); sky.groundColor = new Color3(.18, .13, .095);
     const sun = new DirectionalLight('distant-sun', new Vector3(.65, -.7, .35), this.scene);
-    sun.position.set(-80, 120, -60); sun.diffuse = new Color3(1, .86, .69); sun.intensity = 1.5;
+    sun.position.set(-80, 120, -60); sun.diffuse = new Color3(1, .86, .69); sun.intensity = 1.8;
+    this.portraitLight = new PointLight('helmet-reflected-fill', Vector3.Zero(), this.scene);
+    this.portraitLight.diffuse = new Color3(.65, .78, .86); this.portraitLight.intensity = .35; this.portraitLight.range = 7;
     const glow = new GlowLayer('atmospheric-lights', this.scene, { mainTextureRatio: .5, blurKernelSize: 48 }); glow.intensity = .42;
     this.environment = new Environment(this.scene); this.park = new Park(this.scene);
     this.hands = createHands(this.scene, this.camera); this.avatar = createAvatar(this.scene);
     this.avatar.root.setEnabled(false);
     const shadows = new ShadowGenerator(2048, sun); shadows.usePercentageCloserFiltering = true; shadows.filteringQuality = ShadowGenerator.QUALITY_LOW; shadows.bias = .002;
     for (const mesh of this.scene.meshes) {
-      if (mesh.name.includes('boulder') || mesh.name.includes('pylon') || mesh.name.includes('barbell') || mesh.name.includes('support') || mesh.isDescendantOf(this.avatar.root)) shadows.addShadowCaster(mesh);
+      if (['boulder', 'pylon', 'barbell', 'support', 'console', 'bench', 'planter', 'robot-body'].some(word => mesh.name.includes(word)) || mesh.isDescendantOf(this.avatar.root)) shadows.addShadowCaster(mesh);
     }
+    this.scene.onNewMeshAddedObservable.add(mesh => { if (mesh.name === 'scanned-geological-boulders') shadows.addShadowCaster(mesh); });
     this.look = new MouseLook(canvas, () => !this.paused && ['guided', 'park'].includes(this.phase), (dx, dy) => {
       this.camera.rotation.y += dx * .0022 * this.lookSensitivity;
       this.camera.rotation.x = clamp(this.camera.rotation.x + dy * .0022 * this.lookSensitivity, -1.25, 1.25);
@@ -97,6 +113,15 @@ export class World {
       this.stationFramePending = false;
     });
     const resize = () => { this.engine.resize(); this.stationFramePending = true; }; window.addEventListener('resize', resize); this.cleanups.push(() => window.removeEventListener('resize', resize));
+    let readinessSent = false;
+    const notifyReady = () => {
+      if (readinessSent || this.scene.isDisposed) return;
+      readinessSent = true; clearTimeout(readinessTimeout); events.ready?.();
+    };
+    // Optional art should not permanently strand the visitor if an image fails to decode.
+    const readinessTimeout = window.setTimeout(notifyReady, 20000);
+    void this.environment.ready.then(() => { if (!this.scene.isDisposed) this.scene.executeWhenReady(notifyReady); });
+    this.cleanups.push(() => clearTimeout(readinessTimeout));
   }
   private bindKeys() {
     const down = (event: KeyboardEvent) => {
@@ -105,7 +130,9 @@ export class World {
       if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'Space', 'KeyE', 'ArrowLeft', 'ArrowRight'].includes(event.code)) event.preventDefault();
       this.keys.add(event.code);
       if (event.code === 'Space' && this.height === 0 && !event.repeat) this.vertical = 4.2;
-      if (event.code === 'KeyE' && this.near && this.phase === 'park' && !event.repeat) this.events.station(this.near);
+      if (event.code === 'KeyE' && this.phase === 'park' && !event.repeat) {
+        if (this.nearGame) this.events.game?.(this.nearGame); else if (this.near) this.events.station(this.near);
+      }
     };
     const up = (event: KeyboardEvent) => this.keys.delete(event.code);
     const blur = () => { this.keys.clear(); this.speed = 0; };
@@ -116,6 +143,9 @@ export class World {
     this.stationFramePending = true;
     const previous = this.phase;
     this.phase = phase; this.phaseTime = 0; this.keys.clear(); this.speed = 0; this.height = 0; this.vertical = 0; this.lastPhaseEvent = false;
+    if (phase === 'entry' && previous === 'opening') {
+      this.camera.rotation.set(-.18, Math.atan2(-LANDING.x, 60 - LANDING.z), 0);
+    }
     if (phase === 'opening' || (phase === 'guided' && previous !== 'entry' && previous !== 'opening')) {
       this.inside = false; this.discovered = false; this.park.setInside(false);
       this.camera.position.set(LANDING.x, terrainHeight(LANDING.x, LANDING.z) + 1.73, LANDING.z);
@@ -175,6 +205,8 @@ export class World {
     return { power: smooth((time - 10) / 4), robot: clamp((time - 14) / 13, 0, 1) };
   }
   private update(dt: number) {
+    this.portraitLight.position.copyFrom(this.camera.position.add(new Vector3(1.8, .7, -.5)));
+    this.portraitLight.intensity = ['opening', 'arrival'].includes(this.phase) ? .6 : .12;
     this.clock += dt; if (!this.paused) this.phaseTime += dt;
     this.environment.update(this.clock, this.reduced);
     this.look.update(dt);
@@ -191,6 +223,7 @@ export class World {
     }
     if (!this.paused && this.phase === 'opening') {
       this.camera.rotation.x = .5 - smooth((this.phaseTime - 3) / 7) * .68;
+      this.camera.rotation.y = smooth((this.phaseTime - 5) / 5) * Math.atan2(-LANDING.x, 60 - LANDING.z);
       if (this.phaseTime >= 12) this.once(this.events.opened);
     }
     if (!this.paused && ['guided', 'park'].includes(this.phase)) this.move(dt);
@@ -203,6 +236,14 @@ export class World {
         if (d < distance) { distance = d; nearest = ex.id; }
       }
       this.near = this.phase === 'park' && distance < 6 ? nearest : null; this.events.proximity(this.near, distance);
+      let gameDistance = Infinity; this.nearGame = null;
+      if (this.phase === 'park') for (const game of GAME_STATIONS) {
+        const d = Math.hypot(this.camera.position.x - game.position[0], this.camera.position.z - game.position[1]);
+        if (d < gameDistance) { gameDistance = d; this.nearGame = d < 4.2 ? game.id : null; }
+      }
+      if (this.near && distance < gameDistance) this.nearGame = null;
+      if (this.nearGame) { this.near = null; this.events.proximity(null, distance); }
+      this.events.gameProximity?.(this.nearGame, gameDistance);
       // Discovery requires a clear terrain line of sight, not just a distance threshold.
       if (!this.discovered && this.phase === 'guided' && Math.hypot(this.camera.position.x, this.camera.position.z - 60) < 110) {
         let clear = true;
@@ -227,12 +268,16 @@ export class World {
     this.vertical -= 8.5 * dt; this.height = Math.max(0, this.height + this.vertical * dt); if (this.height === 0) this.vertical = 0;
     if (this.phase === 'guided') {
       x = clamp(x, -185, 185); z = clamp(z, -160, 175);
+      const resolved = this.environment.collisions.move(this.camera.position, { x, z }, terrainHeight(this.camera.position.x, this.camera.position.z) + this.height);
+      x = resolved.x; z = resolved.z;
       if (this.park.contains(x, z)) { x = this.camera.position.x; z = this.camera.position.z; }
       this.camera.position.set(x, terrainHeight(x, z) + 1.73 + this.height, z);
       if (Math.hypot(x, z - 15.5) < 5) this.once(this.events.arrived);
     } else {
       // The sealed rear sectors and habitat shell are physical movement boundaries.
       z = Math.min(z, 82.5);
+      const resolved = this.park.collisions.move(this.camera.position, { x, z }, .15 + this.height);
+      x = resolved.x; z = resolved.z;
       if (Math.hypot(x, z - HABITAT.z) > 39.5) { x = this.camera.position.x; z = this.camera.position.z; }
       this.camera.position.set(x, 1.85 + this.height, z);
     }

@@ -10,7 +10,7 @@ async function start(page: Page) {
 }
 async function tour(page: Page) {
   await expect(page.getByRole('heading', { name: 'Let me show you around.' })).toBeVisible();
-  for (const title of ['Let’s work on something real.', 'One useful review at a time.', 'You bring the energy.']) {
+  for (const title of ['Let’s work on something real.', 'One useful review at a time.', 'You bring the energy.', 'A little room to play.']) {
     await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible();
     await page.getByRole('button', { name: /Got it. Keep going/ }).click();
   }
@@ -27,23 +27,39 @@ async function park(page: Page) {
 async function hold(page: Page, key: string, milliseconds: number) {
   await page.keyboard.down(key); await page.waitForTimeout(milliseconds); await page.keyboard.up(key);
 }
-async function faceNorth(page: Page) {
+async function faceNorth(page: Page, tolerance = 1) {
   // Arrival intentionally keeps the camera facing ORBIT; navigation must respect that heading.
+  if (tolerance < 1) {
+    // Relative mouse input allows finer alignment than a frame-sized keyboard turn.
+    await page.locator('.world-canvas').click({ position: { x: 700, y: 450 } });
+    await expect.poll(() => page.evaluate(() => !!document.pointerLockElement)).toBe(true);
+    let pointerX = 700;
+    for (let i = 0; i < 12; i++) {
+      const bearing = Number((await page.getByTestId('heading').textContent())!.replace('°', ''));
+      const signed = ((bearing + 180) % 360) - 180;
+      if (Math.abs(signed) <= tolerance) { await page.keyboard.press('Escape'); return; }
+      pointerX -= signed * Math.PI / 180 / .0022;
+      await page.mouse.move(pointerX, 450);
+      await page.waitForTimeout(180);
+    }
+    await page.keyboard.press('Escape');
+    throw new Error('Could not align captured mouse look north');
+  }
   for (let i = 0; i < 30; i++) {
     const bearing = Number((await page.getByTestId('heading').textContent())!.replace('°', ''));
     const signed = ((bearing + 180) % 360) - 180;
-    if (Math.abs(signed) <= 1) return;
-    await hold(page, signed > 0 ? 'ArrowLeft' : 'ArrowRight', Math.min(350, Math.max(18, Math.abs(signed) * Math.PI / 180 / 1.1 * 1000)));
+    if (Math.abs(signed) <= tolerance) return;
+    await hold(page, signed > 0 ? 'ArrowLeft' : 'ArrowRight', Math.min(350, Math.max(8, Math.abs(signed) * Math.PI / 180 / 1.1 * 1000)));
     await page.waitForTimeout(160);
   }
   throw new Error('Could not orient the player north');
 }
-async function moveTo(page: Page, x: number, z: number) {
-  await faceNorth(page);
+async function moveTo(page: Page, x: number, z: number, tolerance = 1.6) {
+  await faceNorth(page, tolerance < 1 ? .5 : 1);
   for (const [axis, target, positive, negative] of [['x', x, 'd', 'a'], ['z', z, 'w', 's']] as const) {
     for (let i = 0; i < 45; i++) {
       const value = Number(await page.getByTestId('map-player').getAttribute(`data-${axis}`));
-      if (Math.abs(target - value) < 1.6) break;
+      if (Math.abs(target - value) < tolerance) break;
       await hold(page, target > value ? positive : negative, Math.min(1500, Math.max(180, Math.abs(target - value) / 5 * 1000)));
       await page.waitForTimeout(150);
       if (i === 44) throw new Error(`Could not reach ${axis}=${target}`);
@@ -83,7 +99,7 @@ test('silent title, three stations and rejected footage cannot earn activity', a
   await expect(page.getByLabel('Push-ups recording preview')).toBeVisible();
   await expect(page.getByText('2.0s', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: /Analyze movement/ }).click();
-  await expect(page.getByRole('heading', { name: 'I can’t give a useful review yet.' })).toBeVisible({ timeout: 60000 });
+  await expect(page.getByRole('heading', { name: 'Here’s where the view falls short.' })).toBeVisible({ timeout: 60000 });
   await expect(page.getByText(/No activity or energy awarded/)).toBeVisible();
   await expect(page.getByRole('button', { name: /Finish review & return/ })).toHaveCount(0);
   await expect(page.getByRole('button', { name: /Missions/ })).toContainText('0');
@@ -92,18 +108,21 @@ test('silent title, three stations and rejected footage cannot earn activity', a
   await expect(page.getByRole('button', { name: /Missions/ })).toContainText('0');
 
   // Navigate to both remaining stations; exercise identity follows the actual location.
-  await moveTo(page, -18, 58);
+  await moveTo(page, 0, 48);
+  await moveTo(page, -18, 54);
   await expect(page.getByRole('button', { name: /Enter pull-ups station/ })).toBeVisible();
   await page.keyboard.press('e');
   await expect(page.getByRole('dialog').getByRole('heading', { name: 'Pull-ups', exact: true })).toBeVisible();
   await page.getByRole('button', { name: /Leave station/ }).click();
-  await moveTo(page, 18, 58);
+  await moveTo(page, 0, 48);
+  await moveTo(page, 18, 54);
   await expect(page.getByRole('button', { name: /Enter squats station/ })).toBeVisible();
   await page.keyboard.press('e');
   await expect(page.getByRole('dialog').getByRole('heading', { name: 'Squats', exact: true })).toBeVisible();
   await page.keyboard.press('Escape');
   await page.screenshot({ path: 'artifacts/park.png' });
-  await moveTo(page, 0, 80);
+  // Walk beside the push-up handles when checking the rear boundary.
+  await moveTo(page, 5, 80);
   await hold(page, 'w', 2500);
   expect(Number(await page.getByTestId('map-player').getAttribute('data-z'))).toBeLessThanOrEqual(82.5);
   expect(errors).toEqual([]);
@@ -191,7 +210,7 @@ test('settings persist; returning-user branch never collects pretend credentials
 });
 
 test('exploration discovers the dome, plays the connected arrival and introduces the outpost', async ({ page }) => {
-  test.setTimeout(150000);
+  test.setTimeout(240000);
   await start(page);
   await expect(page.getByRole('heading', { name: /Find what.*out there/ })).toBeVisible();
   await page.getByRole('button', { name: 'Expand survey map' }).click();
@@ -199,10 +218,14 @@ test('exploration discovers the dome, plays the connected arrival and introduces
   await expect(page.getByText('LANDING', { exact: true })).toBeVisible();
   await page.screenshot({ path: 'artifacts/expedition.png' });
   await page.getByRole('button', { name: 'Minimize survey map' }).click();
-  await moveTo(page, 0, -20);
+  // Use open ground between solid rocks, rather than the former route through them.
+  for (const [x, z] of [[-74, -76], [-74, -16], [-42, -16], [-42, 8]]) await moveTo(page, x, z, .6);
   await expect(page.getByRole('heading', { name: 'A shelter in the distance.' })).toBeVisible();
   await page.screenshot({ path: 'artifacts/dome-exterior.png' });
-  await hold(page, 'w', 5200);
+  for (const [x, z] of [[-20, 8], [-20, 12]]) await moveTo(page, x, z, .6);
+  await page.keyboard.down('d');
+  try { await expect(page.getByText('HABITAT DISCOVERED', { exact: true })).toBeVisible({ timeout: 15000 }); }
+  finally { await page.keyboard.up('d'); }
   await expect(page.getByText('HABITAT DISCOVERED', { exact: true })).toBeVisible();
   await page.screenshot({ path: 'artifacts/third-person.png' });
   await expect(page.getByText('RESTORING HABITAT POWER', { exact: true })).toBeVisible();
@@ -211,5 +234,5 @@ test('exploration discovers the dome, plays the connected arrival and introduces
   await page.getByLabel('Your callsign').fill('Nova');
   await page.getByRole('button', { name: /Meet your guide/ }).click();
   await tour(page);
-  await expect(page.getByText(/Nova, a whole moon/)).toBeVisible();
+  await expect(page.getByText(/Nova, pick something/)).toBeVisible();
 });

@@ -3,7 +3,7 @@ import { createJourney, finishReview, protectDay, settleWeek, shiftDay, streak }
 import type { AnalysisReport } from '../src/analysis/types';
 
 // A report stub tests reward bookkeeping only; it is never presented as analysis evidence.
-const report = (id: string, status: 'usable' | 'insufficient' = 'usable') => ({ id, status, exercise: 'pushup' } as AnalysisReport);
+const report = (id: string, status: 'usable' | 'partial' | 'insufficient' = 'usable') => ({ id, status, exercise: 'pushup' } as AnalysisReport);
 const monday = '2026-10-05';
 test('only finished usable reviews earn energy; repeat clips cannot multiply daily credit', () => {
   const initial = createJourney(monday);
@@ -15,6 +15,15 @@ test('only finished usable reviews earn energy; repeat clips cannot multiply dai
   expect(second.entries).toHaveLength(2);
   expect(second.activity).toHaveLength(1);
   expect(second.regular).toBe(5);
+});
+test('partial observations can be saved without earning activity or energy', () => {
+  const initial = createJourney(monday);
+  const saved = finishReview(initial, report('limited', 'partial'), null, monday);
+  expect(saved.entries).toHaveLength(1);
+  expect(saved.activity).toHaveLength(0);
+  expect(saved.regular).toBe(0);
+  expect(finishReview(saved, report('limited', 'partial'), null, monday)).toEqual(saved);
+  expect(finishReview(saved, report('complete'), null, monday).regular).toBe(5);
 });
 test('weekly awards stop after five days; reserve requires seven actual days and caps at 100', () => {
   let journey = createJourney(monday);

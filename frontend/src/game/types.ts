@@ -6,14 +6,14 @@ export interface Exercise {
 }
 export const EXERCISES: Exercise[] = [
   { id: 'pullup', number: '01', name: 'Pull-ups', label: 'ASCENT', position: [-18, 58],
-    cue: 'A little gravity. A lot of possibility.',
-    capture: ['Place the camera to your side, with the bar, both hands and your whole body visible.', 'Keep the camera still and leave space above the bar and below your feet.', 'Record a short set at your usual pace. One exercise per clip.'] },
+    cue: 'Got a clip of your set? Let’s take a look.',
+    capture: ['A side or three-quarter view usually shows the arm movement best. Other views are welcome too.', 'Keep shoulders, elbows, hands and the bar in view throughout the set. Step the camera back if they leave the frame.', 'Record at your usual pace with a steady camera. Missing feet need not prevent an arm review.'] },
   { id: 'pushup', number: '02', name: 'Push-ups', label: 'GROUNDWORK', position: [0, 73],
-    cue: 'Every good ascent starts from the ground.',
-    capture: ['Place the camera to your side, around body height while in the push-up position.', 'Keep your hands, shoulders, hips and feet in frame for the whole movement.', 'Use a stable, well-lit view. Avoid placing equipment in front of your body.'] },
+    cue: 'Show me a few reps. We’ll go through them together.',
+    capture: ['Try a side or three-quarter view, with the camera near your height in the push-up position.', 'Check the top and bottom position before recording: shoulders, elbows and wrists should stay visible at both.', 'Hips and feet help with body-line observations. If something is cropped, I’ll explain which observations are still possible.'] },
   { id: 'squat', number: '03', name: 'Squats', label: 'FOUNDATION', position: [18, 58],
-    cue: 'Let’s build a stronger foundation.',
-    capture: ['Use a stable side view with your whole body and both feet in frame.', 'Leave enough space above your head while standing and below your feet.', 'Record a short set at your usual pace. Other angles may be requested if needed.'] },
+    cue: 'Take your usual pace. I’ll mark the moments worth looking at.',
+    capture: ['A side or three-quarter view makes knee movement easier to measure; you can try an existing clip from another angle.', 'Keep hips, knees and ankles visible while standing and at your lowest point. A cropped head need not prevent a leg review.', 'Set the camera down somewhere steady with enough light. One exercise and one person per clip works best.'] },
 ];
 export type LookMode = 'off' | 'locked' | 'free';
 export interface Survey { x: number; z: number; bearing: number; discovered: boolean; inside: boolean; }
