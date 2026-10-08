@@ -1,0 +1,10 @@
+{
+  "selectedOnDevelopment": false,
+  "testClassPass": {
+    "pullup": true,
+    "pushup": true,
+    "squat": false
+  },
+  "shipActivityGate": false,
+  "claimBoundary": "Activity identity only; the dataset contains no good/bad-form labels. Passing an activity gate does not validate corrections, safety or personal exercise technique."
+}

@@ -1,0 +1,20 @@
+{
+  "createdAt": "2026-10-08T08:06:05.227Z",
+  "seed": "aster-600-v1",
+  "summary": {
+    "total": 6,
+    "byClass": {
+      "pullup": 2,
+      "pushup": 2,
+      "squat": 2
+    },
+    "bySplit": {
+      "train": 6,
+      "validation": 0,
+      "test": 0
+    },
+    "sourceGroups": 6,
+    "sha256": "b85e4fea4d8538b237540146920b6a73e0010076c723326f2c21a9c80926e0a1"
+  },
+  "policy": "Source groups never cross splits. Test outcomes must remain unseen until protocol and calibration are frozen."
+}

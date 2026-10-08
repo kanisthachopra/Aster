@@ -8,11 +8,12 @@ test('spoken reviews preserve findings and uncertainty without inventing a form 
   const spoken = narrateReport(report);
   expect(spoken).toContain("couldn't get a dependable movement measurement");
   for (const finding of report.findings) {
-    expect(spoken).toContain(finding.observation);
+    expect(spoken).toContain(narrateFinding(finding));
     expect(narrateFinding(finding)).toContain(finding.suggestion);
   }
   expect(spoken).toContain(report.limitations[0]);
   expect(spoken).not.toMatch(/your form is (correct|incorrect)|80% confident/);
+  expect(narrateFinding({ id: 'range', title: 'Bend', timestamp: 2.5, observation: 'At 2.5s, the visible elbow spans 80–150°. The middle 80% of samples are included.', suggestion: 'Compare these positions.' })).toBe('At 2.5 seconds, the visible elbow spans 80 to 150 degrees. The middle 80 percent of samples are included. Compare these positions.');
 });
 
 test('actual model processing paints successive evidence frames and speaks their completed report', async ({ page }) => {
@@ -33,7 +34,8 @@ test('actual model processing paints successive evidence frames and speaks their
   const spoken = await page.evaluate(() => (window as any).reviewSpeechCalls);
   expect(spoken).toHaveLength(1);
   const observation = await page.locator('.finding-card p').first().textContent();
-  expect(spoken[0]).toContain(observation);
+  expect(spoken[0]).toContain(observation!.match(/visible (left|right) elbow/)![0]);
+  expect(spoken[0]).toContain(observation!.match(/about (\d+)°/)![1] + ' degrees');
   await page.getByRole('button', { name: /^Listen ·/ }).first().click();
   expect(await page.evaluate(() => (window as any).reviewSpeechCalls.length)).toBe(2);
   await page.screenshot({ path: 'artifacts/spoken-review.png' });

@@ -1,0 +1,17 @@
+{
+  "source": "https://s3.amazonaws.com/kinetics/600/annotations/train.csv",
+  "classes": {
+    "pull ups": {
+      "annotatedClips": 719,
+      "distinctYouTubeIds": 719
+    },
+    "push up": {
+      "annotatedClips": 602,
+      "distinctYouTubeIds": 602
+    },
+    "squat": {
+      "annotatedClips": 951,
+      "distinctYouTubeIds": 951
+    }
+  }
+}

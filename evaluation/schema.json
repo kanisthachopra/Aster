@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ASTER public exercise evaluation manifest (JSONL records)",
+  "type": "object",
+  "required": ["id", "exercise", "sourceDataset", "sourceGroup", "sourceUrl", "license", "relativePath", "sha256", "duration", "width", "height", "label"],
+  "properties": {
+    "id": {"type":"string", "pattern":"^[a-zA-Z0-9_-]+$"},
+    "exercise": {"enum":["pullup","pushup","squat"]},
+    "sourceDataset": {"type":"string"}, "sourceGroup": {"type":"string"},
+    "sourceUrl": {"type":"string"}, "license": {"type":"string"},
+    "relativePath": {"type":"string", "description":"Path relative to repository root; raw video must remain under ignored evaluation/data/ or frontend/artifacts/evaluation/media/"},
+    "sha256": {"type":"string", "pattern":"^[a-fA-F0-9]{64}$"},
+    "duration": {"type":"number", "minimum":2, "maximum":120},
+    "width": {"type":"integer", "minimum":240}, "height": {"type":"integer", "minimum":180},
+    "split": {"enum":["train","validation","test"]},
+    "label": {"type":"object", "required":["exercise"], "properties": {
+      "exercise": {"enum":["pullup","pushup","squat"]},
+      "repCount": {"type":["integer","null"],"minimum":0},
+      "form": {"enum":["good","bad",null]},
+      "annotationSource": {"type":"string"},
+      "formProtocol": {"type":["string","null"], "description":"Human expert rubric and annotator agreement; required for form-accuracy claims"}
+    }}
+  }
+}

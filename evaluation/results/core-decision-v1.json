@@ -1,0 +1,76 @@
+{
+  "decidedAt": "2026-10-08T09:48:40.416Z",
+  "shipCore": true,
+  "selectedVersion": "revised3",
+  "baseline": {
+    "positiveCompleted": 58,
+    "positivePartial": 54,
+    "positiveInsufficient": 8,
+    "wrongStationAccepted": 0,
+    "wrongStationTrials": 240,
+    "byClass": {
+      "pullup": {
+        "videos": 40,
+        "usable": 20,
+        "partial": 19,
+        "insufficient": 1,
+        "wrongStationAccepted": 0,
+        "wrongStationTrials": 80
+      },
+      "pushup": {
+        "videos": 40,
+        "usable": 24,
+        "partial": 14,
+        "insufficient": 2,
+        "wrongStationAccepted": 0,
+        "wrongStationTrials": 80
+      },
+      "squat": {
+        "videos": 40,
+        "usable": 14,
+        "partial": 21,
+        "insufficient": 5,
+        "wrongStationAccepted": 0,
+        "wrongStationTrials": 80
+      }
+    }
+  },
+  "revised": {
+    "positiveCompleted": 58,
+    "positivePartial": 58,
+    "positiveInsufficient": 4,
+    "wrongStationAccepted": 0,
+    "wrongStationTrials": 240,
+    "byClass": {
+      "pullup": {
+        "videos": 40,
+        "usable": 19,
+        "partial": 20,
+        "insufficient": 1,
+        "wrongStationAccepted": 0,
+        "wrongStationTrials": 80
+      },
+      "pushup": {
+        "videos": 40,
+        "usable": 24,
+        "partial": 15,
+        "insufficient": 1,
+        "wrongStationAccepted": 0,
+        "wrongStationTrials": 80
+      },
+      "squat": {
+        "videos": 40,
+        "usable": 15,
+        "partial": 23,
+        "insufficient": 2,
+        "wrongStationAccepted": 0,
+        "wrongStationTrials": 80
+      }
+    }
+  },
+  "runtimeSourceHash": "32201bc1044b0c32e1dce0f25a3865c216db748fd38dd236d6848bb15d17af49",
+  "snapshotSourceHash": "78980bd329ed7ee79200a532cf445033104cf7ba0c3b1c1e008d04076081bd99",
+  "difference": "Only import paths differ between the frozen evaluated snapshot and the shipped TypeScript source.",
+  "classifierShipped": false,
+  "claimBoundary": "Partial observation availability improved. No validated form-correctness or clinical safety claim; the statistical exercise classifier remains research-only."
+}

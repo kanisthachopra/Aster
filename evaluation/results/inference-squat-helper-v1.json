@@ -1,0 +1,111 @@
+{
+  "runId": "inference-squat-helper-v1",
+  "createdAt": "2026-10-08T08:20:18.099Z",
+  "engineKey": "6ef59e1c82fd6042913c",
+  "fingerprints": {
+    "frontend/public/models/pose_landmarker_full.task": "5134a3aad27a58b93da0088d431f366da362b44e3ccfbe3462b3827a839011b1",
+    "frontend/public/mediapipe/pose-worker.js": "f04cc8c6b2d6bae4295433f057fa6525825cbf686aed5fa6aac0c52388d90792",
+    "frontend/src/analysis/analyzeVideo.ts": "b44fcc374f8931a4955b72a90e5bff7badc2c03d752729e5dddfcb2781f16443"
+  },
+  "manifest": {
+    "total": 600,
+    "byClass": {
+      "pullup": 200,
+      "pushup": 200,
+      "squat": 200
+    },
+    "bySplit": {
+      "train": 360,
+      "validation": 120,
+      "test": 120
+    },
+    "sourceGroups": 600,
+    "sha256": "c72e3e69e87fc1cc4f54296a8f39d30001c255a689f41e525267e1d6f019121e"
+  },
+  "requested": 200,
+  "concurrency": 1,
+  "processed": 9,
+  "cached": 2,
+  "failed": 0,
+  "clips": [
+    {
+      "id": "k600-squat-ObNG8eo7dRY-000229-000239",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-squat-gV3dgCS0hWU-000009-000019",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-squat-R-ZXfxuHVeM-000046-000056",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 23.769
+    },
+    {
+      "id": "k600-squat-OuxYUdNFa70-000016-000026",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 21.818
+    },
+    {
+      "id": "k600-squat-0pf4tHm9U9A-000059-000069",
+      "split": "validation",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 22.904
+    },
+    {
+      "id": "k600-squat-__wQZ6MFuZM-000001-000011",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 14.637
+    },
+    {
+      "id": "k600-squat-p4tkVczWzxQ-000039-000049",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 4.901
+    },
+    {
+      "id": "k600-squat-Q3CqPk8_3UA-000004-000014",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 4.505
+    },
+    {
+      "id": "k600-squat-AelLoY8rCt4-000002-000012",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 22,
+      "seconds": 3.406
+    },
+    {
+      "id": "k600-squat-3UrUhMuWwfY-000032-000042",
+      "split": "validation",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 5.76
+    },
+    {
+      "id": "k600-squat-i-HQaIjVsBs-000005-000015",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 21,
+      "seconds": 2.859
+    }
+  ],
+  "interrupted": true,
+  "interruptionReason": "Task-owned process tree stopped after measured memory pressure. Completed matching caches retained and reused by the final600-record run. This summary is not a completed benchmark."
+}

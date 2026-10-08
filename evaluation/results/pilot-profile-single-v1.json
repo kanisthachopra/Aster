@@ -1,0 +1,168 @@
+{
+  "runId": "pilot-profile-single-v1",
+  "createdAt": "2026-10-08T08:17:47.370Z",
+  "engineKey": "6ef59e1c82fd6042913c",
+  "fingerprints": {
+    "frontend/public/models/pose_landmarker_full.task": "5134a3aad27a58b93da0088d431f366da362b44e3ccfbe3462b3827a839011b1",
+    "frontend/public/mediapipe/pose-worker.js": "f04cc8c6b2d6bae4295433f057fa6525825cbf686aed5fa6aac0c52388d90792",
+    "frontend/src/analysis/analyzeVideo.ts": "b44fcc374f8931a4955b72a90e5bff7badc2c03d752729e5dddfcb2781f16443"
+  },
+  "manifest": {
+    "total": 6,
+    "byClass": {
+      "pullup": 2,
+      "pushup": 2,
+      "squat": 2
+    },
+    "bySplit": {
+      "train": 6,
+      "validation": 0,
+      "test": 0
+    },
+    "sourceGroups": 6,
+    "sha256": "b85e4fea4d8538b237540146920b6a73e0010076c723326f2c21a9c80926e0a1"
+  },
+  "requested": 1,
+  "concurrency": 1,
+  "processed": 1,
+  "cached": 0,
+  "failed": 0,
+  "clips": [
+    {
+      "id": "k600-pullup-POxw77MviHw-000007-000017",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 23,
+      "seconds": 6.045,
+      "timings": [
+        {
+          "stage": "loading",
+          "frame": 0,
+          "elapsedMs": 2891.0999999046326
+        },
+        {
+          "stage": "sampling",
+          "frame": 1,
+          "elapsedMs": 3622.2999999523163
+        },
+        {
+          "stage": "sampling",
+          "frame": 2,
+          "elapsedMs": 3707.1999999284744
+        },
+        {
+          "stage": "sampling",
+          "frame": 3,
+          "elapsedMs": 3774.399999976158
+        },
+        {
+          "stage": "sampling",
+          "frame": 4,
+          "elapsedMs": 3855.5999999046326
+        },
+        {
+          "stage": "sampling",
+          "frame": 5,
+          "elapsedMs": 3942.6999999284744
+        },
+        {
+          "stage": "sampling",
+          "frame": 6,
+          "elapsedMs": 4052
+        },
+        {
+          "stage": "sampling",
+          "frame": 7,
+          "elapsedMs": 4127.199999928474
+        },
+        {
+          "stage": "sampling",
+          "frame": 8,
+          "elapsedMs": 4212.699999928474
+        },
+        {
+          "stage": "sampling",
+          "frame": 9,
+          "elapsedMs": 4305.199999928474
+        },
+        {
+          "stage": "sampling",
+          "frame": 10,
+          "elapsedMs": 4400.199999928474
+        },
+        {
+          "stage": "sampling",
+          "frame": 11,
+          "elapsedMs": 4488.299999952316
+        },
+        {
+          "stage": "sampling",
+          "frame": 12,
+          "elapsedMs": 4585.799999952316
+        },
+        {
+          "stage": "sampling",
+          "frame": 13,
+          "elapsedMs": 4755.399999976158
+        },
+        {
+          "stage": "sampling",
+          "frame": 14,
+          "elapsedMs": 4865.199999928474
+        },
+        {
+          "stage": "sampling",
+          "frame": 15,
+          "elapsedMs": 4967.299999952316
+        },
+        {
+          "stage": "sampling",
+          "frame": 16,
+          "elapsedMs": 5065.899999976158
+        },
+        {
+          "stage": "sampling",
+          "frame": 17,
+          "elapsedMs": 5177.5
+        },
+        {
+          "stage": "sampling",
+          "frame": 18,
+          "elapsedMs": 5282.099999904633
+        },
+        {
+          "stage": "sampling",
+          "frame": 19,
+          "elapsedMs": 5390.799999952316
+        },
+        {
+          "stage": "sampling",
+          "frame": 20,
+          "elapsedMs": 5487.399999976158
+        },
+        {
+          "stage": "sampling",
+          "frame": 21,
+          "elapsedMs": 5590.399999976158
+        },
+        {
+          "stage": "sampling",
+          "frame": 22,
+          "elapsedMs": 5684.799999952316
+        },
+        {
+          "stage": "sampling",
+          "frame": 23,
+          "elapsedMs": 5821.099999904633
+        },
+        {
+          "stage": "summarizing",
+          "frame": 23,
+          "elapsedMs": 5821.099999904633
+        }
+      ]
+    }
+  ],
+  "finishedAt": "2026-10-08T08:17:57.031Z",
+  "stopped": false
+}

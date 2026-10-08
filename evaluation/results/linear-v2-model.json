@@ -1,0 +1,1643 @@
+{
+  "createdAt": "2026-10-08T09:46:30.112Z",
+  "inputHash": "f90b84d5f8362173ae801344202045613a7f3f8faee99fc9094fa416f560ffdc",
+  "implementationHash": "2c6340432e83d7dbf54d407de49199f90fac2942efdc4664a96407cc27daf5a1",
+  "manifestHash": "c72e3e69e87fc1cc4f54296a8f39d30001c255a689f41e525267e1d6f019121e",
+  "featureSourceHash": "a7dd010ba6f0a1713b9b4b0409bb89c190ddb3e03c40d6051f77f1087db7dc42",
+  "poseFeatureHash": "d5094b13c9b18fd2b208b4fcbacc9341166c08fd7a3c2f2e8696976fd0a06ddf",
+  "engineKey": "6ef59e1c82fd6042913c",
+  "developmentGroups": [
+    "-4H2Ub_l2QA",
+    "-5FM8mMJeYc",
+    "-EicsYK0lxY",
+    "-KW8ptQGGXM",
+    "-Lk5jrlljxA",
+    "-ZMVkEzqLBg",
+    "-ed2QplJMQw",
+    "-u3Ri_EWqf0",
+    "-xsG5SRE6YM",
+    "04p4MWfhpAI",
+    "07HsM5RLBcw",
+    "07eq1ZyNg_U",
+    "0Qo2BlRlf7Y",
+    "0XNoBLQlxTU",
+    "0af6BfRm8lI",
+    "0lxcRpxPKH4",
+    "0pf4tHm9U9A",
+    "0shXloE0Tkw",
+    "16lUu2tZooc",
+    "19lxJWDYgI8",
+    "1SGl9SZX4OU",
+    "1WEgLgcFT-E",
+    "1WoJoFf11AU",
+    "1_sdGdLDYKg",
+    "1o6fXy-0uUE",
+    "1tUWlXqXGHM",
+    "1vnGNr5Xy2g",
+    "20agCg2s0uo",
+    "291hHKjOGe8",
+    "2BC4P5QWDSk",
+    "2E7Pk7h7mLI",
+    "2P2Ua459CMY",
+    "2V6zHS9McGE",
+    "2dnt-8wmeds",
+    "2ncNeIBknE8",
+    "2p1HEae3Yfs",
+    "2qa1avIsLaA",
+    "2vzMmWX6fB8",
+    "2wzx_4ntGVg",
+    "2x-4bgRvIHA",
+    "2zT2x_upEOU",
+    "36hKIWoqaVo",
+    "3QGKKHPsP9A",
+    "3QnXCGe6xZA",
+    "3UrUhMuWwfY",
+    "3_EvaENFaXI",
+    "3dLhi7qJeY4",
+    "3pP4EmzHx0k",
+    "3vXnpSMhAHY",
+    "40G_yVdDq0Q",
+    "44n2nwEc-UY",
+    "45_0XZPzQzg",
+    "4AgL3OMC0Z0",
+    "4Tv6vI-rDGo",
+    "4YmyQ0Qq3HY",
+    "4jqm3Z2qjiI",
+    "4k4XQca5bfo",
+    "4oz23cNENRo",
+    "4vfGx4fEdZ0",
+    "52F0rXpB8a0",
+    "52W2CuJhDZs",
+    "5r2bPO0Z--0",
+    "61GrOGdE31E",
+    "65TYkOw-R6o",
+    "6E4Fqn9JA6k",
+    "6FiVvY3WclY",
+    "6H3DCcS3s94",
+    "6dQnfjocZwo",
+    "6wnjVTht5WY",
+    "78ZXclvYBWE",
+    "7alkhzuoqgk",
+    "7dopFf5AOOI",
+    "7t-hF6ogs4I",
+    "7uSpIpf74Oc",
+    "7xb6Siy4Cns",
+    "8-UuFzd4Ivs",
+    "847WyTriT9M",
+    "8Dy721ifPRQ",
+    "8VF7Q3mA5dc",
+    "8YzgL9BTpHs",
+    "8fsQU5xAaWo",
+    "8i5iZdDLK2k",
+    "8qXd0bd5zwY",
+    "9D0XkGNKVMw",
+    "9IODJOOiQjY",
+    "9NXxkh8sApY",
+    "9Und-WVDRG0",
+    "9emEijq7gmc",
+    "A2u9M2Bi6-I",
+    "AAP--2lzb7o",
+    "ALX40RJd_GU",
+    "AQK4b5T_CrI",
+    "ASop_Xc8SaA",
+    "ATQrlQnb_ME",
+    "AelLoY8rCt4",
+    "AfN5l8z3QO8",
+    "Alu6kcYwLAs",
+    "AlucHuOJSpc",
+    "ApiHX52fAoo",
+    "Arg1z3Kul4Y",
+    "BIisI6ZtYaI",
+    "BPaHwows_Qo",
+    "Bk0h_BbuHus",
+    "BkhW9mMaMsE",
+    "BpvkIJvxZ90",
+    "BuZLRlH1sVI",
+    "C7eF-MQdX1E",
+    "CZWHDdbRYuk",
+    "Cev-_XAr68k",
+    "CgWZGGXYwLE",
+    "Ch8JRPtJX_0",
+    "D6sz67x-wxM",
+    "DcB97BukTf0",
+    "DqEdBtenvmY",
+    "E41DpvJ1s6s",
+    "E6vUl7DQ4sY",
+    "EA8g7q9jauM",
+    "EHjPccV82nQ",
+    "EUdogFwqvq8",
+    "Edj2LjS9jUY",
+    "EnZRwkx00sk",
+    "EozTa5xQDR4",
+    "Et5cjRcIGgQ",
+    "FQhRg0cj2BY",
+    "Fndz1dG5y54",
+    "Fo7g3PVkvaU",
+    "G-_DB4PFkdw",
+    "G0hZD0DGeTA",
+    "G0okcseCIgM",
+    "GHOoWhhDt8I",
+    "GZz-Ra1nElE",
+    "Ga6VL803ow4",
+    "Ga_Dq7tKfvc",
+    "GzqDAFNhFO0",
+    "H3nU7fggaBE",
+    "HAGpDY1rqg0",
+    "HBTx111kAA0",
+    "HSrGAlk5ouQ",
+    "HnXbfxIl9Ak",
+    "I5x_x9JJM-I",
+    "IcvUt_OzhZE",
+    "IftIfrU5Xxk",
+    "IkJtW42a9FM",
+    "IvC0x-5fFeg",
+    "J-euLAboI2U",
+    "J4U-VxZIxZM",
+    "J7JCSqOlgIY",
+    "JJQzQRZACgw",
+    "JKNwmx4b7HE",
+    "JTPkh1IhcVw",
+    "JXwslkTQFUo",
+    "JmPMVRPNrYI",
+    "JoVupA2MJCc",
+    "JtkK96CqdKc",
+    "KGmoJM3SvDQ",
+    "KLwwbvvfiaI",
+    "Kd7eUjnFozQ",
+    "KgjS_TSCLsk",
+    "KhPZydhpd0I",
+    "Kid6S_f3QhQ",
+    "KpnjJfdJZP0",
+    "Ksm8-66NCiU",
+    "L1MR-vpeR6M",
+    "L2_sNxxvmuw",
+    "LDdRUvkmq_A",
+    "LKMZw4iRY3M",
+    "LLiStJjNqwc",
+    "LQjuiL7y5oA",
+    "LiRRgqFRdss",
+    "Lret4qtbbsg",
+    "Ltk1P4rQS7w",
+    "Lur6TBnMmek",
+    "LxkdL0tGGxE",
+    "M065ZpAKuyY",
+    "M0TsTELFhGM",
+    "M1YMl8AU94I",
+    "M5Ce9YbVcHI",
+    "MK1Rc7e2-Xw",
+    "MM5m3oPeMcI",
+    "MQc6yogMXhA",
+    "Mnhy1dGhIxY",
+    "MxS9dU-HXJI",
+    "N1RPjOL7Sf8",
+    "N2RALFl13eI",
+    "N4_Pvltl9rY",
+    "N9oVlhmHhio",
+    "NC0-2f9j_JA",
+    "NIW_tCP8ZzU",
+    "NKAJYSohsBE",
+    "NPSjLLyjzuA",
+    "NqMnuXvoOsk",
+    "Nr3odkGdx0U",
+    "O1eNb7U05Es",
+    "O4MXIrHhqZo",
+    "O8kff0xLnsM",
+    "OCjZz0YU26Q",
+    "OG_q7BFjKQU",
+    "OLTqLabA3qI",
+    "OUQKb8Qwqg8",
+    "OWaQW8lVJH0",
+    "OaXW4R2pnSo",
+    "ObNG8eo7dRY",
+    "Odehfb2PZek",
+    "OpJC8XSUQHg",
+    "OuxYUdNFa70",
+    "P9iZqI0gcWs",
+    "PEhUvWV1l20",
+    "POxw77MviHw",
+    "PYGFpXpj1Kg",
+    "PbB-L7QN6aQ",
+    "Q3CqPk8_3UA",
+    "QCAtQwaXq2Q",
+    "QCBpxQjr1GI",
+    "QT4eZgEPZ78",
+    "QTeQCLk2hns",
+    "QUy2Aum6oTM",
+    "QmEd3xYdhCQ",
+    "QsIP98SekYc",
+    "R-ZXfxuHVeM",
+    "RCI9YSTJEHY",
+    "RRjz65DkgKU",
+    "RuOSy8kXPRg",
+    "RvIx1WWjqR0",
+    "Rxt-xkISpNY",
+    "S0XL8YQbxow",
+    "S3jzFktsnwE",
+    "S6udD0IlSRM",
+    "SC-XC4jf_lY",
+    "SHq6ItW49m4",
+    "SV3NlbJMZNI",
+    "SXOOaN4bDag",
+    "SjsXfXy41lI",
+    "SsZMIS6ubRc",
+    "SxDqEqCkR2o",
+    "T-A3-TNvNPY",
+    "T2dnRYhqzik",
+    "T5fWYIZiW4A",
+    "TDoUkGaVxDo",
+    "TIZ4oTuiUog",
+    "Tgj_NoH4PUs",
+    "TjZPxJqLm5o",
+    "TmiLrzwQL9k",
+    "Tx08-jVQCaQ",
+    "UDi-p--lbBg",
+    "ULOLObzlyxM",
+    "U_5W43Ot-ls",
+    "UbH0wGrWfIA",
+    "UcVQuUV-G9E",
+    "V34jrWy-3tw",
+    "V61JFeQulgE",
+    "V8hCWnq5044",
+    "VLQZyNKdnJI",
+    "VO3ts38ZCTk",
+    "VWSsRUNjyM0",
+    "VbHjDdj4l9E",
+    "Vq7BKfn8PIQ",
+    "Vy5vq0vnkxQ",
+    "W0yMzdg7iko",
+    "WGmeZPkyRJ0",
+    "WHmpANTJjGo",
+    "WdajLofbxOM",
+    "WteDSPi2XGg",
+    "Wyjt23K-7Zg",
+    "X-coaoY6KII",
+    "X5t6zXSj38U",
+    "X9bEYqRf7VY",
+    "XBmVYR0hWd0",
+    "XBpeqfQFdYE",
+    "XKP-zNvIBTg",
+    "XPhncl06VKM",
+    "XR6RxXycCQ8",
+    "XdM_QpyOox8",
+    "XeGSEKOz31E",
+    "XeidoTtIYjs",
+    "XusWRe8zQ5o",
+    "XvVrqkgojg0",
+    "Xwocbi-tp2o",
+    "Y35rcMq9F2E",
+    "Y6j3xvZBeyY",
+    "YK_ikvm922A",
+    "YVVns1LhKnM",
+    "YaHfRx04h4o",
+    "YduwRC64IQo",
+    "YzadwpZUKUM",
+    "Z1iV4D61hKo",
+    "ZEf7bF0DuO8",
+    "ZUq4CTCXVhA",
+    "ZeRFEmlGADA",
+    "_0s9oacFJkg",
+    "_2ynLsdbiOs",
+    "_5lTAxcYzo8",
+    "_65iwGkdm70",
+    "_KtitR_vvo0",
+    "_S9I5Nog0u8",
+    "_SYATJSKUIg",
+    "__wQZ6MFuZM",
+    "_m4TDbpIQPI",
+    "_qetyAj3fdc",
+    "_xWx4X5IwZ8",
+    "a-CVXlMpy_s",
+    "a162kOBlI4k",
+    "a1ohAnY9LEU",
+    "a2EqcfiHKlA",
+    "aG_edH_6MrE",
+    "aKKB-OA9fmk",
+    "aZulpy-F3S8",
+    "abgmV0xuCrk",
+    "b35FXlISU-o",
+    "b95HmjNm0bs",
+    "bS3tKkxMUlM",
+    "beftoiHw7G8",
+    "biTwco8VN4I",
+    "blJraLmAfD0",
+    "bnlI4BASlXI",
+    "bqwuhXMz228",
+    "bzAu_Ne2PRM",
+    "c8QJc5EsThw",
+    "cQNv3KqF7E4",
+    "cXFmE9k0Nik",
+    "ci8501voDW0",
+    "cn8-hMEKb6E",
+    "cptVIr4OJx8",
+    "crBWD1_8H4Q",
+    "cst9gVNcopk",
+    "d0SF0m8Ge8U",
+    "d7BmPyLjeuo",
+    "d7mkkyYM4Ac",
+    "dD08NNtxI0s",
+    "dMAbO5VovGs",
+    "dQCe4a2ztEg",
+    "d_rSp7G4hU4",
+    "dgy8Pa30hnk",
+    "dptApZvEt5Y",
+    "dsb8tb8HfRo",
+    "e84cJsiuVnA",
+    "eLVvliiAym4",
+    "eU7N2ythUn8",
+    "e_AELN3mVw0",
+    "ecNPrSc9alc",
+    "eeu8neb0ySY",
+    "f6ZUi-QYVdI",
+    "fBb2tMomdoY",
+    "fKQDLos9E9w",
+    "fKZHo9Oz-4o",
+    "fYysYL_eZXs",
+    "faDIJrn3uCQ",
+    "g-X7PDCLVMU",
+    "gHQ24WRYJVM",
+    "gHSL2cGguK8",
+    "gTqhkWubSTc",
+    "gV3dgCS0hWU",
+    "go1f1ZWxbk0",
+    "h7e6sp9tS6I",
+    "hKX6CteXJUQ",
+    "hOjeM8nRNyY",
+    "hOo9KcMhy5s",
+    "hV54y8BVEtY",
+    "hmoZbBdejOE",
+    "hpt7Wnm6wew",
+    "i-HQaIjVsBs",
+    "iKKkKrJNDTs",
+    "ioGmBsMhXQ0",
+    "j1DwX5owdQU",
+    "jGLcf-jJaJw",
+    "jGbDC5Bvkqw",
+    "jMNkragWK6U",
+    "jOXEh9lb96k",
+    "jvH_WjLe650",
+    "k6L9rOpJ2Vg",
+    "kI2snsZuCfw",
+    "krtz1b0v490",
+    "ktlUya-qgIU",
+    "kvnEYNCcyC8",
+    "kzAwB3wwzKg",
+    "l1TAClaRazw",
+    "l4hZmhKrqq8",
+    "lA46pO4G0hQ",
+    "lTUoHbXpx5Y",
+    "lWV74JUoaAE",
+    "lvrEkAVOSAs",
+    "lw9V3G9PE0A",
+    "m2It8oXLsE0",
+    "m408i9NFQIY",
+    "mAcEr7QJR9Y",
+    "mddh-9tTmRs",
+    "melV62mGRbY",
+    "miNX6dg_arc",
+    "mm6OMeZhYeI",
+    "mwBDtFMCdgY",
+    "mzP4JbFV5m4",
+    "n0aq5Rl6msw",
+    "n6SHX6tKQmA",
+    "nGDDCCY4iQk",
+    "nHal5q656nM",
+    "nIBHcWdqhWw",
+    "nSrXq1DDSk8",
+    "o3HgCuc6u3Y",
+    "o6rzycLEQdE",
+    "oTYQxAr9dEg",
+    "onNF_bQxOMg",
+    "ottsYU-Q5w0",
+    "p1Tn8IKNWtg",
+    "p4tkVczWzxQ",
+    "pN_OBtdQhJA",
+    "pQ8SdGYvCss",
+    "pR1OMPf2-jY",
+    "pSMJrEOFJwU",
+    "pXZpKk37Vnw",
+    "pgBnhDuDmIc",
+    "pnDgJ7l_cQ0",
+    "pz5TKEqbVAc",
+    "q38xkDR67Xc",
+    "q5ABlrAeuWI",
+    "qMj6haNe6eE",
+    "qc26jVbVNUw",
+    "qdXjaIibjNE",
+    "qi8yifwu2rg",
+    "qopddvcWCOU",
+    "qvt1eW72VLQ",
+    "r7kValMbcHo",
+    "rHSMua6mDQs",
+    "rR67XSV8IKw",
+    "ri7gn4oN5JI",
+    "rt8-BD5kxps",
+    "sDbqmRT7om0",
+    "sEGJ88bqEz0",
+    "sIBwYVvK6no",
+    "sJ7xeUzZ0cw",
+    "sighB0jA_Gw",
+    "soh5Xqxs0Nk",
+    "sw7V8nTj3Ro",
+    "tGv-8GE3gsk",
+    "tKY1YcY7moc",
+    "tKdtGkeLGzM",
+    "tSs1fVXMuPA",
+    "u0ZYImQdlQs",
+    "u2u6qBzNo30",
+    "u4hywnSLIOw",
+    "uOhmPlzJlMk",
+    "ud9cWaLSzbs",
+    "vEna10tCMzM",
+    "vH8bQkOEjuo",
+    "vUgoodaBlEY",
+    "vWPONRzoRxc",
+    "vbU9g1y3fUA",
+    "w03SsSFm3A4",
+    "w2haA2mouos",
+    "wPC4H3wX5ew",
+    "wTAIqfTi_0M",
+    "wbgBlaE_wEA",
+    "whQNcTayo2Y",
+    "whyljUAoLtQ",
+    "xFa21mq3xIQ",
+    "xJHurF-EZp8",
+    "xo5CWiM1r28",
+    "xokMxnFcmTo",
+    "xrEvrsm_08Y",
+    "xvbDRcfR4e4",
+    "y0QJ0dsQYbo",
+    "y2OiEe3K-8c",
+    "y4Uy6Pg3XPk",
+    "y4gu66DArqg",
+    "yAmZoNC4w6c",
+    "yKbQ7sDm2f0",
+    "yc4jZ6AjoiQ",
+    "ydgFbBxOaac",
+    "ym2wu8Wny8o",
+    "yt92AzS7S_c",
+    "yv2yyDezWD4",
+    "z7P0dDzuNXg",
+    "z7SzKk1oLmE",
+    "zJTkfo-sWm8",
+    "zL4UqRnzv2o",
+    "zWhaFxncrV4",
+    "zffxVv0LCz8",
+    "zhJdCOPLQfk",
+    "zjIFC2t1WCg",
+    "zjZjiCKP6eI",
+    "zyOEFzAqAe0",
+    "zz6lF-UE29A"
+  ],
+  "calibration": {
+    "model": {
+      "type": "regularized-multinomial-logistic-regression",
+      "classes": [
+        "pullup",
+        "pushup",
+        "squat"
+      ],
+      "featureNames": [
+        "pullup:compatibleFraction",
+        "pullup:incompatibleFraction",
+        "pullup:measurementCoverage",
+        "pullup:poseCoverage",
+        "pullup:range/180",
+        "pullup:min(cycles,10)/10",
+        "pullup:usable",
+        "pushup:compatibleFraction",
+        "pushup:incompatibleFraction",
+        "pushup:measurementCoverage",
+        "pushup:poseCoverage",
+        "pushup:range/180",
+        "pushup:min(cycles,10)/10",
+        "pushup:usable",
+        "squat:compatibleFraction",
+        "squat:incompatibleFraction",
+        "squat:measurementCoverage",
+        "squat:poseCoverage",
+        "squat:range/180",
+        "squat:min(cycles,10)/10",
+        "squat:usable",
+        "shoulderCoverage",
+        "wristCoverage",
+        "hipCoverage",
+        "ankleCoverage",
+        "shoulderExcursion",
+        "wristExcursion",
+        "hipExcursion",
+        "ankleExcursion",
+        "handAnchorContrast",
+        "footAnchorContrast",
+        "wristShoulderY10",
+        "wristShoulderY50",
+        "wristShoulderY90",
+        "wristShoulderCoverage",
+        "elbowShoulderY50",
+        "elbowShoulderCoverage",
+        "ankleHipY50",
+        "ankleHipCoverage",
+        "torsoTilt50",
+        "torsoTilt90",
+        "torsoCoverage",
+        "trackingJumpFraction",
+        "maximumTrackingJump",
+        "peakHandAnchoredBodyMotion",
+        "peakFootAnchoredBodyMotion"
+      ],
+      "weights": [
+        [
+          -0.2289966091456588,
+          0.6763793530826344,
+          -0.2666272457138943,
+          0.05374543985221568,
+          0.04398380139429362,
+          0.0466002036431154,
+          0.11043909660631622,
+          0.4635041026547808,
+          -0.2654221440688715,
+          0.6230808845589875,
+          0.05374543985221568,
+          0.04398380139429362,
+          0.0466002036431154,
+          -0.053491098060147346,
+          -0.2120132600106519,
+          -0.27361776498673285,
+          0.372801010393128,
+          -0.0357395290585749,
+          0.04398380139429362,
+          -0.2511411242318377,
+          -0.08513401956096456,
+          -0.4536925660243876,
+          0.03236240887063347,
+          0.04168026220344553,
+          -0.062115542414289494,
+          -0.06375626863979832,
+          0.055723569124547206,
+          0.10082586732752898,
+          0.22295819503356099,
+          0.3601458274358282,
+          0.0068358313848427684,
+          -0.16225503689101023,
+          -0.8348250132054087,
+          -0.5364363085941966,
+          -0.30239262634132785,
+          0.03303373500504296,
+          -0.2512124170451712,
+          0.08044890499272148,
+          -0.23966684602174526,
+          -0.06552856674634959,
+          -0.2932924920441842,
+          -0.5783625991708929,
+          -0.05827811275451292,
+          -0.03292544161765061,
+          0.08707604678029873,
+          0.10943529142119088,
+          -0.1889817956743176
+        ],
+        [
+          -0.594303946498911,
+          -0.3713065326652288,
+          0.6313550830487216,
+          0.02545367494957372,
+          -0.1185137608189509,
+          0.03880343906088042,
+          -0.03372275690758889,
+          -0.1677766301068273,
+          0.7224759488055591,
+          -0.5821108815845967,
+          0.02545367494957372,
+          -0.1185137608189509,
+          0.03880343906088042,
+          0.13137234695885502,
+          0.573132866740468,
+          -0.16928754452897327,
+          0.42039206811594854,
+          0.0016179614218040739,
+          -0.1185137608189509,
+          -0.25227975900741817,
+          -0.02637446258363866,
+          -0.014636897579942717,
+          -0.10333998021984132,
+          0.04311188725813856,
+          -0.08324575531382475,
+          0.07531201280025207,
+          -0.056056440259720404,
+          -0.11498424192438272,
+          -0.07407331578662964,
+          -0.08633051145453312,
+          0.08275553991912706,
+          -0.05353291653041613,
+          0.4985626289201622,
+          0.67403683161831,
+          0.7097979992778476,
+          0.04542859184900102,
+          0.08118764360287348,
+          -0.029951675707497693,
+          -0.4852968894781049,
+          0.0759124805843811,
+          0.6058725711525531,
+          0.7031533424818589,
+          -0.08267630966333375,
+          0.053651526329829384,
+          0.027083795667420748,
+          0.3245480527983906,
+          0.19514617626629582
+        ],
+        [
+          0.8233005556445717,
+          -0.3050728204174055,
+          -0.36472783733482617,
+          -0.07919911480178952,
+          0.0745299594246573,
+          -0.08540364270399574,
+          -0.0767163396987272,
+          -0.2957274725479544,
+          -0.4570538047366873,
+          -0.040970002974389456,
+          -0.07919911480178952,
+          0.0745299594246573,
+          -0.08540364270399574,
+          -0.07788124889870775,
+          -0.3611196067298163,
+          0.44290530951570595,
+          -0.793193078509076,
+          0.034121567636770773,
+          0.0745299594246573,
+          0.5034208832392563,
+          0.11150848214460307,
+          0.4683294636043306,
+          0.07097757134920775,
+          -0.08479214946158406,
+          0.14536129772811457,
+          -0.011555744160453588,
+          0.00033287113517317495,
+          0.014158374596853741,
+          -0.1488848792469317,
+          -0.2738153159812955,
+          -0.0895913713039698,
+          0.21578795342142632,
+          0.3362623842852475,
+          -0.13760052302411271,
+          -0.40740537293652024,
+          -0.07846232685404415,
+          0.1700247734422973,
+          -0.050497229285223794,
+          0.7249637354998497,
+          -0.010383913838031484,
+          -0.3125800791083696,
+          -0.12479074331096646,
+          0.14095442241784686,
+          -0.020726084712178745,
+          -0.1141598424477194,
+          -0.4339833442195817,
+          -0.006164380591978058
+        ]
+      ],
+      "trainingConfig": {
+        "regularization": 0.01,
+        "epochs": 700,
+        "learningRate": 0.15
+      },
+      "trainingRows": 360
+    },
+    "gate": {
+      "perClass": {
+        "pullup": {
+          "threshold": 0.5,
+          "margin": 0,
+          "enabled": true
+        },
+        "pushup": {
+          "threshold": 0,
+          "margin": 0,
+          "enabled": true
+        },
+        "squat": {
+          "threshold": 0.7,
+          "margin": 0,
+          "enabled": true
+        }
+      }
+    },
+    "targetPrecision": 0.8,
+    "validationGatePassed": true,
+    "anyClassGatePassed": true,
+    "classGateResults": {
+      "pullup": {
+        "passed": true,
+        "minimumSupport": 16,
+        "metrics": {
+          "support": 40,
+          "acceptedAsClass": 37,
+          "correct": 35,
+          "acceptedFromClass": 36,
+          "coverage": 0.9,
+          "recall": 0.875,
+          "acceptedPrecision": 0.9459459459459459,
+          "acceptedPrecision95CI": {
+            "low": 0.822950349364601,
+            "high": 0.9850493372294601
+          }
+        }
+      },
+      "pushup": {
+        "passed": true,
+        "minimumSupport": 16,
+        "metrics": {
+          "support": 40,
+          "acceptedAsClass": 34,
+          "correct": 33,
+          "acceptedFromClass": 35,
+          "coverage": 0.875,
+          "recall": 0.825,
+          "acceptedPrecision": 0.9705882352941176,
+          "acceptedPrecision95CI": {
+            "low": 0.8508409778365519,
+            "high": 0.9947892280744034
+          }
+        }
+      },
+      "squat": {
+        "passed": true,
+        "minimumSupport": 16,
+        "metrics": {
+          "support": 40,
+          "acceptedAsClass": 22,
+          "correct": 22,
+          "acceptedFromClass": 23,
+          "coverage": 0.575,
+          "recall": 0.55,
+          "acceptedPrecision": 1,
+          "acceptedPrecision95CI": {
+            "low": 0.8513404742740388,
+            "high": 1
+          }
+        }
+      }
+    },
+    "trainingCrossValidation": [
+      {
+        "config": {
+          "regularization": 0.01
+        },
+        "groupCrossValidation": [
+          {
+            "evaluated": 129,
+            "accepted": 105,
+            "correct": 101,
+            "wrong": 4,
+            "abstained": 24,
+            "coverage": 0.813953488372093,
+            "accuracyIncludingAbstentions": 0.7829457364341085,
+            "acceptedPrecision": 0.9619047619047619,
+            "acceptedPrecision95CI": {
+              "low": 0.9061155814676505,
+              "high": 0.9850877819522184
+            },
+            "confusion": {
+              "pullup": {
+                "pullup": 35,
+                "pushup": 0,
+                "squat": 0,
+                "abstain": 7
+              },
+              "pushup": {
+                "pullup": 0,
+                "pushup": 37,
+                "squat": 1,
+                "abstain": 4
+              },
+              "squat": {
+                "pullup": 2,
+                "pushup": 1,
+                "squat": 29,
+                "abstain": 13
+              }
+            },
+            "perClass": {
+              "pullup": {
+                "support": 42,
+                "acceptedAsClass": 37,
+                "correct": 35,
+                "acceptedFromClass": 35,
+                "coverage": 0.8333333333333334,
+                "recall": 0.8333333333333334,
+                "acceptedPrecision": 0.9459459459459459,
+                "acceptedPrecision95CI": {
+                  "low": 0.822950349364601,
+                  "high": 0.9850493372294601
+                }
+              },
+              "pushup": {
+                "support": 42,
+                "acceptedAsClass": 38,
+                "correct": 37,
+                "acceptedFromClass": 38,
+                "coverage": 0.9047619047619048,
+                "recall": 0.8809523809523809,
+                "acceptedPrecision": 0.9736842105263158,
+                "acceptedPrecision95CI": {
+                  "low": 0.8650482156319974,
+                  "high": 0.9953395324464698
+                }
+              },
+              "squat": {
+                "support": 45,
+                "acceptedAsClass": 30,
+                "correct": 29,
+                "acceptedFromClass": 32,
+                "coverage": 0.7111111111111111,
+                "recall": 0.6444444444444445,
+                "acceptedPrecision": 0.9666666666666667,
+                "acceptedPrecision95CI": {
+                  "low": 0.8332924860304112,
+                  "high": 0.9940915620051425
+                }
+              }
+            },
+            "balancedRecall": 0.7862433862433863
+          },
+          {
+            "evaluated": 108,
+            "accepted": 88,
+            "correct": 83,
+            "wrong": 5,
+            "abstained": 20,
+            "coverage": 0.8148148148148148,
+            "accuracyIncludingAbstentions": 0.7685185185185185,
+            "acceptedPrecision": 0.9431818181818182,
+            "acceptedPrecision95CI": {
+              "low": 0.8737990064572213,
+              "high": 0.9754893334671705
+            },
+            "confusion": {
+              "pullup": {
+                "pullup": 31,
+                "pushup": 0,
+                "squat": 2,
+                "abstain": 7
+              },
+              "pushup": {
+                "pullup": 0,
+                "pushup": 32,
+                "squat": 1,
+                "abstain": 2
+              },
+              "squat": {
+                "pullup": 2,
+                "pushup": 0,
+                "squat": 20,
+                "abstain": 11
+              }
+            },
+            "perClass": {
+              "pullup": {
+                "support": 40,
+                "acceptedAsClass": 33,
+                "correct": 31,
+                "acceptedFromClass": 33,
+                "coverage": 0.825,
+                "recall": 0.775,
+                "acceptedPrecision": 0.9393939393939394,
+                "acceptedPrecision95CI": {
+                  "low": 0.8039341828220181,
+                  "high": 0.9832194695709291
+                }
+              },
+              "pushup": {
+                "support": 35,
+                "acceptedAsClass": 32,
+                "correct": 32,
+                "acceptedFromClass": 33,
+                "coverage": 0.9428571428571428,
+                "recall": 0.9142857142857143,
+                "acceptedPrecision": 1,
+                "acceptedPrecision95CI": {
+                  "low": 0.8928172849426366,
+                  "high": 1
+                }
+              },
+              "squat": {
+                "support": 33,
+                "acceptedAsClass": 23,
+                "correct": 20,
+                "acceptedFromClass": 22,
+                "coverage": 0.6666666666666666,
+                "recall": 0.6060606060606061,
+                "acceptedPrecision": 0.8695652173913043,
+                "acceptedPrecision95CI": {
+                  "low": 0.678721020269818,
+                  "high": 0.954624234856553
+                }
+              }
+            },
+            "balancedRecall": 0.7651154401154402
+          },
+          {
+            "evaluated": 123,
+            "accepted": 94,
+            "correct": 85,
+            "wrong": 9,
+            "abstained": 29,
+            "coverage": 0.7642276422764228,
+            "accuracyIncludingAbstentions": 0.6910569105691057,
+            "acceptedPrecision": 0.9042553191489362,
+            "acceptedPrecision95CI": {
+              "low": 0.8279570919390105,
+              "high": 0.9488086191695568
+            },
+            "confusion": {
+              "pullup": {
+                "pullup": 26,
+                "pushup": 0,
+                "squat": 3,
+                "abstain": 9
+              },
+              "pushup": {
+                "pullup": 1,
+                "pushup": 35,
+                "squat": 1,
+                "abstain": 6
+              },
+              "squat": {
+                "pullup": 4,
+                "pushup": 0,
+                "squat": 24,
+                "abstain": 14
+              }
+            },
+            "perClass": {
+              "pullup": {
+                "support": 38,
+                "acceptedAsClass": 31,
+                "correct": 26,
+                "acceptedFromClass": 29,
+                "coverage": 0.7631578947368421,
+                "recall": 0.6842105263157895,
+                "acceptedPrecision": 0.8387096774193549,
+                "acceptedPrecision95CI": {
+                  "low": 0.6736529727502113,
+                  "high": 0.9290748009456006
+                }
+              },
+              "pushup": {
+                "support": 43,
+                "acceptedAsClass": 35,
+                "correct": 35,
+                "acceptedFromClass": 37,
+                "coverage": 0.8604651162790697,
+                "recall": 0.813953488372093,
+                "acceptedPrecision": 1,
+                "acceptedPrecision95CI": {
+                  "low": 0.9010957324106112,
+                  "high": 1
+                }
+              },
+              "squat": {
+                "support": 42,
+                "acceptedAsClass": 28,
+                "correct": 24,
+                "acceptedFromClass": 28,
+                "coverage": 0.6666666666666666,
+                "recall": 0.5714285714285714,
+                "acceptedPrecision": 0.8571428571428571,
+                "acceptedPrecision95CI": {
+                  "low": 0.6850982695512267,
+                  "high": 0.9430108706929821
+                }
+              }
+            },
+            "balancedRecall": 0.6898641953721514
+          }
+        ],
+        "meanRecall": 0.7470743405769925
+      },
+      {
+        "config": {
+          "regularization": 0.03
+        },
+        "groupCrossValidation": [
+          {
+            "evaluated": 129,
+            "accepted": 105,
+            "correct": 100,
+            "wrong": 5,
+            "abstained": 24,
+            "coverage": 0.813953488372093,
+            "accuracyIncludingAbstentions": 0.7751937984496124,
+            "acceptedPrecision": 0.9523809523809523,
+            "acceptedPrecision95CI": {
+              "low": 0.8933368995663414,
+              "high": 0.9794911367727052
+            },
+            "confusion": {
+              "pullup": {
+                "pullup": 34,
+                "pushup": 0,
+                "squat": 1,
+                "abstain": 7
+              },
+              "pushup": {
+                "pullup": 0,
+                "pushup": 37,
+                "squat": 1,
+                "abstain": 4
+              },
+              "squat": {
+                "pullup": 2,
+                "pushup": 1,
+                "squat": 29,
+                "abstain": 13
+              }
+            },
+            "perClass": {
+              "pullup": {
+                "support": 42,
+                "acceptedAsClass": 36,
+                "correct": 34,
+                "acceptedFromClass": 35,
+                "coverage": 0.8333333333333334,
+                "recall": 0.8095238095238095,
+                "acceptedPrecision": 0.9444444444444444,
+                "acceptedPrecision95CI": {
+                  "low": 0.8185502589238878,
+                  "high": 0.9846303362329332
+                }
+              },
+              "pushup": {
+                "support": 42,
+                "acceptedAsClass": 38,
+                "correct": 37,
+                "acceptedFromClass": 38,
+                "coverage": 0.9047619047619048,
+                "recall": 0.8809523809523809,
+                "acceptedPrecision": 0.9736842105263158,
+                "acceptedPrecision95CI": {
+                  "low": 0.8650482156319974,
+                  "high": 0.9953395324464698
+                }
+              },
+              "squat": {
+                "support": 45,
+                "acceptedAsClass": 31,
+                "correct": 29,
+                "acceptedFromClass": 32,
+                "coverage": 0.7111111111111111,
+                "recall": 0.6444444444444445,
+                "acceptedPrecision": 0.9354838709677419,
+                "acceptedPrecision95CI": {
+                  "low": 0.7928101168125354,
+                  "high": 0.9821255922249368
+                }
+              }
+            },
+            "balancedRecall": 0.7783068783068784
+          },
+          {
+            "evaluated": 108,
+            "accepted": 88,
+            "correct": 83,
+            "wrong": 5,
+            "abstained": 20,
+            "coverage": 0.8148148148148148,
+            "accuracyIncludingAbstentions": 0.7685185185185185,
+            "acceptedPrecision": 0.9431818181818182,
+            "acceptedPrecision95CI": {
+              "low": 0.8737990064572213,
+              "high": 0.9754893334671705
+            },
+            "confusion": {
+              "pullup": {
+                "pullup": 31,
+                "pushup": 0,
+                "squat": 2,
+                "abstain": 7
+              },
+              "pushup": {
+                "pullup": 0,
+                "pushup": 32,
+                "squat": 1,
+                "abstain": 2
+              },
+              "squat": {
+                "pullup": 2,
+                "pushup": 0,
+                "squat": 20,
+                "abstain": 11
+              }
+            },
+            "perClass": {
+              "pullup": {
+                "support": 40,
+                "acceptedAsClass": 33,
+                "correct": 31,
+                "acceptedFromClass": 33,
+                "coverage": 0.825,
+                "recall": 0.775,
+                "acceptedPrecision": 0.9393939393939394,
+                "acceptedPrecision95CI": {
+                  "low": 0.8039341828220181,
+                  "high": 0.9832194695709291
+                }
+              },
+              "pushup": {
+                "support": 35,
+                "acceptedAsClass": 32,
+                "correct": 32,
+                "acceptedFromClass": 33,
+                "coverage": 0.9428571428571428,
+                "recall": 0.9142857142857143,
+                "acceptedPrecision": 1,
+                "acceptedPrecision95CI": {
+                  "low": 0.8928172849426366,
+                  "high": 1
+                }
+              },
+              "squat": {
+                "support": 33,
+                "acceptedAsClass": 23,
+                "correct": 20,
+                "acceptedFromClass": 22,
+                "coverage": 0.6666666666666666,
+                "recall": 0.6060606060606061,
+                "acceptedPrecision": 0.8695652173913043,
+                "acceptedPrecision95CI": {
+                  "low": 0.678721020269818,
+                  "high": 0.954624234856553
+                }
+              }
+            },
+            "balancedRecall": 0.7651154401154402
+          },
+          {
+            "evaluated": 123,
+            "accepted": 94,
+            "correct": 85,
+            "wrong": 9,
+            "abstained": 29,
+            "coverage": 0.7642276422764228,
+            "accuracyIncludingAbstentions": 0.6910569105691057,
+            "acceptedPrecision": 0.9042553191489362,
+            "acceptedPrecision95CI": {
+              "low": 0.8279570919390105,
+              "high": 0.9488086191695568
+            },
+            "confusion": {
+              "pullup": {
+                "pullup": 26,
+                "pushup": 0,
+                "squat": 3,
+                "abstain": 9
+              },
+              "pushup": {
+                "pullup": 1,
+                "pushup": 35,
+                "squat": 1,
+                "abstain": 6
+              },
+              "squat": {
+                "pullup": 4,
+                "pushup": 0,
+                "squat": 24,
+                "abstain": 14
+              }
+            },
+            "perClass": {
+              "pullup": {
+                "support": 38,
+                "acceptedAsClass": 31,
+                "correct": 26,
+                "acceptedFromClass": 29,
+                "coverage": 0.7631578947368421,
+                "recall": 0.6842105263157895,
+                "acceptedPrecision": 0.8387096774193549,
+                "acceptedPrecision95CI": {
+                  "low": 0.6736529727502113,
+                  "high": 0.9290748009456006
+                }
+              },
+              "pushup": {
+                "support": 43,
+                "acceptedAsClass": 35,
+                "correct": 35,
+                "acceptedFromClass": 37,
+                "coverage": 0.8604651162790697,
+                "recall": 0.813953488372093,
+                "acceptedPrecision": 1,
+                "acceptedPrecision95CI": {
+                  "low": 0.9010957324106112,
+                  "high": 1
+                }
+              },
+              "squat": {
+                "support": 42,
+                "acceptedAsClass": 28,
+                "correct": 24,
+                "acceptedFromClass": 28,
+                "coverage": 0.6666666666666666,
+                "recall": 0.5714285714285714,
+                "acceptedPrecision": 0.8571428571428571,
+                "acceptedPrecision95CI": {
+                  "low": 0.6850982695512267,
+                  "high": 0.9430108706929821
+                }
+              }
+            },
+            "balancedRecall": 0.6898641953721514
+          }
+        ],
+        "meanRecall": 0.74442883793149
+      },
+      {
+        "config": {
+          "regularization": 0.1
+        },
+        "groupCrossValidation": [
+          {
+            "evaluated": 129,
+            "accepted": 105,
+            "correct": 99,
+            "wrong": 6,
+            "abstained": 24,
+            "coverage": 0.813953488372093,
+            "accuracyIncludingAbstentions": 0.7674418604651163,
+            "acceptedPrecision": 0.9428571428571428,
+            "acceptedPrecision95CI": {
+              "low": 0.8809019831863215,
+              "high": 0.9735507260719031
+            },
+            "confusion": {
+              "pullup": {
+                "pullup": 33,
+                "pushup": 0,
+                "squat": 2,
+                "abstain": 7
+              },
+              "pushup": {
+                "pullup": 0,
+                "pushup": 37,
+                "squat": 1,
+                "abstain": 4
+              },
+              "squat": {
+                "pullup": 3,
+                "pushup": 0,
+                "squat": 29,
+                "abstain": 13
+              }
+            },
+            "perClass": {
+              "pullup": {
+                "support": 42,
+                "acceptedAsClass": 36,
+                "correct": 33,
+                "acceptedFromClass": 35,
+                "coverage": 0.8333333333333334,
+                "recall": 0.7857142857142857,
+                "acceptedPrecision": 0.9166666666666666,
+                "acceptedPrecision95CI": {
+                  "low": 0.7817298972308114,
+                  "high": 0.9712519107287082
+                }
+              },
+              "pushup": {
+                "support": 42,
+                "acceptedAsClass": 37,
+                "correct": 37,
+                "acceptedFromClass": 38,
+                "coverage": 0.9047619047619048,
+                "recall": 0.8809523809523809,
+                "acceptedPrecision": 1,
+                "acceptedPrecision95CI": {
+                  "low": 0.9059390425448564,
+                  "high": 1
+                }
+              },
+              "squat": {
+                "support": 45,
+                "acceptedAsClass": 32,
+                "correct": 29,
+                "acceptedFromClass": 32,
+                "coverage": 0.7111111111111111,
+                "recall": 0.6444444444444445,
+                "acceptedPrecision": 0.90625,
+                "acceptedPrecision95CI": {
+                  "low": 0.7578150066422116,
+                  "high": 0.9675990373736805
+                }
+              }
+            },
+            "balancedRecall": 0.7703703703703703
+          },
+          {
+            "evaluated": 108,
+            "accepted": 88,
+            "correct": 83,
+            "wrong": 5,
+            "abstained": 20,
+            "coverage": 0.8148148148148148,
+            "accuracyIncludingAbstentions": 0.7685185185185185,
+            "acceptedPrecision": 0.9431818181818182,
+            "acceptedPrecision95CI": {
+              "low": 0.8737990064572213,
+              "high": 0.9754893334671705
+            },
+            "confusion": {
+              "pullup": {
+                "pullup": 31,
+                "pushup": 0,
+                "squat": 2,
+                "abstain": 7
+              },
+              "pushup": {
+                "pullup": 0,
+                "pushup": 32,
+                "squat": 1,
+                "abstain": 2
+              },
+              "squat": {
+                "pullup": 2,
+                "pushup": 0,
+                "squat": 20,
+                "abstain": 11
+              }
+            },
+            "perClass": {
+              "pullup": {
+                "support": 40,
+                "acceptedAsClass": 33,
+                "correct": 31,
+                "acceptedFromClass": 33,
+                "coverage": 0.825,
+                "recall": 0.775,
+                "acceptedPrecision": 0.9393939393939394,
+                "acceptedPrecision95CI": {
+                  "low": 0.8039341828220181,
+                  "high": 0.9832194695709291
+                }
+              },
+              "pushup": {
+                "support": 35,
+                "acceptedAsClass": 32,
+                "correct": 32,
+                "acceptedFromClass": 33,
+                "coverage": 0.9428571428571428,
+                "recall": 0.9142857142857143,
+                "acceptedPrecision": 1,
+                "acceptedPrecision95CI": {
+                  "low": 0.8928172849426366,
+                  "high": 1
+                }
+              },
+              "squat": {
+                "support": 33,
+                "acceptedAsClass": 23,
+                "correct": 20,
+                "acceptedFromClass": 22,
+                "coverage": 0.6666666666666666,
+                "recall": 0.6060606060606061,
+                "acceptedPrecision": 0.8695652173913043,
+                "acceptedPrecision95CI": {
+                  "low": 0.678721020269818,
+                  "high": 0.954624234856553
+                }
+              }
+            },
+            "balancedRecall": 0.7651154401154402
+          },
+          {
+            "evaluated": 123,
+            "accepted": 94,
+            "correct": 85,
+            "wrong": 9,
+            "abstained": 29,
+            "coverage": 0.7642276422764228,
+            "accuracyIncludingAbstentions": 0.6910569105691057,
+            "acceptedPrecision": 0.9042553191489362,
+            "acceptedPrecision95CI": {
+              "low": 0.8279570919390105,
+              "high": 0.9488086191695568
+            },
+            "confusion": {
+              "pullup": {
+                "pullup": 26,
+                "pushup": 0,
+                "squat": 3,
+                "abstain": 9
+              },
+              "pushup": {
+                "pullup": 1,
+                "pushup": 35,
+                "squat": 1,
+                "abstain": 6
+              },
+              "squat": {
+                "pullup": 4,
+                "pushup": 0,
+                "squat": 24,
+                "abstain": 14
+              }
+            },
+            "perClass": {
+              "pullup": {
+                "support": 38,
+                "acceptedAsClass": 31,
+                "correct": 26,
+                "acceptedFromClass": 29,
+                "coverage": 0.7631578947368421,
+                "recall": 0.6842105263157895,
+                "acceptedPrecision": 0.8387096774193549,
+                "acceptedPrecision95CI": {
+                  "low": 0.6736529727502113,
+                  "high": 0.9290748009456006
+                }
+              },
+              "pushup": {
+                "support": 43,
+                "acceptedAsClass": 35,
+                "correct": 35,
+                "acceptedFromClass": 37,
+                "coverage": 0.8604651162790697,
+                "recall": 0.813953488372093,
+                "acceptedPrecision": 1,
+                "acceptedPrecision95CI": {
+                  "low": 0.9010957324106112,
+                  "high": 1
+                }
+              },
+              "squat": {
+                "support": 42,
+                "acceptedAsClass": 28,
+                "correct": 24,
+                "acceptedFromClass": 28,
+                "coverage": 0.6666666666666666,
+                "recall": 0.5714285714285714,
+                "acceptedPrecision": 0.8571428571428571,
+                "acceptedPrecision95CI": {
+                  "low": 0.6850982695512267,
+                  "high": 0.9430108706929821
+                }
+              }
+            },
+            "balancedRecall": 0.6898641953721514
+          }
+        ],
+        "meanRecall": 0.7417833352859873
+      }
+    ],
+    "training": {
+      "evaluated": 360,
+      "accepted": 272,
+      "correct": 264,
+      "wrong": 8,
+      "abstained": 88,
+      "coverage": 0.7555555555555555,
+      "accuracyIncludingAbstentions": 0.7333333333333333,
+      "acceptedPrecision": 0.9705882352941176,
+      "acceptedPrecision95CI": {
+        "low": 0.9430459188165177,
+        "high": 0.9850229438930953
+      },
+      "confusion": {
+        "pullup": {
+          "pullup": 92,
+          "pushup": 0,
+          "squat": 1,
+          "abstain": 27
+        },
+        "pushup": {
+          "pullup": 0,
+          "pushup": 105,
+          "squat": 2,
+          "abstain": 13
+        },
+        "squat": {
+          "pullup": 5,
+          "pushup": 0,
+          "squat": 67,
+          "abstain": 48
+        }
+      },
+      "perClass": {
+        "pullup": {
+          "support": 120,
+          "acceptedAsClass": 97,
+          "correct": 92,
+          "acceptedFromClass": 93,
+          "coverage": 0.775,
+          "recall": 0.7666666666666667,
+          "acceptedPrecision": 0.9484536082474226,
+          "acceptedPrecision95CI": {
+            "low": 0.8849549104296393,
+            "high": 0.9777842765725502
+          }
+        },
+        "pushup": {
+          "support": 120,
+          "acceptedAsClass": 105,
+          "correct": 105,
+          "acceptedFromClass": 107,
+          "coverage": 0.8916666666666667,
+          "recall": 0.875,
+          "acceptedPrecision": 1,
+          "acceptedPrecision95CI": {
+            "low": 0.9647046717431569,
+            "high": 0.9999999999999998
+          }
+        },
+        "squat": {
+          "support": 120,
+          "acceptedAsClass": 70,
+          "correct": 67,
+          "acceptedFromClass": 72,
+          "coverage": 0.6,
+          "recall": 0.5583333333333333,
+          "acceptedPrecision": 0.9571428571428572,
+          "acceptedPrecision95CI": {
+            "low": 0.8814013892581987,
+            "high": 0.9853187251488564
+          }
+        }
+      },
+      "balancedRecall": 0.7333333333333334
+    },
+    "validation": {
+      "evaluated": 120,
+      "accepted": 93,
+      "correct": 90,
+      "wrong": 3,
+      "abstained": 27,
+      "coverage": 0.775,
+      "accuracyIncludingAbstentions": 0.75,
+      "acceptedPrecision": 0.967741935483871,
+      "acceptedPrecision95CI": {
+        "low": 0.9094046653225201,
+        "high": 0.9889695870648838
+      },
+      "confusion": {
+        "pullup": {
+          "pullup": 35,
+          "pushup": 0,
+          "squat": 0,
+          "abstain": 5
+        },
+        "pushup": {
+          "pullup": 1,
+          "pushup": 33,
+          "squat": 0,
+          "abstain": 6
+        },
+        "squat": {
+          "pullup": 1,
+          "pushup": 1,
+          "squat": 22,
+          "abstain": 16
+        }
+      },
+      "perClass": {
+        "pullup": {
+          "support": 40,
+          "acceptedAsClass": 37,
+          "correct": 35,
+          "acceptedFromClass": 35,
+          "coverage": 0.875,
+          "recall": 0.875,
+          "acceptedPrecision": 0.9459459459459459,
+          "acceptedPrecision95CI": {
+            "low": 0.822950349364601,
+            "high": 0.9850493372294601
+          }
+        },
+        "pushup": {
+          "support": 40,
+          "acceptedAsClass": 34,
+          "correct": 33,
+          "acceptedFromClass": 34,
+          "coverage": 0.85,
+          "recall": 0.825,
+          "acceptedPrecision": 0.9705882352941176,
+          "acceptedPrecision95CI": {
+            "low": 0.8508409778365519,
+            "high": 0.9947892280744034
+          }
+        },
+        "squat": {
+          "support": 40,
+          "acceptedAsClass": 22,
+          "correct": 22,
+          "acceptedFromClass": 24,
+          "coverage": 0.6,
+          "recall": 0.55,
+          "acceptedPrecision": 1,
+          "acceptedPrecision95CI": {
+            "low": 0.8513404742740388,
+            "high": 1
+          }
+        }
+      },
+      "balancedRecall": 0.75
+    },
+    "method": "Supervised linear activity classifier trained on source-grouped training data. Grouped cross-validation chooses hyperparameters; independent validation selects separate abstention gates for each predicted class. Unsupported classes abstain. No form-quality labels or reinforcement learning."
+  },
+  "claimBoundary": "Exercise recognition only. Softmax scores are not form-correctness probabilities. Calibration is not a guarantee for new users."
+}

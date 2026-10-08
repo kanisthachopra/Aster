@@ -1,0 +1,83 @@
+{
+  "auditedAt": "2026-10-08T08:18:21.749089+00:00",
+  "selectionSeed": "aster-kinetics600-2026-10-08-v1",
+  "manifestPath": "evaluation/manifests/dataset.jsonl",
+  "manifestSha256": "94e404308ef7a2c892807365aeef25903f69f3b239d729ccd456fd35fe089191",
+  "records": 600,
+  "classes": {
+    "pullup": 200,
+    "pushup": 200,
+    "squat": 200
+  },
+  "distinctYoutubeIds": 600,
+  "distinctMediaSha256": 600,
+  "localMediaFiles": 600,
+  "totalSelectedMediaBytes": 830007621,
+  "allFullDecodeVerified": true,
+  "durationRangeSeconds": [
+    2.4,
+    10.06
+  ],
+  "resolutionRange": {
+    "width": [
+      270,
+      1280
+    ],
+    "height": [
+      180,
+      720
+    ]
+  },
+  "developmentOnlyPilotIds": [
+    "k600-pullup-yv2yyDezWD4-000028-000038",
+    "k600-pullup-POxw77MviHw-000007-000017",
+    "k600-pushup-78ZXclvYBWE-000012-000022",
+    "k600-pushup-1WEgLgcFT-E-000013-000023",
+    "k600-squat-ObNG8eo7dRY-000229-000239",
+    "k600-squat-gV3dgCS0hWU-000009-000019"
+  ],
+  "clipsWithCountixIntervals": 49,
+  "clipsWithAtLeastOneWhollyPresentCountixInterval": 49,
+  "expertFormLabels": 0,
+  "excludedCandidates": 160,
+  "sources": [
+    {
+      "exercise": "pullup",
+      "url": "https://s3.amazonaws.com/kinetics/600/train/pull%20ups.tar.gz",
+      "bytes": 906854188,
+      "sha256": "275344cf558bc45c0c7e8179e0eeb257f3294b472c12fe12d7213570321b6371"
+    },
+    {
+      "exercise": "pushup",
+      "url": "https://s3.amazonaws.com/kinetics/600/train/push%20up.tar.gz",
+      "bytes": 877355617,
+      "sha256": "1b7063dba1ce122db789f9432ce5fb4da4abe1f93bc627e28613c6f6afd5ffc8"
+    },
+    {
+      "exercise": "squat",
+      "url": "https://s3.amazonaws.com/kinetics/600/train/squat.tar.gz",
+      "bytes": 1202983150,
+      "sha256": "ba4f1c450cd7c2bbac01a8befff99553024f936079530e289429884548bfca75"
+    },
+    {
+      "url": "https://s3.amazonaws.com/kinetics/600/annotations/train.csv",
+      "bytes": 14610582,
+      "sha256": "d2d3bc844d10b68fd66f5137d2db31a45dd74376acf8cfe9741eb8f7db563bda"
+    },
+    {
+      "url": "https://s3.amazonaws.com/kinetics/700_2020/annotations/countix.tar.gz",
+      "bytes": 160752,
+      "sha256": "c68a98f9bbedc6a5ebf7d7e4b1eb70ba026154081b0f398c5f0287a43e61e2cb"
+    },
+    {
+      "url": "https://storage.googleapis.com/deepmind-media/Datasets/kinetics600.tar.gz",
+      "bytes": 18155989,
+      "sha256": "14290349253a87c5a1761733da7ef20a15e90e5a6286b023555ce17497b80374"
+    }
+  ],
+  "limitations": [
+    "Distinct source IDs and exact hashes do not guarantee distinct people or exclude re-encoded reuploads.",
+    "No expert form-quality labels: this corpus cannot establish 80% form accuracy.",
+    "Source videos retain individual licenses; media remain local and must not be redistributed."
+  ]
+}

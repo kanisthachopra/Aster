@@ -1,4 +1,5 @@
 import type { ExerciseId } from '../game/types';
+import {extractActivityPoseFeatures,ACTIVITY_POSE_FEATURE_NAMES} from './activityFeatures';
 import type { AnalysisReport, EvidenceFrame, FrameMetrics, JointAngles, Landmark, Side } from './types';
 
 const clamp = (v: number) => Math.max(-1, Math.min(1, v));
@@ -13,7 +14,7 @@ export function angle(a: Landmark,b: Landmark,c: Landmark,aspect: number): numbe
   const u=[(a.x-b.x)*aspect,a.y-b.y],v=[(c.x-b.x)*aspect,c.y-b.y],size=Math.hypot(...u)*Math.hypot(...v);
   return size<1e-7 ? NaN : Math.acos(clamp((u[0]*v[0]+u[1]*v[1])/size))*180/Math.PI;
 }
-export function measure(p: Landmark[],exercise: ExerciseId,width: number,height: number): FrameMetrics | null {
+export function measure(p: Landmark[],exercise: ExerciseId,width: number,height: number,preferredSide?:Side): FrameMetrics | null {
   if(p.length!==33 || width<=0 || height<=0)return null;
   const aspect=width/height;
   const chain=(a:number,b:number,c:number):number|null=>{
@@ -27,7 +28,7 @@ export function measure(p: Landmark[],exercise: ExerciseId,width: number,height:
     const ids=sides[side],required=primary==='knee'?[ids[3],ids[4],ids[5]]:[ids[0],ids[1],ids[2]];
     return Math.min(...required.map(i=>visible(p[i])?p[i].visibility:0));
   };
-  const side:Side=quality('left')>=quality('right')?'left':'right';
+  const side:Side=preferredSide??(quality('left')>=quality('right')?'left':'right');
   const [s,,w,h,,a]=sides[side];
   const bodyTilt=visible(p[s])&&visible(p[h])?Math.atan2(Math.abs((p[h].x-p[s].x)*aspect),Math.abs(p[h].y-p[s].y))*180/Math.PI:null;
   const visibleJoints=Array.from({length:33},(_,i)=>i).filter(i=>visible(p[i]));
@@ -50,11 +51,29 @@ export function measure(p: Landmark[],exercise: ExerciseId,width: number,height:
 }
 
 // A consistent set-level side avoids turning alternating left/right estimates into false cycles.
-export function stabilizeFrames(frames:EvidenceFrame[],exercise:ExerciseId):EvidenceFrame[]{
+export function stabilizeFrames(frames:EvidenceFrame[],exercise:ExerciseId,width?:number,height?:number):EvidenceFrame[]{
   const metric:Metric=exercise==='squat'?'knee':'elbow';
   const score=(side:Side)=>frames.reduce((total,f)=>total+(number(f.metrics?.sides?.[side][metric])?1:0),0);
   const side:Side=score('left')>=score('right')?'left':'right';
-  return frames.map(f=>f.metrics?.sides?{...f,metrics:{...f.metrics,...f.metrics.sides[side],side}}:f);
+  const stabilized=frames.map(f=>f.metrics?.sides?{...f,metrics:width&&height&&f.landmarks.length===33?measure(f.landmarks,exercise,width,height,side):{...f.metrics,...f.metrics.sides[side],side}}:f);
+  if(exercise!=='squat'||!width||!height)return stabilized;
+  const history=extractActivityPoseFeatures(stabilized,width,height),feature=(name:typeof ACTIVITY_POSE_FEATURE_NAMES[number])=>history[ACTIVITY_POSE_FEATURE_NAMES.indexOf(name)];
+  // An overhead reach is compatible with a squat when visible feet anchor hip
+  // movement. A hanging knee tuck does not establish this fixed-foot context.
+  const foot=feature('peakFootAnchoredBodyMotion'),hand=feature('peakHandAnchoredBodyMotion');
+  const supported=foot>.06&&foot>hand*1.25&&feature('maximumTrackingJump')<.8;
+  if(!supported){
+    const hanging=hand>.06&&hand>foot*1.25;
+    // Missing upper-body evidence is not positive evidence of a grounded squat.
+    const visibleContext=feature('wristShoulderCoverage')>=.5&&feature('ankleHipCoverage')>=.5&&feature('torsoCoverage')>=.5;
+    if(hanging||(foot<=.06&&!visibleContext))return stabilized.map(f=>f.metrics?{...f,metrics:{...f.metrics,orientation:hanging?'incompatible' as const:'uncertain' as const,orientationMatches:false}}:f);
+    return stabilized;
+  }
+  return stabilized.map(f=>{
+    const m=f.metrics;if(!m||!number(m.knee))return f;const ids=sides[m.side],hip=f.landmarks[ids[3]],ankle=f.landmarks[ids[5]];
+    if(!visible(hip)||!visible(ankle)||ankle.y<=hip.y+.06||(number(m.bodyTilt)&&m.bodyTilt>=75))return f;
+    return {...f,metrics:{...m,orientation:'compatible' as const,orientationMatches:true}};
+  });
 }
 
 export function countCycles(frames:EvidenceFrame[],metric:'knee'|'elbow',exercise?:ExerciseId):number{
@@ -107,15 +126,18 @@ function captureNotes(frames:EvidenceFrame[],exercise:ExerciseId):string[]{
 }
 
 export function summarize(input:EvidenceFrame[],exercise:ExerciseId,duration:number,width:number,height:number):AnalysisReport{
-  const frames=stabilizeFrames(input,exercise),metric:'knee'|'elbow'=exercise==='squat'?'knee':'elbow';
+  const frames=stabilizeFrames(input,exercise,width,height),metric:'knee'|'elbow'=exercise==='squat'?'knee':'elbow';
   const poseFrames=frames.filter(f=>f.landmarks.length===33).length;
   const measurable=frames.filter(f=>number(f.metrics?.[metric])),valid=measurable.filter(f=>f.metrics!.orientationMatches);
   const coverage=frames.length?measurable.length/frames.length:0,repetitions=countCycles(frames,metric,exercise);
-  const usable=valid.length>=8&&repetitions>0;
+  const history=extractActivityPoseFeatures(frames,width,height),trackingJump=history[ACTIVITY_POSE_FEATURE_NAMES.indexOf('maximumTrackingJump')]>=.8;
+    const usable=valid.length>=8&&repetitions>0&&!trackingJump;
   const available=frames.filter(f=>f.metrics&&(['elbow','knee','hip'] as const).some(k=>number(f.metrics![k])));
   const incompatible=measurable.length>0&&measurable.filter(f=>f.metrics!.orientation==='incompatible').length/measurable.length>.7;
-  const status:AnalysisReport['status']=usable?'usable':available.length>=3&&!incompatible?'partial':'insufficient';
+  const status:AnalysisReport['status']=usable?'usable':available.length>=3?'partial':'insufficient';
   const notes=captureNotes(frames,exercise);
+  if(incompatible&&available.length>=3)notes.unshift('Visible positions do not consistently establish the selected exercise. I have preserved the tracked frames, but cannot confirm a set or give station-specific corrections from them. Check the selected station and the joint markers.');
+    if(trackingJump)notes.unshift('The tracked body shifts abruptly between sampled frames. A camera change or a change of tracked person can break continuity; I cannot confirm a complete set from these tracks.');
   const report:AnalysisReport={id:crypto.randomUUID(),exercise,status,duration,width,height,sampledFrames:frames.length,usableFrames:measurable.length,coverage,poseFrames,
     frames,findings:[],estimatedRepetitions:usable?repetitions:0,captureNotes:notes,
     measurementCoverage:Object.fromEntries((['elbow','knee','hip'] as const).map(k=>[k,frames.filter(f=>number(f.metrics?.[k])).length/Math.max(1,frames.length)])) as AnalysisReport['measurementCoverage'],

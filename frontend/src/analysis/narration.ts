@@ -1,8 +1,14 @@
 import type { AnalysisReport, Finding } from './types';
 
-const speechText = (text: string) => text.replace(/\s+/g, ' ').trim();
+const speechText = (text: string) => text
+  .replace(/(\d)–(?=\d)/g, '$1 to ')
+  .replace(/\b(\d+(?:\.\d+)?)s\b/g, '$1 seconds')
+  .replace(/°/g, ' degrees').replace(/%/g, ' percent')
+  .replace(/shoulder–hip–ankle/g, 'shoulder, hip and ankle')
+  .replace(/\s+/g, ' ').trim();
 export function narrateFinding(finding: Finding) {
-  return speechText(`At ${finding.timestamp.toFixed(1)} seconds. ${finding.observation} ${finding.suggestion}`);
+  const observation = finding.observation.replace(/^At \d+(?:\.\d+)?s,\s*/i, '');
+  return speechText(`At ${finding.timestamp.toFixed(1)} seconds, ${observation} ${finding.suggestion}`);
 }
 /** Narration is derived from evidence, never a second model inventing corrections. */
 export function narrateReport(report: AnalysisReport) {

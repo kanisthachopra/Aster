@@ -23,7 +23,9 @@ test('synthetic rule tests reject stillness, incomplete cycles, tracking gaps an
   }
   const frames = syntheticFrames([170,165,140,110,80,100,130,165,170,165,140,110,80,100,130,165,170]);
   expect(countCycles(frames,'knee')).toBe(2);
-  expect(summarize(frames,'squat',4.25,1280,720).status).toBe('usable');
+  // Angle-only fixtures test cycle arithmetic, but cannot establish grounded
+  // movement without actual visible landmark geometry.
+  expect(summarize(frames,'squat',4.25,1280,720).status).toBe('partial');
   const wrong = frames.map(f=>({...f,metrics:{...f.metrics!,orientationMatches:false}}));
   expect(summarize(wrong,'squat',4.25,1280,720).status).not.toBe('usable');
   const broken = syntheticFrames([170,165,140,110,80,100,130,165,170]);

@@ -1,0 +1,151 @@
+{
+  "frozenAt": "2026-10-08T09:47:59.930Z",
+  "selectedVersion": "revised3",
+  "sourceHash": "78980bd329ed7ee79200a532cf445033104cf7ba0c3b1c1e008d04076081bd99",
+  "poseFeatureHash": "d5094b13c9b18fd2b208b4fcbacc9341166c08fd7a3c2f2e8696976fd0a06ddf",
+  "manifestHash": "c72e3e69e87fc1cc4f54296a8f39d30001c255a689f41e525267e1d6f019121e",
+  "baselineSourceHash": "067cbc0076f54779b357708de72a380c0fb0fda20074286fed26e0f4ba716490",
+  "developmentEvidence": {
+    "baseline": {
+      "train": {
+        "positiveCompleted": 168,
+        "positivePartial": 173,
+        "positiveInsufficient": 19,
+        "wrongStationAccepted": 9,
+        "wrongStationTrials": 720,
+        "byClass": {
+          "pullup": {
+            "videos": 120,
+            "usable": 48,
+            "partial": 70,
+            "insufficient": 2,
+            "wrongStationAccepted": 2,
+            "wrongStationTrials": 240
+          },
+          "pushup": {
+            "videos": 120,
+            "usable": 75,
+            "partial": 42,
+            "insufficient": 3,
+            "wrongStationAccepted": 6,
+            "wrongStationTrials": 240
+          },
+          "squat": {
+            "videos": 120,
+            "usable": 45,
+            "partial": 61,
+            "insufficient": 14,
+            "wrongStationAccepted": 1,
+            "wrongStationTrials": 240
+          }
+        }
+      },
+      "validation": {
+        "positiveCompleted": 63,
+        "positivePartial": 48,
+        "positiveInsufficient": 9,
+        "wrongStationAccepted": 4,
+        "wrongStationTrials": 240,
+        "byClass": {
+          "pullup": {
+            "videos": 40,
+            "usable": 22,
+            "partial": 17,
+            "insufficient": 1,
+            "wrongStationAccepted": 3,
+            "wrongStationTrials": 80
+          },
+          "pushup": {
+            "videos": 40,
+            "usable": 23,
+            "partial": 14,
+            "insufficient": 3,
+            "wrongStationAccepted": 1,
+            "wrongStationTrials": 80
+          },
+          "squat": {
+            "videos": 40,
+            "usable": 18,
+            "partial": 17,
+            "insufficient": 5,
+            "wrongStationAccepted": 0,
+            "wrongStationTrials": 80
+          }
+        }
+      }
+    },
+    "revised": {
+      "train": {
+        "positiveCompleted": 169,
+        "positivePartial": 178,
+        "positiveInsufficient": 13,
+        "wrongStationAccepted": 5,
+        "wrongStationTrials": 720,
+        "byClass": {
+          "pullup": {
+            "videos": 120,
+            "usable": 49,
+            "partial": 69,
+            "insufficient": 2,
+            "wrongStationAccepted": 0,
+            "wrongStationTrials": 240
+          },
+          "pushup": {
+            "videos": 120,
+            "usable": 74,
+            "partial": 44,
+            "insufficient": 2,
+            "wrongStationAccepted": 4,
+            "wrongStationTrials": 240
+          },
+          "squat": {
+            "videos": 120,
+            "usable": 46,
+            "partial": 65,
+            "insufficient": 9,
+            "wrongStationAccepted": 1,
+            "wrongStationTrials": 240
+          }
+        }
+      },
+      "validation": {
+        "positiveCompleted": 64,
+        "positivePartial": 50,
+        "positiveInsufficient": 6,
+        "wrongStationAccepted": 1,
+        "wrongStationTrials": 240,
+        "byClass": {
+          "pullup": {
+            "videos": 40,
+            "usable": 23,
+            "partial": 16,
+            "insufficient": 1,
+            "wrongStationAccepted": 0,
+            "wrongStationTrials": 80
+          },
+          "pushup": {
+            "videos": 40,
+            "usable": 25,
+            "partial": 13,
+            "insufficient": 2,
+            "wrongStationAccepted": 1,
+            "wrongStationTrials": 80
+          },
+          "squat": {
+            "videos": 40,
+            "usable": 16,
+            "partial": 21,
+            "insufficient": 3,
+            "wrongStationAccepted": 0,
+            "wrongStationTrials": 80
+          }
+        }
+      }
+    }
+  },
+  "decision": "Select revised3 for final held-out core audit: overall usable coverage slightly improves on train and validation, wrong-station completion falls, and more measurable ambiguous footage remains partial. Squat validation usable coverage falls18 to16 of40, explicitly accepted as a conservative tradeoff with partial observations16 to21 and insufficient5 to3. Do not reinterpret a usable review as correct-form ground truth.",
+  "heldOutGoNoGo": "Ship core only if held-out total usable coverage is no worse than baseline, wrong-station completions do not increase, and partial-or-usable observation coverage does not fall. No post-test tuning.",
+  "classifierCandidate": "forest-v1",
+  "classifierDecision": "Forest improves development accuracy over the linear candidate but not over the predeclared baseline recognition comparator. Preserve the no-ship development decision despite higher accepted precision; audit frozen forest only as a research result.",
+  "classifierModelHash": "d8f3eb5de53a9a276be8b047b116796ff1b6d22315937400c9a6ac3150047b5b"
+}

@@ -114,9 +114,9 @@ The learner explicitly pauses world dynamics and typography work. Current priori
 - [x] Show sampled recording frames and their actual detected skeleton during processing; handle missing joints and cancellation without fabricating motion.
 - [x] Derive spoken feedback from each report, including timestamped observations, suggestions and uncertainty; add transcript and playback controls.
 - [x] Prepare an ignored server-only Deepgram key slot and local speech integration.
-- [ ] Verify real Deepgram synthesis after the learner supplies a key. Mocked transport checks do not establish real voice quality.
-- [ ] Acquire, deduplicate and decode 200 pull-up, 200 push-up and 200 squat clips with provenance and source-group splits.
-- [ ] Run the app's actual inference pipeline on all 600; retain reproducible aggregate results and evaluation protocol.
-- [ ] Evaluate and improve development-set failure modes; preserve separate calibration and held-out test sets.
+- [x] Verify real Deepgram synthesis after the learner supplies a key. A real 295-character request returned playable MP3; the learner chose to keep this voice for now. Browser playback verification is recorded separately.
+- [x] Acquire, deduplicate and decode 200 pull-up, 200 push-up and 200 squat clips with provenance and source-group splits.
+- [x] Run the app's actual inference pipeline on all 600; retain reproducible aggregate results and evaluation protocol. Completed 200 per exercise with zero unresolved failures, using matching actual-inference caches when resuming.
+- [x] Evaluate and improve development-set failure modes; preserve separate calibration and held-out test sets. Shipped the frozen core refinement after its final audit; withheld the trained activity classifier when it missed the predeclared release criteria. See evaluation/results/summary.md.
 - [ ] Demonstrate at least 80% form-feedback accuracy on independently judged form labels. Action labels alone cannot close this item.
 - [ ] Learner tries the new tracking display and spoken feedback.

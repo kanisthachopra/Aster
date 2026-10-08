@@ -1,6 +1,6 @@
 # Aster — Outpost 07
 
-A desktop-browser exercise park on a distant moon. Version **0.5** focuses on the movement review: actual tracked skeletons during processing and report-specific spoken feedback through an optional Deepgram connection. World production is paused while the core review and a 600-clip evaluation are developed. The complete cinematic product and persistent private accounts remain in development.
+A desktop-browser exercise park on a distant moon. Version **0.5** adds actual tracked skeletons during processing, report-specific Deepgram speech, and a completed 600-video evaluation. World production is paused while the core review is refined. The complete cinematic product and persistent private accounts remain in development.
 
 ## Try it
 
@@ -44,6 +44,10 @@ The [evaluation repository](evaluation/README.md) keeps acquisition, source-grou
 
 ## Analysis evidence and limits
 
+All **600 distinct public clips** completed actual local inference: 200 pull-ups, 200 push-ups and 200 squats. Sources were split into 360 training, 120 validation and 120 held-out clips. The shipped rule refinement reduced insufficient held-out reviews from 8 to 4, preserved 58 confirmed-cycle reviews, and kept wrong-station completions at 0/240 trials. It improves access to partial observations; it does not validate technique corrections. See the [complete benchmark and limitations](evaluation/results/summary.md).
+
+The trained activity classifier remains **research-only**: its 94.1% accepted-prediction precision came with 84.2% coverage, and the squat precision interval missed the predeclared confidence gate. Repetition counts remain exploratory. **80% form-correction accuracy has not been established**; action labels cannot provide that evidence. A separate [form-validation audit and annotation protocol](evaluation/form-validation/README.md) records available sources and the missing ground truth. This work uses supervised evaluation, not reinforcement learning.
+
 The Full model processed an independent public-domain seven-second Navy push-up clip: 28/28 measurable samples and one estimated visible cycle. The same clip cannot earn completion at incompatible stations. Additional private, locally inspected examples produced useful squat and pull-up reviews; a severely cropped push-up recording produced partial observations and specific tracking-gap guidance. No private media are shipped or uploaded, and no filename-specific behavior was added. Tests cover no-person footage, cancellation, projected-angle math, incomplete cycles, cropped joints and tracking gaps. These checks do not establish representative accuracy. Measurements are two-dimensional projections; they cannot establish safe range, pain, load suitability or hidden joint positions.
 
 See [model provenance and fixture instructions](frontend/public/models/README.md). Test exercise media are ignored local artifacts, not shipped assets.
@@ -55,7 +59,7 @@ npm --prefix frontend run build
 npm --prefix frontend test
 ```
 
-The build typechecks and bundles production assets. Browser tests use installed Microsoft Edge; change the Playwright browser setting if unavailable. Tests reuse the running local server. Optional real-media checks require the documented fixtures; they skip when those files are absent. Screenshots and traces are ignored. See [0.4 verification](devpost/verification-0.4.md) and the [skills review](devpost/skills-review-0.4.md).
+The build typechecks and bundles production assets. Browser tests use installed Microsoft Edge; change the Playwright browser setting if unavailable. Tests reuse the running local server. Optional real-media checks require the documented fixtures; they skip when those files are absent. Real-provider speech testing requires an explicit opt-in and otherwise skips. Screenshots and traces are ignored. See [0.5 verification](devpost/verification-0.5.md), [0.4 verification](devpost/verification-0.4.md), and the [skills review](devpost/skills-review-0.4.md).
 
 ## Remaining product work
 

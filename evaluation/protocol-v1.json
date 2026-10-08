@@ -1,0 +1,51 @@
+{
+  "protocolVersion": "aster-activity-600-v1",
+  "target": {
+    "totalDistinctVideos": 600,
+    "perClass": {
+      "pullup": 200,
+      "pushup": 200,
+      "squat": 200
+    }
+  },
+  "sampling": "Deterministic source-ID hashing among eligible public clips, before model outcomes. Distinct bytes and original-source groups checked. Development pilots force their whole group into training.",
+  "splits": {
+    "groupKey": "sourceGroup",
+    "seed": "aster-600-v1",
+    "ratios": {
+      "train": 0.6,
+      "validation": 0.2,
+      "test": 0.2
+    }
+  },
+  "inference": "Actual app analyzeVideo and locally hosted MediaPipe Full v1, no synthetic landmark substitution. Cache raw observations and reuse across three station-specific rule evaluations.",
+  "baseline": "Frozen evaluation/versions/baseline/measurements.ts plus deterministic orientation/motion rule scoring. Training selects feature weights; validation selects an abstention threshold and margin.",
+  "candidate": "Regularized multinomial logistic regression over 46 app-derived pose/motion features. Only training groups fit weights. Three-fold source-group cross-validation selects regularization from [0.01,0.03,0.1]. Validation selects abstention threshold/margin from a fixed finite grid.",
+  "abstentionGate": {
+    "target": "95% Wilson lower bound of accepted activity-recognition precision at least 0.80",
+    "minimumValidationSupport": "Per predicted class: min(20,ceil(number of validation examples of that class*0.4)). Separate threshold/margin gate per predicted class; a class failing the Wilson precision gate always abstains.",
+    "requiresVisibleMotionEvidence": true,
+    "visibleMotionGuard": "Richer anchor features store excursion/2: classifier threshold0.025 means unscaled observed body-versus-hand/foot anchor excursion greater than0.05 torso lengths in a2-second window. Core squat support threshold0.06 means unscaled excursion greater than0.12 torso lengths. maximumTrackingJump stores displacement/3, so the0.8 cutoff means2.4 torso lengths between nearby sampled frames. These exploratory tracking-coherence gates are not biomechanical safety thresholds. Existing minimum measured angle range10degrees and coverage10% also apply to the classifier."
+  },
+  "primaryMetrics": [
+    "Accuracy including abstentions as misses",
+    "Accepted prediction precision and 95% Wilson interval",
+    "Prediction coverage",
+    "Per-class confusion and balanced recall",
+    "True-station completion coverage",
+    "Wrong-station completion rate",
+    "Per-predicted-class precision, 95% interval, support, recall and coverage"
+  ],
+  "conditionalMetrics": {
+    "repetitionCounting": "MAE, RMSE and within-one accuracy only with independently annotated counts matching exact evaluated clip boundaries",
+    "formQuality": "Unavailable unless expert good/bad form labels and rubric exist; no action label is a correct-form label"
+  },
+  "selection": "Choose candidate and gate using training/validation only. Freeze both before test scoring. Held-out results are a final go/no-go audit, not a tuning set. A failed test gate is reported and does not trigger retuning on that test.",
+  "claimBoundary": "Supervised activity recognition, not reinforcement learning, neural pose-model retraining, a form-quality classifier, injury diagnosis, or proof of safe exercise. Runtime model scores are not individual correctness probabilities. Report coverage and abstentions with any precision number.",
+  "secondaryCandidate": "If the linear candidate underperforms in development, a deterministic random forest over the same46 pose/motion features is allowed.48 bootstrap trees; training-only3-fold source-group CV chooses maxDepth in[3,5] and minLeaf in[6,12], featureCount5, seed10937. The same per-class validation gate applies. Candidate choice uses only development results; final test remains unopened until the candidate is frozen.",
+  "featureRevision": "Training-only visual audit identified overhead-arm squats, fixed-hand above-bar pull-up tops, hanging knee tucks, standing rest segments and tracking-person discontinuities. Before validation/test scoring,25 visible-joint motion/history features were added to21 existing station features: coverage, robust torso-normalized joint excursions, relative joint heights, torso tilt, tracking jumps, and peak2-second hand/foot anchored body motion. Missing joints are not inferred. Shared implementation:frontend/src/analysis/activityFeatures.ts, hashed in artifacts.",
+  "coreRuleCandidate": "Frozen original rules are compared with evaluation/versions/revised/measurements.ts: consistent-side orientation; visible fixed-foot/hip-motion context can admit overhead-arm squats; missing ground-support evidence or dominant hanging support cannot establish a squat cycle; abrupt tracking discontinuities prevent completed-set claims. Rule choice is based on training/validation correct-station completion versus wrong-station completion and partial observation coverage. No test-driven threshold changes.",
+  "featureGeometryLimit": "Torso normalization and tilt use one coherent shoulder/hip side selected by paired visibility across the clip. Wrists, elbows and ankles retain their own most-visible side consistently across the clip. Relative-height and anchor features can therefore compare different sides; they are image-plane motion descriptors, not same-limb anatomical measurements. Actual joint angles retain their own three-joint chain requirements.",
+  "coreRuleDevelopmentRefinement": "After development-only comparison showed a four-video loss in squat validation completion, a second bounded rule candidate preserves the original orientation rule when wrist/shoulder, ankle/hip and coherent torso are each observed in at least half the sampled frames, despite low anchored excursion. Strong hanging evidence still rejects squat completion. This refinement is frozen before any held-out outcome scoring; it does not infer missing joints.",
+  "partialObservationPolicy": "Before held-out testing, revised3 preserves a limited partial report whenever at least three sampled frames contain actual measurable visible joints, even if selected-exercise identity is incompatible or ambiguous. Such reports do not award completion, and incompatible frames do not produce station-specific correction findings. This changes report availability, not classifier features or completion eligibility."
+}

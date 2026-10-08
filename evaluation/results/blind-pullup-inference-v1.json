@@ -1,0 +1,174 @@
+{
+  "runId": "blind-pullup-inference-v1",
+  "createdAt": "2026-10-08T08:12:21.830Z",
+  "engineKey": "6ef59e1c82fd6042913c",
+  "fingerprints": {
+    "frontend/public/models/pose_landmarker_full.task": "5134a3aad27a58b93da0088d431f366da362b44e3ccfbe3462b3827a839011b1",
+    "frontend/public/mediapipe/pose-worker.js": "f04cc8c6b2d6bae4295433f057fa6525825cbf686aed5fa6aac0c52388d90792",
+    "frontend/src/analysis/analyzeVideo.ts": "b44fcc374f8931a4955b72a90e5bff7badc2c03d752729e5dddfcb2781f16443"
+  },
+  "manifest": {
+    "total": 200,
+    "byClass": {
+      "pullup": 200,
+      "pushup": 0,
+      "squat": 0
+    },
+    "bySplit": {
+      "train": 200,
+      "validation": 0,
+      "test": 0
+    },
+    "sourceGroups": 200,
+    "sha256": "9ed1a8a74f9d1b021c746ff5f9d52e6bae93cdb13d5e42bbb2571af282d86bd0"
+  },
+  "requested": 200,
+  "concurrency": 3,
+  "processed": 18,
+  "cached": 2,
+  "failed": 0,
+  "clips": [
+    {
+      "id": "k600-pullup-yv2yyDezWD4-000028-000038",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-POxw77MviHw-000007-000017",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 23,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-fBb2tMomdoY-000064-000074",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 56.2
+    },
+    {
+      "id": "k600-pullup-Kid6S_f3QhQ-000010-000020",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 62.667
+    },
+    {
+      "id": "k600-pullup-YVVns1LhKnM-000057-000067",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 66.026
+    },
+    {
+      "id": "k600-pullup-vEna10tCMzM-000080-000090",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 111.723
+    },
+    {
+      "id": "k600-pullup-_65iwGkdm70-000030-000040",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 109.783
+    },
+    {
+      "id": "k600-pullup-HSrGAlk5ouQ-000006-000016",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 107.822
+    },
+    {
+      "id": "k600-pullup-9emEijq7gmc-000005-000015",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 32,
+      "seconds": 51.024
+    },
+    {
+      "id": "k600-pullup-yKbQ7sDm2f0-000041-000051",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 23,
+      "seconds": 33.846
+    },
+    {
+      "id": "k600-pullup-beftoiHw7G8-000001-000011",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 78.977
+    },
+    {
+      "id": "k600-pullup-1eMXETpS9yo-000004-000014",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 80.742
+    },
+    {
+      "id": "k600-pullup-Rxt-xkISpNY-000015-000025",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 6.925
+    },
+    {
+      "id": "k600-pullup-uSzYBHbjLFI-000017-000027",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 7.775
+    },
+    {
+      "id": "k600-pullup-LejuXY1bCZ8-000019-000029",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 7.962
+    },
+    {
+      "id": "k600-pullup-LxkdL0tGGxE-000000-000010",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 23,
+      "seconds": 3.111
+    },
+    {
+      "id": "k600-pullup-ri7gn4oN5JI-000000-000010",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 5.579
+    },
+    {
+      "id": "k600-pullup-xJHurF-EZp8-000008-000018",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 5.388
+    },
+    {
+      "id": "k600-pullup-vEFKnY7h4iE-000002-000012",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 5.314
+    },
+    {
+      "id": "k600-pullup-07HsM5RLBcw-000018-000028",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 29,
+      "seconds": 5.348
+    }
+  ],
+  "interrupted": true,
+  "interruptionReason": "Task-owned process tree stopped after measured memory pressure. Completed matching caches retained and reused by the final600-record run. This summary is not a completed benchmark."
+}

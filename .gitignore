@@ -6,9 +6,15 @@ node_modules/
 dist/
 test-results/
 playwright-report/
+*.tsbuildinfo
 __pycache__/
 .venv/
 *.sqlite3
 private-media/
 artifacts/
 .tools/
+evaluation/data/
+evaluation/cache/
+evaluation/logs/
+evaluation/private/
+evaluation/manifests/*.in-progress.jsonl

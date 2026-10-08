@@ -1,0 +1,81 @@
+{
+  "kind": "aggregate metadata-only overlap audit; no fault labels, clips, or predictions inspected",
+  "generatedAt": "2026-10-08T09:28:09.020Z",
+  "lockedManifest": {
+    "path": "evaluation/manifests/dataset.jsonl",
+    "rows": 600,
+    "canonicalSha256": "c72e3e69e87fc1cc4f54296a8f39d30001c255a689f41e525267e1d6f019121e",
+    "fileSha256": "94e404308ef7a2c892807365aeef25903f69f3b239d729ccd456fd35fe089191",
+    "verifiedUnchanged": true
+  },
+  "fitAqa": {
+    "commit": "eec7c3be769f038889a05e1ac81a93b0cf2513fd",
+    "projectedColumns": [
+      "dataset",
+      "video_name",
+      "video_sha256",
+      "action_name"
+    ],
+    "uniqueTargetAssets": 287,
+    "targetAssetsWithVideoHashes": 255,
+    "targetAssetsWithoutVideoHashes": 32,
+    "comparableOriginalSourceIds": 27,
+    "annotationSha256": {
+      "multiple_choice": "26fe661c5054dc64d9bb3b7ec267fc533ed3952907b8ffa763339b8328db461f",
+      "temporal_grounding": "5d2471fb599f627b56ad70d1880c65221571d97d538e24bf6ff01cc21826830f"
+    }
+  },
+  "decoder": {
+    "package": "hyparquet",
+    "version": "1.31.3",
+    "node": "v24.16.0",
+    "compression": "Node built-in ZSTD"
+  },
+  "totals": {
+    "exactHashMatchPairs": 0,
+    "sourceIdOnlyCandidatePairs": 2,
+    "sameSourceAndNominalTimeBoundsWithoutByteMatch": 2,
+    "crossExerciseMatchPairs": 0
+  },
+  "bySplit": {
+    "train": {
+      "lockedVideos": 360,
+      "exactHashMatchPairs": 0,
+      "sourceIdOnlyCandidatePairs": 1,
+      "sourceIdOnlyWithSameNominalTimeBounds": 1,
+      "sourceIdOnlyExerciseCounts": {
+        "pullup": 0,
+        "pushup": 0,
+        "squat": 1
+      }
+    },
+    "validation": {
+      "lockedVideos": 120,
+      "exactHashMatchPairs": 0,
+      "sourceIdOnlyCandidatePairs": 0,
+      "sourceIdOnlyWithSameNominalTimeBounds": 0,
+      "sourceIdOnlyExerciseCounts": {
+        "pullup": 0,
+        "pushup": 0,
+        "squat": 0
+      }
+    },
+    "test": {
+      "lockedVideos": 120,
+      "exactHashMatchPairs": 0,
+      "sourceIdOnlyCandidatePairs": 1,
+      "sourceIdOnlyWithSameNominalTimeBounds": 1,
+      "sourceIdOnlyExerciseCounts": {
+        "pullup": 0,
+        "pushup": 0,
+        "squat": 1
+      }
+    }
+  },
+  "interpretation": "Source ID or nominal interval equality without a SHA-256 match does not establish frame/encoding alignment; no labels may be transferred. These are future identity-verification candidates only. Current groups and splits remain locked, including any test candidates.",
+  "notInspected": [
+    "FitAQA gold/options/form_error/error_detail columns",
+    "core prediction files",
+    "video bytes or frames"
+  ]
+}

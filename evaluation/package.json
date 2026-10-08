@@ -1,0 +1,14 @@
+{
+  "name": "aster-local-evaluation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate": "node validate.mjs",
+    "run": "node run.mjs",
+    "score": "node score.mjs",
+    "train": "node train.mjs",
+    "finalize": "node finalize.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": { "node": ">=24" }
+}

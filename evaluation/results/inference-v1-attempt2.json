@@ -1,0 +1,2403 @@
+{
+  "runId": "inference-v1",
+  "createdAt": "2026-10-08T09:00:03.750Z",
+  "engineKey": "6ef59e1c82fd6042913c",
+  "fingerprints": {
+    "frontend/public/models/pose_landmarker_full.task": "5134a3aad27a58b93da0088d431f366da362b44e3ccfbe3462b3827a839011b1",
+    "frontend/public/mediapipe/pose-worker.js": "f04cc8c6b2d6bae4295433f057fa6525825cbf686aed5fa6aac0c52388d90792",
+    "frontend/src/analysis/analyzeVideo.ts": "b44fcc374f8931a4955b72a90e5bff7badc2c03d752729e5dddfcb2781f16443"
+  },
+  "manifest": {
+    "total": 600,
+    "byClass": {
+      "pullup": 200,
+      "pushup": 200,
+      "squat": 200
+    },
+    "bySplit": {
+      "train": 360,
+      "validation": 120,
+      "test": 120
+    },
+    "sourceGroups": 600,
+    "sha256": "c72e3e69e87fc1cc4f54296a8f39d30001c255a689f41e525267e1d6f019121e"
+  },
+  "requested": 600,
+  "concurrency": 1,
+  "processed": 0,
+  "cached": 338,
+  "failed": 0,
+  "retried": 0,
+  "clips": [
+    {
+      "id": "k600-pullup-yv2yyDezWD4-000028-000038",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-POxw77MviHw-000007-000017",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 23,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-YVVns1LhKnM-000057-000067",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-Kid6S_f3QhQ-000010-000020",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-fBb2tMomdoY-000064-000074",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-vEna10tCMzM-000080-000090",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-_65iwGkdm70-000030-000040",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-HSrGAlk5ouQ-000006-000016",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-9emEijq7gmc-000005-000015",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 32,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-1eMXETpS9yo-000004-000014",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-beftoiHw7G8-000001-000011",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-yKbQ7sDm2f0-000041-000051",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 23,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-uSzYBHbjLFI-000017-000027",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-LejuXY1bCZ8-000019-000029",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-Rxt-xkISpNY-000015-000025",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-LxkdL0tGGxE-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 23,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-ri7gn4oN5JI-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-xJHurF-EZp8-000008-000018",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-vEFKnY7h4iE-000002-000012",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-07HsM5RLBcw-000018-000028",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 29,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-ytqlH0d5WHA-000000-000010",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-LLiStJjNqwc-000159-000169",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-S7SxGBsFkeA-000115-000125",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-TIZ4oTuiUog-000010-000020",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-Tx08-jVQCaQ-000002-000012",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 20,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-PFISl6mVwtk-000045-000055",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 28,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-KzCSxCrhuo8-000000-000010",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 26,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-SXOOaN4bDag-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-biTwco8VN4I-000039-000049",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-bnlI4BASlXI-000017-000027",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-M1YMl8AU94I-000002-000012",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-U_5W43Ot-ls-000024-000034",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-4AgL3OMC0Z0-000034-000044",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-JmPMVRPNrYI-000001-000011",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-a162kOBlI4k-000003-000013",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-9ohUOUjnb_c-000014-000024",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-EHjPccV82nQ-000010-000020",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-n-c8-jT99fE-000049-000059",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-_KtitR_vvo0-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-ALX40RJd_GU-000000-000010",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 36,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-0_Ulm3cZ1Ro-000020-000030",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 36,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-c8QJc5EsThw-000013-000023",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-cXFmE9k0Nik-000051-000061",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-lw9V3G9PE0A-000013-000023",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-_S9I5Nog0u8-000005-000015",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-oUJzdYlh7sg-000002-000012",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-J4U-VxZIxZM-000010-000020",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-XusWRe8zQ5o-000000-000010",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-JKNwmx4b7HE-000024-000034",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-5gZl7z9C-P8-000002-000012",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-NwTH_voPRnQ-000000-000010",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 28,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-kz_noNxdGSg-000003-000013",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-qi8yifwu2rg-000001-000011",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-WdajLofbxOM-000013-000023",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-4oz23cNENRo-000005-000015",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-KGmoJM3SvDQ-000029-000039",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-XdM_QpyOox8-000010-000020",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-7xb6Siy4Cns-000011-000021",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 26,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-2E7Pk7h7mLI-000017-000027",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-O7cNmDgtPNo-000003-000013",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-vWPONRzoRxc-000038-000048",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-onNF_bQxOMg-000020-000030",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-pR1OMPf2-jY-000074-000084",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-f9NgVciVWLY-000007-000017",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-mwBDtFMCdgY-000019-000029",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-z7SzKk1oLmE-000025-000035",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-Ltk1P4rQS7w-000016-000026",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 39,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-AfN5l8z3QO8-000050-000060",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-opoIUl4eXTU-000000-000010",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-q5ABlrAeuWI-000003-000013",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-OUQKb8Qwqg8-000033-000043",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-TDoUkGaVxDo-000071-000081",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-klHQVbogkYw-000037-000047",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-eU7N2ythUn8-000031-000041",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-CgWZGGXYwLE-000024-000034",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-gHSL2cGguK8-000011-000021",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 35,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-4LewQ9qKLW8-000003-000013",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 37,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-tSs1fVXMuPA-000035-000045",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-lR55iuAxmsQ-000109-000119",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-UX890SrROhQ-000138-000148",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-b2mctDFemp8-000003-000013",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-tKdtGkeLGzM-000000-000010",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-JXwslkTQFUo-000107-000117",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-rHSMua6mDQs-000004-000014",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-Fndz1dG5y54-000184-000194",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-YaHfRx04h4o-000171-000181",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-65TYkOw-R6o-000006-000016",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-VLQZyNKdnJI-000019-000029",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-61GrOGdE31E-000010-000020",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-SsZMIS6ubRc-000024-000034",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-zjIFC2t1WCg-000001-000011",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-Cev-_XAr68k-000001-000011",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-O4MXIrHhqZo-000005-000015",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-y0QJ0dsQYbo-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-ATQrlQnb_ME-000009-000019",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-X1ub7-1sCUg-000000-000010",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 16,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-GZz-Ra1nElE-000004-000014",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-e84cJsiuVnA-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-OpJC8XSUQHg-000013-000023",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 23,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-whQNcTayo2Y-000002-000012",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 37,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-S3jzFktsnwE-000007-000017",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-hOo9KcMhy5s-000101-000111",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-whyljUAoLtQ-000017-000027",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 32,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-847WyTriT9M-000017-000027",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-XeGSEKOz31E-000001-000011",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 26,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-2zT2x_upEOU-000000-000010",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 28,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-MQc6yogMXhA-000073-000083",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-fKZHo9Oz-4o-000026-000036",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 33,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-nSrXq1DDSk8-000009-000019",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-ud9cWaLSzbs-000086-000096",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 26,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-0zEbGDBhta4-000001-000011",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-HnXbfxIl9Ak-000025-000035",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 33,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-n0aq5Rl6msw-000140-000150",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 22,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-P4wdPebB0sE-000004-000014",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-pz5TKEqbVAc-000051-000061",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-NPSjLLyjzuA-000037-000047",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-L2_sNxxvmuw-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-cQNv3KqF7E4-000065-000075",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-cptVIr4OJx8-000093-000103",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-crBWD1_8H4Q-000002-000012",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-_2ynLsdbiOs-000017-000027",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-ivhP9QJgQQA-000000-000010",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup--5FM8mMJeYc-000075-000085",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-PEhUvWV1l20-000008-000018",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-rsCkYJfAoEU-000011-000021",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-_xWx4X5IwZ8-000077-000087",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-iKKkKrJNDTs-000055-000065",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 36,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-vH8bQkOEjuo-000029-000039",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-nPSDR2WaSPE-000029-000039",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-3QGKKHPsP9A-000004-000014",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-_0s9oacFJkg-000003-000013",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-hKX6CteXJUQ-000004-000014",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 36,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-2P2Ua459CMY-000008-000018",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 28,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-y2OiEe3K-8c-000003-000013",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-MxS9dU-HXJI-000024-000034",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-tKY1YcY7moc-000001-000011",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-_l6lPs1R1y4-000003-000013",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-vUgoodaBlEY-000007-000017",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-Vq7BKfn8PIQ-000004-000014",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-SV3NlbJMZNI-000011-000021",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-wbgBlaE_wEA-000073-000083",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-sJ7xeUzZ0cw-000001-000011",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-BpvkIJvxZ90-000018-000028",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 30,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-y4Uy6Pg3XPk-000020-000030",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-Edj2LjS9jUY-000017-000027",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-l1TAClaRazw-000029-000039",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-ysNVMDKF0Pc-000012-000022",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-qMj6haNe6eE-000195-000205",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-hmoZbBdejOE-000013-000023",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-zz6lF-UE29A-000024-000034",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-NwTo6r8853k-000022-000032",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-HBTx111kAA0-000259-000269",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-6FiVvY3WclY-000060-000070",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-ApiHX52fAoo-000069-000079",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-EUdogFwqvq8-000008-000018",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-7t-hF6ogs4I-000080-000090",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-a1ohAnY9LEU-000060-000070",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-mddh-9tTmRs-000002-000012",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 30,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-t-9hp0Ez5gs-000000-000010",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-MK1Rc7e2-Xw-000006-000016",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 24,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-zjZjiCKP6eI-000003-000013",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-Fo7g3PVkvaU-000069-000079",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-S6udD0IlSRM-000012-000022",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 39,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-WteDSPi2XGg-000050-000060",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-aG_edH_6MrE-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-T5fWYIZiW4A-000004-000014",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-LUlt4tPj5SQ-000004-000014",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 37,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup--SOiww33KU8-000002-000012",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-TmiLrzwQL9k-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 36,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-LKMZw4iRY3M-000078-000088",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-VbHjDdj4l9E-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-lTUoHbXpx5Y-000000-000010",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-KLwwbvvfiaI-000002-000012",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-cn8-hMEKb6E-000030-000040",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-o6rzycLEQdE-000003-000013",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-pSMJrEOFJwU-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-uOhmPlzJlMk-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 39,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-pN_OBtdQhJA-000000-000010",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-XKP-zNvIBTg-000003-000013",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-OUOZ8MgyQmg-000002-000012",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-Ch8JRPtJX_0-000005-000015",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-ioGmBsMhXQ0-000050-000060",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-fKQDLos9E9w-000046-000056",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-RCI9YSTJEHY-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-pnDgJ7l_cQ0-000066-000076",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-NwUF_P6p4d8-000004-000014",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-T-A3-TNvNPY-000001-000011",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-PYGFpXpj1Kg-000029-000039",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-ji6yiab_b5o-000048-000058",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-wTAIqfTi_0M-000039-000049",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-kdhtwhS4nCk-000001-000011",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-0af6BfRm8lI-000001-000011",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-bqwuhXMz228-000011-000021",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 29,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-gHQ24WRYJVM-000017-000027",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-2BC4P5QWDSk-000008-000018",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 28,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-EnZRwkx00sk-000070-000080",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-gTqhkWubSTc-000142-000152",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-4jqm3Z2qjiI-000028-000038",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-IkJtW42a9FM-000003-000013",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pullup-ZyBUAy8auRY-000002-000012",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-78ZXclvYBWE-000012-000022",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-1WEgLgcFT-E-000013-000023",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 36,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-Q7zU9ZBekdA-000000-000010",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-aEkXO_5rPjI-000010-000020",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 37,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-y4gu66DArqg-000057-000067",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-nHal5q656nM-000013-000023",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 38,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-pQ8SdGYvCss-000002-000012",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 28,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-Z1iV4D61hKo-000001-000011",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-ktlUya-qgIU-000013-000023",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-3QnXCGe6xZA-000007-000017",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-qopddvcWCOU-000088-000098",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-eeu8neb0ySY-000007-000017",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup--4H2Ub_l2QA-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 25,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-jGbDC5Bvkqw-000010-000020",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 26,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-RuOSy8kXPRg-000093-000103",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-4LrlgRXSO3A-000000-000010",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 27,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-a2LBOKwdPcQ-000001-000011",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-P9iZqI0gcWs-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-3dLhi7qJeY4-000007-000017",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 39,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-1WoJoFf11AU-000014-000024",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-jGLcf-jJaJw-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-kc2K0HgimpU-000052-000062",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-QmEd3xYdhCQ-000028-000038",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-b95HmjNm0bs-000061-000071",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-OG_q7BFjKQU-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-S31FfvUwStM-000000-000010",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-J7JCSqOlgIY-000002-000012",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 36,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-pk62BpEHQN8-000007-000017",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 34,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-19lxJWDYgI8-000008-000018",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 38,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-N1RPjOL7Sf8-000000-000010",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 12,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup--ed2QplJMQw-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 34,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-Y6j3xvZBeyY-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 39,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-3pP4EmzHx0k-000016-000026",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-ZebYRRLB3SM-000000-000010",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-H3nU7fggaBE-000020-000030",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-5r2bPO0Z--0-000062-000072",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-pXZpKk37Vnw-000055-000065",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-pevbpXl0RLs-000000-000010",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-9qLtqTCf-nI-000004-000014",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-f6ZUi-QYVdI-000000-000010",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 38,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-f2AfRV7qCnE-000005-000015",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-SC-XC4jf_lY-000009-000019",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 32,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-zffxVv0LCz8-000102-000112",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-nGDDCCY4iQk-000037-000047",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 33,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-XPhncl06VKM-000118-000128",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 20,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-OaXW4R2pnSo-000020-000030",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 36,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-bS3tKkxMUlM-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-zJTkfo-sWm8-000045-000055",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-AAP--2lzb7o-000047-000057",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 38,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-q38xkDR67Xc-000010-000020",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-2x-4bgRvIHA-000004-000014",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-A2u9M2Bi6-I-000315-000325",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-bx4oG5Towdg-000013-000023",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-sEGJ88bqEz0-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-8i5iZdDLK2k-000003-000013",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-tGv-8GE3gsk-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-T2dnRYhqzik-000000-000010",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-2V6zHS9McGE-000009-000019",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-N2RALFl13eI-000001-000011",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 37,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-2dnt-8wmeds-000000-000010",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-JTPkh1IhcVw-000000-000010",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-fYysYL_eZXs-000160-000170",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-a-CVXlMpy_s-000010-000020",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup--KW8ptQGGXM-000000-000010",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-xFa21mq3xIQ-000039-000049",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-52W2CuJhDZs-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 29,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-G-_DB4PFkdw-000013-000023",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-Odehfb2PZek-000001-000011",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-YAD22zlGTRA-000257-000267",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-m2It8oXLsE0-000003-000013",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 21,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-R545oNayWH8-000003-000013",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-Kd7eUjnFozQ-000060-000070",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-h7e6sp9tS6I-000159-000169",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-ekhHO6lmWVM-000133-000143",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-M0TsTELFhGM-000008-000018",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-Vy5vq0vnkxQ-000008-000018",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-zh-DVnmvwvw-000002-000012",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-8Dy721ifPRQ-000007-000017",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-qdXjaIibjNE-000054-000064",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-hV54y8BVEtY-000018-000028",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-fZ495Xjbtw8-000019-000029",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-o3HgCuc6u3Y-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-ecNPrSc9alc-000037-000047",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup--EicsYK0lxY-000003-000013",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-W0gq1RmFfIc-000025-000035",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-2qa1avIsLaA-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-zhJdCOPLQfk-000007-000017",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-EA8g7q9jauM-000016-000026",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 39,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-OCjZz0YU26Q-000000-000010",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-RRjz65DkgKU-000021-000031",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-TjZPxJqLm5o-000023-000033",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-X-coaoY6KII-000003-000013",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 38,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-2wzx_4ntGVg-000032-000042",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-7LU7qeHjlF4-000033-000043",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-m408i9NFQIY-000000-000010",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-UcVQuUV-G9E-000002-000012",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 33,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-8MNF_2cWwp0-000000-000010",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 39,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-OCprW1PXzLc-000040-000050",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-3vXnpSMhAHY-000072-000082",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-yc4jZ6AjoiQ-000000-000010",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-Wyjt23K-7Zg-000047-000057",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 35,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup--WTRl_h5XKg-000118-000128",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-20agCg2s0uo-000002-000012",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-3pzJ8BUNttw-000159-000169",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-KhPZydhpd0I-000003-000013",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 36,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-r7kValMbcHo-000014-000024",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-9D0XkGNKVMw-000014-000024",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 38,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-I5x_x9JJM-I-000002-000012",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-_CI6EhRDhJ8-000015-000025",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-s0XWAiQO5c8-000000-000010",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-l4hZmhKrqq8-000014-000024",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-9JXoluSGdcA-000017-000027",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-8fsQU5xAaWo-000000-000010",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 28,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-Ga_Dq7tKfvc-000010-000020",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 36,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup--ZMVkEzqLBg-000040-000050",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-NC0-2f9j_JA-000010-000020",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-sdiqFmlovFE-000000-000010",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-AXCVO9S15z0-000011-000021",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-C7eF-MQdX1E-000064-000074",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-d7mkkyYM4Ac-000020-000030",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-XBmVYR0hWd0-000028-000038",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-NM8_O3IbAlw-000002-000012",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 32,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-Lret4qtbbsg-000014-000024",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-miNX6dg_arc-000160-000170",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 38,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-07eq1ZyNg_U-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-cFwYrO6rdwY-000023-000033",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-f5QW2tqpigM-000032-000042",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 37,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-XvVrqkgojg0-000077-000087",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-rt8-BD5kxps-000025-000035",
+      "split": "validation",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-heNyItd8seA-000002-000012",
+      "split": "test",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-DcB97BukTf0-000003-000013",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-XeidoTtIYjs-000003-000013",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-sDbqmRT7om0-000005-000015",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-EozTa5xQDR4-000011-000021",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-G0hZD0DGeTA-000002-000012",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 36,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-2ncNeIBknE8-000015-000025",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-JJQzQRZACgw-000000-000010",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    },
+    {
+      "id": "k600-pushup-u4hywnSLIOw-000276-000286",
+      "split": "train",
+      "outcome": "cached",
+      "samples": 40,
+      "seconds": 0
+    }
+  ],
+  "finishedAt": "2026-10-08T09:00:15.727Z",
+  "stopped": false,
+  "complete": false,
+  "interruptionReason": "Temporary Windows EPERM rename lock while replaying already completed caches. No new inference was lost. Atomic checkpoint retries were added before resuming."
+}

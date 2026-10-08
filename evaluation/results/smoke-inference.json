@@ -1,0 +1,41 @@
+{
+  "runId": "smoke-inference",
+  "createdAt": "2026-10-08T08:02:30.389Z",
+  "engineKey": "6ef59e1c82fd6042913c",
+  "fingerprints": {
+    "frontend/public/models/pose_landmarker_full.task": "5134a3aad27a58b93da0088d431f366da362b44e3ccfbe3462b3827a839011b1",
+    "frontend/public/mediapipe/pose-worker.js": "f04cc8c6b2d6bae4295433f057fa6525825cbf686aed5fa6aac0c52388d90792",
+    "frontend/src/analysis/analyzeVideo.ts": "b44fcc374f8931a4955b72a90e5bff7badc2c03d752729e5dddfcb2781f16443"
+  },
+  "manifest": {
+    "total": 1,
+    "byClass": {
+      "pullup": 0,
+      "pushup": 1,
+      "squat": 0
+    },
+    "bySplit": {
+      "train": 1,
+      "validation": 0,
+      "test": 0
+    },
+    "sourceGroups": 1,
+    "sha256": "5cd81ec1eb8152077f6de1a078e7c2f390155477670e580acb29ba12f5e74dbe"
+  },
+  "requested": 1,
+  "concurrency": 1,
+  "processed": 1,
+  "cached": 0,
+  "failed": 0,
+  "clips": [
+    {
+      "id": "public-smoke",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 28,
+      "seconds": 38.052
+    }
+  ],
+  "finishedAt": "2026-10-08T08:03:49.450Z",
+  "stopped": false
+}

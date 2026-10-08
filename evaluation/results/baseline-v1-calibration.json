@@ -1,0 +1,598 @@
+{
+  "createdAt": "2026-10-08T09:44:20.638Z",
+  "version": "baseline",
+  "sourceHash": "067cbc0076f54779b357708de72a380c0fb0fda20074286fed26e0f4ba716490",
+  "poseFeatureHash": "d5094b13c9b18fd2b208b4fcbacc9341166c08fd7a3c2f2e8696976fd0a06ddf",
+  "engineKey": "6ef59e1c82fd6042913c",
+  "manifest": {
+    "total": 600,
+    "byClass": {
+      "pullup": 200,
+      "pushup": 200,
+      "squat": 200
+    },
+    "bySplit": {
+      "train": 360,
+      "validation": 120,
+      "test": 120
+    },
+    "sourceGroups": 600,
+    "sha256": "c72e3e69e87fc1cc4f54296a8f39d30001c255a689f41e525267e1d6f019121e"
+  },
+  "incomplete": false,
+  "missing": [],
+  "calibration": {
+    "parameters": {
+      "coverageWeight": 1,
+      "motionWeight": 0.5,
+      "threshold": 0,
+      "margin": 0
+    },
+    "targetPrecision": 0.8,
+    "validationGatePassed": true,
+    "validation": {
+      "evaluated": 120,
+      "accepted": 114,
+      "correct": 101,
+      "wrong": 13,
+      "abstained": 6,
+      "accuracyIncludingAbstentions": 0.8416666666666667,
+      "coverage": 0.95,
+      "acceptedPrecision": 0.8859649122807017,
+      "acceptedPrecision95CI": {
+        "low": 0.8146297223884994,
+        "high": 0.9321354267608671
+      },
+      "confusion": {
+        "pullup": {
+          "pullup": 35,
+          "pushup": 0,
+          "squat": 3,
+          "abstain": 2
+        },
+        "pushup": {
+          "pullup": 2,
+          "pushup": 35,
+          "squat": 2,
+          "abstain": 1
+        },
+        "squat": {
+          "pullup": 5,
+          "pushup": 1,
+          "squat": 31,
+          "abstain": 3
+        }
+      },
+      "perClass": {
+        "pullup": {
+          "support": 40,
+          "acceptedAsClass": 42,
+          "correct": 35,
+          "acceptedFromClass": 38,
+          "coverage": 0.95,
+          "recall": 0.875,
+          "acceptedPrecision": 0.8333333333333334,
+          "acceptedPrecision95CI": {
+            "low": 0.693957037952257,
+            "high": 0.916841887041635
+          }
+        },
+        "pushup": {
+          "support": 40,
+          "acceptedAsClass": 36,
+          "correct": 35,
+          "acceptedFromClass": 39,
+          "coverage": 0.975,
+          "recall": 0.875,
+          "acceptedPrecision": 0.9722222222222222,
+          "acceptedPrecision95CI": {
+            "low": 0.8582996626496918,
+            "high": 0.9950797197044302
+          }
+        },
+        "squat": {
+          "support": 40,
+          "acceptedAsClass": 36,
+          "correct": 31,
+          "acceptedFromClass": 37,
+          "coverage": 0.925,
+          "recall": 0.775,
+          "acceptedPrecision": 0.8611111111111112,
+          "acceptedPrecision95CI": {
+            "low": 0.7134014871960681,
+            "high": 0.9391827463688489
+          }
+        }
+      },
+      "balancedRecall": 0.8416666666666667,
+      "station": {
+        "positiveCompleted": 63,
+        "positivePartial": 48,
+        "positiveInsufficient": 9,
+        "wrongStationAccepted": 4,
+        "wrongStationTrials": 240,
+        "byClass": {
+          "pullup": {
+            "videos": 40,
+            "usable": 22,
+            "partial": 17,
+            "insufficient": 1,
+            "wrongStationAccepted": 3,
+            "wrongStationTrials": 80
+          },
+          "pushup": {
+            "videos": 40,
+            "usable": 23,
+            "partial": 14,
+            "insufficient": 3,
+            "wrongStationAccepted": 1,
+            "wrongStationTrials": 80
+          },
+          "squat": {
+            "videos": 40,
+            "usable": 18,
+            "partial": 17,
+            "insufficient": 5,
+            "wrongStationAccepted": 0,
+            "wrongStationTrials": 80
+          }
+        }
+      },
+      "repetitionCounting": {
+        "labeledVideos": 0,
+        "mae": null,
+        "rmse": null,
+        "withinOneAccuracy": null,
+        "reason": "No human repetition-count labels; activity labels do not validate counting."
+      },
+      "formQuality": {
+        "labeledVideos": 0,
+        "accuracy": null,
+        "reason": "This algorithm does not classify good/bad form. Activity-recognition accuracy is not form-quality accuracy."
+      }
+    },
+    "training": {
+      "evaluated": 360,
+      "accepted": 346,
+      "correct": 301,
+      "wrong": 45,
+      "abstained": 14,
+      "accuracyIncludingAbstentions": 0.8361111111111111,
+      "coverage": 0.9611111111111111,
+      "acceptedPrecision": 0.869942196531792,
+      "acceptedPrecision95CI": {
+        "low": 0.830398612420626,
+        "high": 0.9013611325611028
+      },
+      "confusion": {
+        "pullup": {
+          "pullup": 105,
+          "pushup": 0,
+          "squat": 12,
+          "abstain": 3
+        },
+        "pushup": {
+          "pullup": 3,
+          "pushup": 104,
+          "squat": 10,
+          "abstain": 3
+        },
+        "squat": {
+          "pullup": 20,
+          "pushup": 0,
+          "squat": 92,
+          "abstain": 8
+        }
+      },
+      "perClass": {
+        "pullup": {
+          "support": 120,
+          "acceptedAsClass": 128,
+          "correct": 105,
+          "acceptedFromClass": 117,
+          "coverage": 0.975,
+          "recall": 0.875,
+          "acceptedPrecision": 0.8203125,
+          "acceptedPrecision95CI": {
+            "low": 0.7447821997086049,
+            "high": 0.8771762716691697
+          }
+        },
+        "pushup": {
+          "support": 120,
+          "acceptedAsClass": 104,
+          "correct": 104,
+          "acceptedFromClass": 117,
+          "coverage": 0.975,
+          "recall": 0.8666666666666667,
+          "acceptedPrecision": 1,
+          "acceptedPrecision95CI": {
+            "low": 0.9643773831248793,
+            "high": 0.9999999999999999
+          }
+        },
+        "squat": {
+          "support": 120,
+          "acceptedAsClass": 114,
+          "correct": 92,
+          "acceptedFromClass": 112,
+          "coverage": 0.9333333333333333,
+          "recall": 0.7666666666666667,
+          "acceptedPrecision": 0.8070175438596491,
+          "acceptedPrecision95CI": {
+            "low": 0.7250557059201088,
+            "high": 0.8689620263577964
+          }
+        }
+      },
+      "balancedRecall": 0.8361111111111111,
+      "station": {
+        "positiveCompleted": 168,
+        "positivePartial": 173,
+        "positiveInsufficient": 19,
+        "wrongStationAccepted": 9,
+        "wrongStationTrials": 720,
+        "byClass": {
+          "pullup": {
+            "videos": 120,
+            "usable": 48,
+            "partial": 70,
+            "insufficient": 2,
+            "wrongStationAccepted": 2,
+            "wrongStationTrials": 240
+          },
+          "pushup": {
+            "videos": 120,
+            "usable": 75,
+            "partial": 42,
+            "insufficient": 3,
+            "wrongStationAccepted": 6,
+            "wrongStationTrials": 240
+          },
+          "squat": {
+            "videos": 120,
+            "usable": 45,
+            "partial": 61,
+            "insufficient": 14,
+            "wrongStationAccepted": 1,
+            "wrongStationTrials": 240
+          }
+        }
+      },
+      "repetitionCounting": {
+        "labeledVideos": 0,
+        "mae": null,
+        "rmse": null,
+        "withinOneAccuracy": null,
+        "reason": "No human repetition-count labels; activity labels do not validate counting."
+      },
+      "formQuality": {
+        "labeledVideos": 0,
+        "accuracy": null,
+        "reason": "This algorithm does not classify good/bad form. Activity-recognition accuracy is not form-quality accuracy."
+      }
+    },
+    "method": "Finite deterministic supervised rule/threshold calibration; no neural weight update or reinforcement learning. Test labels are never used.",
+    "candidateCounts": {
+      "training": 9,
+      "validation": 35
+    }
+  },
+  "splits": {
+    "train": {
+      "evaluated": 360,
+      "accepted": 346,
+      "correct": 301,
+      "wrong": 45,
+      "abstained": 14,
+      "accuracyIncludingAbstentions": 0.8361111111111111,
+      "coverage": 0.9611111111111111,
+      "acceptedPrecision": 0.869942196531792,
+      "acceptedPrecision95CI": {
+        "low": 0.830398612420626,
+        "high": 0.9013611325611028
+      },
+      "confusion": {
+        "pullup": {
+          "pullup": 105,
+          "pushup": 0,
+          "squat": 12,
+          "abstain": 3
+        },
+        "pushup": {
+          "pullup": 3,
+          "pushup": 104,
+          "squat": 10,
+          "abstain": 3
+        },
+        "squat": {
+          "pullup": 20,
+          "pushup": 0,
+          "squat": 92,
+          "abstain": 8
+        }
+      },
+      "perClass": {
+        "pullup": {
+          "support": 120,
+          "acceptedAsClass": 128,
+          "correct": 105,
+          "acceptedFromClass": 117,
+          "coverage": 0.975,
+          "recall": 0.875,
+          "acceptedPrecision": 0.8203125,
+          "acceptedPrecision95CI": {
+            "low": 0.7447821997086049,
+            "high": 0.8771762716691697
+          }
+        },
+        "pushup": {
+          "support": 120,
+          "acceptedAsClass": 104,
+          "correct": 104,
+          "acceptedFromClass": 117,
+          "coverage": 0.975,
+          "recall": 0.8666666666666667,
+          "acceptedPrecision": 1,
+          "acceptedPrecision95CI": {
+            "low": 0.9643773831248793,
+            "high": 0.9999999999999999
+          }
+        },
+        "squat": {
+          "support": 120,
+          "acceptedAsClass": 114,
+          "correct": 92,
+          "acceptedFromClass": 112,
+          "coverage": 0.9333333333333333,
+          "recall": 0.7666666666666667,
+          "acceptedPrecision": 0.8070175438596491,
+          "acceptedPrecision95CI": {
+            "low": 0.7250557059201088,
+            "high": 0.8689620263577964
+          }
+        }
+      },
+      "balancedRecall": 0.8361111111111111,
+      "station": {
+        "positiveCompleted": 168,
+        "positivePartial": 173,
+        "positiveInsufficient": 19,
+        "wrongStationAccepted": 9,
+        "wrongStationTrials": 720,
+        "byClass": {
+          "pullup": {
+            "videos": 120,
+            "usable": 48,
+            "partial": 70,
+            "insufficient": 2,
+            "wrongStationAccepted": 2,
+            "wrongStationTrials": 240
+          },
+          "pushup": {
+            "videos": 120,
+            "usable": 75,
+            "partial": 42,
+            "insufficient": 3,
+            "wrongStationAccepted": 6,
+            "wrongStationTrials": 240
+          },
+          "squat": {
+            "videos": 120,
+            "usable": 45,
+            "partial": 61,
+            "insufficient": 14,
+            "wrongStationAccepted": 1,
+            "wrongStationTrials": 240
+          }
+        }
+      },
+      "repetitionCounting": {
+        "labeledVideos": 0,
+        "mae": null,
+        "rmse": null,
+        "withinOneAccuracy": null,
+        "reason": "No human repetition-count labels; activity labels do not validate counting."
+      },
+      "formQuality": {
+        "labeledVideos": 0,
+        "accuracy": null,
+        "reason": "This algorithm does not classify good/bad form. Activity-recognition accuracy is not form-quality accuracy."
+      }
+    },
+    "validation": {
+      "evaluated": 120,
+      "accepted": 114,
+      "correct": 101,
+      "wrong": 13,
+      "abstained": 6,
+      "accuracyIncludingAbstentions": 0.8416666666666667,
+      "coverage": 0.95,
+      "acceptedPrecision": 0.8859649122807017,
+      "acceptedPrecision95CI": {
+        "low": 0.8146297223884994,
+        "high": 0.9321354267608671
+      },
+      "confusion": {
+        "pullup": {
+          "pullup": 35,
+          "pushup": 0,
+          "squat": 3,
+          "abstain": 2
+        },
+        "pushup": {
+          "pullup": 2,
+          "pushup": 35,
+          "squat": 2,
+          "abstain": 1
+        },
+        "squat": {
+          "pullup": 5,
+          "pushup": 1,
+          "squat": 31,
+          "abstain": 3
+        }
+      },
+      "perClass": {
+        "pullup": {
+          "support": 40,
+          "acceptedAsClass": 42,
+          "correct": 35,
+          "acceptedFromClass": 38,
+          "coverage": 0.95,
+          "recall": 0.875,
+          "acceptedPrecision": 0.8333333333333334,
+          "acceptedPrecision95CI": {
+            "low": 0.693957037952257,
+            "high": 0.916841887041635
+          }
+        },
+        "pushup": {
+          "support": 40,
+          "acceptedAsClass": 36,
+          "correct": 35,
+          "acceptedFromClass": 39,
+          "coverage": 0.975,
+          "recall": 0.875,
+          "acceptedPrecision": 0.9722222222222222,
+          "acceptedPrecision95CI": {
+            "low": 0.8582996626496918,
+            "high": 0.9950797197044302
+          }
+        },
+        "squat": {
+          "support": 40,
+          "acceptedAsClass": 36,
+          "correct": 31,
+          "acceptedFromClass": 37,
+          "coverage": 0.925,
+          "recall": 0.775,
+          "acceptedPrecision": 0.8611111111111112,
+          "acceptedPrecision95CI": {
+            "low": 0.7134014871960681,
+            "high": 0.9391827463688489
+          }
+        }
+      },
+      "balancedRecall": 0.8416666666666667,
+      "station": {
+        "positiveCompleted": 63,
+        "positivePartial": 48,
+        "positiveInsufficient": 9,
+        "wrongStationAccepted": 4,
+        "wrongStationTrials": 240,
+        "byClass": {
+          "pullup": {
+            "videos": 40,
+            "usable": 22,
+            "partial": 17,
+            "insufficient": 1,
+            "wrongStationAccepted": 3,
+            "wrongStationTrials": 80
+          },
+          "pushup": {
+            "videos": 40,
+            "usable": 23,
+            "partial": 14,
+            "insufficient": 3,
+            "wrongStationAccepted": 1,
+            "wrongStationTrials": 80
+          },
+          "squat": {
+            "videos": 40,
+            "usable": 18,
+            "partial": 17,
+            "insufficient": 5,
+            "wrongStationAccepted": 0,
+            "wrongStationTrials": 80
+          }
+        }
+      },
+      "repetitionCounting": {
+        "labeledVideos": 0,
+        "mae": null,
+        "rmse": null,
+        "withinOneAccuracy": null,
+        "reason": "No human repetition-count labels; activity labels do not validate counting."
+      },
+      "formQuality": {
+        "labeledVideos": 0,
+        "accuracy": null,
+        "reason": "This algorithm does not classify good/bad form. Activity-recognition accuracy is not form-quality accuracy."
+      }
+    }
+  },
+  "annotatedIntervalCounting": {
+    "train": {
+      "intervals": 31,
+      "videos": 30,
+      "mae": 2.032258064516129,
+      "rmse": 2.7649884792386716,
+      "withinOneAccuracy": 0.41935483870967744,
+      "exactAccuracy": 0.16129032258064516,
+      "perClass": {
+        "pullup": {
+          "intervals": 14,
+          "videos": 13,
+          "mae": 2.7142857142857144,
+          "rmse": 3.5456210417116734,
+          "withinOneAccuracy": 0.21428571428571427,
+          "exactAccuracy": 0.07142857142857142
+        },
+        "pushup": {
+          "intervals": 10,
+          "videos": 10,
+          "mae": 0.7,
+          "rmse": 0.9486832980505138,
+          "withinOneAccuracy": 0.9,
+          "exactAccuracy": 0.4
+        },
+        "squat": {
+          "intervals": 7,
+          "videos": 7,
+          "mae": 2.5714285714285716,
+          "rmse": 2.7255405754769875,
+          "withinOneAccuracy": 0.14285714285714285,
+          "exactAccuracy": 0
+        }
+      },
+      "boundary": "Countix human counts cover only the specified subintervals. Predictions count complete observed angle cycles within those same windows, at app sampling resolution. Window boundaries and tracking gaps may undercount. This does not validate exercise form."
+    },
+    "validation": {
+      "intervals": 9,
+      "videos": 9,
+      "mae": 1.8888888888888888,
+      "rmse": 2.1343747458109497,
+      "withinOneAccuracy": 0.2222222222222222,
+      "exactAccuracy": 0.1111111111111111,
+      "perClass": {
+        "pullup": {
+          "intervals": 5,
+          "videos": 5,
+          "mae": 2.2,
+          "rmse": 2.4083189157584592,
+          "withinOneAccuracy": 0.2,
+          "exactAccuracy": 0
+        },
+        "pushup": {
+          "intervals": 1,
+          "videos": 1,
+          "mae": 0,
+          "rmse": 0,
+          "withinOneAccuracy": 1,
+          "exactAccuracy": 1
+        },
+        "squat": {
+          "intervals": 3,
+          "videos": 3,
+          "mae": 2,
+          "rmse": 2,
+          "withinOneAccuracy": 0,
+          "exactAccuracy": 0
+        }
+      },
+      "boundary": "Countix human counts cover only the specified subintervals. Predictions count complete observed angle cycles within those same windows, at app sampling resolution. Window boundaries and tracking gaps may undercount. This does not validate exercise form."
+    }
+  },
+  "claimBoundary": "Only activity labels support recognition metrics. Motion-cycle counts require independent count labels. No good/bad-form accuracy, clinical safety score or reinforcement-learning claim is established."
+}

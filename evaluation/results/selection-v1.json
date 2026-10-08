@@ -1,0 +1,8 @@
+{
+  "createdAt": "2026-10-08T09:48:00.123Z",
+  "manifestHash": "c72e3e69e87fc1cc4f54296a8f39d30001c255a689f41e525267e1d6f019121e",
+  "baselineSourceHash": "067cbc0076f54779b357708de72a380c0fb0fda20074286fed26e0f4ba716490",
+  "candidateModelHash": "d8f3eb5de53a9a276be8b047b116796ff1b6d22315937400c9a6ac3150047b5b",
+  "selectedForFinalAudit": "baseline-v1",
+  "criterion": "Candidate must pass every predicted-class validation precision/support gate and improve accuracy including abstentions over the calibrated baseline. Selection is frozen before held-out test scoring."
+}

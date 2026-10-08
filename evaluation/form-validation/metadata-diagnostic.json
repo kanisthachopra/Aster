@@ -1,0 +1,178 @@
+{
+  "protocol": "rehab24-form-feasibility-v1",
+  "generatedAt": "2026-10-08T08:19:36.428Z",
+  "source": {
+    "record": "https://zenodo.org/records/13305826",
+    "doi": "10.5281/zenodo.13305826",
+    "license": "CC-BY-NC-4.0",
+    "annotationMd5": "90b8fbd7445dd050bf27b17126c78fbe",
+    "annotationSha256": "72c70bc7e56eafb132452a850f7a56d21c3cb4a602bab1e98370f9b606567100",
+    "metadataSha256": "64dcd4fa8ff3d412dace60c617724ecc3758c6941937f287fc5efffcb426ab21",
+    "localLabels": "frontend/artifacts/evaluation/rehab24-segmentation.csv"
+  },
+  "totalRepetitions": 1072,
+  "totalRecordings": 65,
+  "totalPersons": 10,
+  "exerciseIds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "labelColumns": [
+    "video_id",
+    "repetition_number",
+    "exercise_id",
+    "person_id",
+    "first_frame",
+    "last_frame",
+    "cam17_orientation",
+    "mocap_erroneous",
+    "exercise_subtype",
+    "lights_on",
+    "extra_person_in_cam17",
+    "extra_person_in_cam18",
+    "correctness"
+  ],
+  "labelsIncludeNamedFaultTypes": false,
+  "labelsIncludeExactFaultTimestamps": false,
+  "labelsIncludeCorrectionQuality": false,
+  "exercises": [
+    {
+      "exerciseId": 3,
+      "exercise": "incline/table push-up",
+      "repetitions": 107,
+      "correctness": {
+        "0": 55,
+        "1": 52
+      },
+      "persons": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "recordings": 10,
+      "orientationCamera17": {
+        "profile": 107
+      },
+      "lightsOn": {
+        "0": 24,
+        "1": 83
+      },
+      "mocapErroneous": {
+        "0": 96,
+        "1": 11
+      },
+      "extraPersonCamera17": {
+        "0": 57,
+        "1": 14,
+        "2": 18,
+        "3": 18
+      },
+      "extraPersonCamera18": {
+        "0": 102,
+        "1": 3,
+        "2": 2
+      },
+      "personsWithBothLabels": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "exerciseId": 6,
+      "exercise": "squat",
+      "repetitions": 195,
+      "correctness": {
+        "0": 61,
+        "1": 134
+      },
+      "persons": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "recordings": 9,
+      "orientationCamera17": {
+        "front": 98,
+        "half-profile": 97
+      },
+      "lightsOn": {
+        "0": 49,
+        "1": 146
+      },
+      "mocapErroneous": {
+        "0": 191,
+        "1": 4
+      },
+      "extraPersonCamera17": {
+        "0": 130,
+        "1": 30,
+        "2": 33,
+        "3": 2
+      },
+      "extraPersonCamera18": {
+        "0": 176,
+        "1": 18,
+        "2": 1
+      },
+      "personsWithBothLabels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    }
+  ],
+  "candidatePilot": {
+    "logicalRepetitions": 8,
+    "pairedCameraViews": 16,
+    "persons": [
+      1,
+      2
+    ],
+    "selection": "First two eligible person IDs with both correctness labels in each target exercise; one rep per exercise/label, preferring lights on and fewer visible bystanders, then recording/rep order. Require mocap_erroneous=0 and nominal frame-span duration 2–120s.",
+    "file": "private/research-candidates.jsonl"
+  },
+  "appSourceHashes": {
+    "frontend/src/analysis/measurements.ts": "067cbc0076f54779b357708de72a380c0fb0fda20074286fed26e0f4ba716490",
+    "frontend/src/analysis/types.ts": "c20b32fa1e15067b2d31960abebaf329e8050c42ace21ba91e864547a1f68ebd"
+  },
+  "diagnostic": {
+    "kind": "metadata and output-contract compatibility audit",
+    "clipsDownloaded": 0,
+    "clipsInferred": 0,
+    "formAccuracy": null,
+    "formAccuracyReason": "The current report schema has no binary correctness or named-fault prediction. Report status and generic observation presence are not correctness predictions.",
+    "pullupCoverage": "none",
+    "trainingPerformed": false,
+    "productWeightsProduced": false
+  }
+}

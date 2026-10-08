@@ -1,0 +1,76 @@
+{
+  "runId": "pilot-inference",
+  "createdAt": "2026-10-08T08:06:14.592Z",
+  "engineKey": "6ef59e1c82fd6042913c",
+  "fingerprints": {
+    "frontend/public/models/pose_landmarker_full.task": "5134a3aad27a58b93da0088d431f366da362b44e3ccfbe3462b3827a839011b1",
+    "frontend/public/mediapipe/pose-worker.js": "f04cc8c6b2d6bae4295433f057fa6525825cbf686aed5fa6aac0c52388d90792",
+    "frontend/src/analysis/analyzeVideo.ts": "b44fcc374f8931a4955b72a90e5bff7badc2c03d752729e5dddfcb2781f16443"
+  },
+  "manifest": {
+    "total": 6,
+    "byClass": {
+      "pullup": 2,
+      "pushup": 2,
+      "squat": 2
+    },
+    "bySplit": {
+      "train": 6,
+      "validation": 0,
+      "test": 0
+    },
+    "sourceGroups": 6,
+    "sha256": "b85e4fea4d8538b237540146920b6a73e0010076c723326f2c21a9c80926e0a1"
+  },
+  "requested": 6,
+  "concurrency": 3,
+  "processed": 6,
+  "cached": 0,
+  "failed": 0,
+  "clips": [
+    {
+      "id": "k600-pullup-POxw77MviHw-000007-000017",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 23,
+      "seconds": 62.301
+    },
+    {
+      "id": "k600-pullup-yv2yyDezWD4-000028-000038",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 64.399
+    },
+    {
+      "id": "k600-pushup-1WEgLgcFT-E-000013-000023",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 36,
+      "seconds": 65.263
+    },
+    {
+      "id": "k600-pushup-78ZXclvYBWE-000012-000022",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 15.612
+    },
+    {
+      "id": "k600-squat-gV3dgCS0hWU-000009-000019",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 13.014
+    },
+    {
+      "id": "k600-squat-ObNG8eo7dRY-000229-000239",
+      "split": "train",
+      "outcome": "processed",
+      "samples": 40,
+      "seconds": 14.576
+    }
+  ],
+  "finishedAt": "2026-10-08T08:07:42.044Z",
+  "stopped": false
+}
