@@ -1,14 +1,7 @@
-# Temporary character voice auditions
+# Original local dialogue
 
-Created locally on 2026-10-07 using Windows System.Speech and the installed Microsoft David and Microsoft Zira voices. These are synthesized readings of original project dialogue, not recordings taken from films or games. No user recording or private text was sent to a voice service.
+Updated 2026-10-08. These are locally generated Windows System.Speech readings by Microsoft David Desktop (Traveller) and Microsoft Zira Desktop (ORBIT), with original conversational wording and timed pauses. They are still synthesized voices, not a human performance. No user recording or text was sent to a cloud voice service.
 
-| File | Speaker | Dialogue |
-| --- | --- | --- |
-| threshold.wav | Traveller / David | Someone built all this, out here? |
-| lights.wav | Traveller / David | The glass. I can see the whole sky. |
-| machine.wav | Traveller / David | Wait. Something's waking up. |
-| robot.wav | ORBIT / Zira | Systems online. Oh. A visitor. It has been a while. |
-| greeting.wav | ORBIT / Zira | Welcome to Outpost Seven. What should I call you? |
-| guide.wav | ORBIT / Zira | A whole moon, and you found the one place with a pull-up bar. I think we'll get along. |
+`dialogue.json` records the exact original script, role and filename key for every clip. Arrival clips now have space to finish before the next beat. The tutorial and analysis use short situational lines instead of reusing the welcome speech.
 
-These files establish spoken timing and music ducking in the local development preview. Replace with final selected voices and confirm distribution rights before a public release. Original musical phrases, breathing, footsteps, power-up and motor cues are synthesized by AudioDirector; no soundtrack from the inspiration list is included.
+No film/game soundtrack or dialogue is included. The musical motifs, breathing, footsteps, servo and power cues are procedural sounds from AudioDirector. A finished cinematic soundtrack and human character performances remain future production work, not completed assets.

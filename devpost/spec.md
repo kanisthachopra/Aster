@@ -179,3 +179,13 @@ MouseLook owns pointer capture and fallback behavior independently of movement. 
 A clean page reload is required after changing scene constructor contracts during development; hot reload alone can retain an obsolete World instance. DynamicTexture clones do not copy/upload pixel content in the installed engine version. Procedural normal textures are generated and uploaded explicitly; shared ring textures are assigned directly. This correction preserves the intended art direction.
 
 Input repair evidence: Babylon prevents the default pointerdown, which suppresses compatibility mousedown delivery. Listen to pointerdown/pointermove directly. A focused browser check must prove the heading changes after pointer movement; successful control labels alone are insufficient.
+
+## Revision 0.3 — local evidence bridge (October 8)
+
+To deliver usable analysis while account creation is explicitly deferred, the first evidence pipeline runs inside the browser. React calls analyzeVideo; a classic worker loads pinned MediaPipe 0.10.32 and the official Pose Landmarker Lite v1 model from same-origin public assets. The main thread decodes bounded samples and transfers image bitmaps; cancellation terminates the worker and releases media URLs. A worker prevents CPU inference from blocking interface input. No workout media are transmitted.
+
+Reports contain sampled timestamps, visible landmarks, aspect-correct projected measurements, coverage, complete motion-cycle estimates, findings, limitations and source links. Coverage is not accuracy. UI playback hides pose overlays when playing or seeking to an unmeasured instant. Positive-path validation currently covers one real public-domain push-up clip; positive squat/pull-up evaluation remains open.
+
+journey.ts implements a pure in-memory guest ledger. Analysis alone does not mutate activity. Finish review commits one daily award; duplicate report IDs are idempotent, and extra reports on the same local calendar day add journal entries without extra credit. Weekly energy resets Monday; seven actual activity days without protection earn 2.5 reserve, capped at 100; protection costs 10 and is limited to three per week. These guest rules are not a substitute for the planned transactional authenticated backend.
+
+The existing Django/PostgreSQL plan remains the later durable service boundary. Current account UI collects no pretend credentials. A source File is retained only in the guest journal until removed, page reload or tab closure. Preferences alone use localStorage.

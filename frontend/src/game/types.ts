@@ -17,12 +17,12 @@ export const EXERCISES: Exercise[] = [
 ];
 export type LookMode = 'off' | 'locked' | 'free';
 export interface Survey { x: number; z: number; bearing: number; discovered: boolean; inside: boolean; }
-export interface Settings { music: number; effects: number; dialogue: number; reducedMotion: boolean; }
-export const DEFAULT_SETTINGS: Settings = { music: 0.35, effects: 0.45, dialogue: .75, reducedMotion: false };
+export interface Settings { music: number; effects: number; dialogue: number; lookSensitivity: number; reducedMotion: boolean; }
+export const DEFAULT_SETTINGS: Settings = { music: 0.35, effects: 0.45, dialogue: .75, lookSensitivity: 1, reducedMotion: false };
 export function loadSettings(): Settings {
   try {
     const raw = JSON.parse(localStorage.getItem('aster.preferences') || '{}');
     const volume = (v: unknown, fallback: number) => typeof v === 'number' && Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : fallback;
-    return { music: volume(raw.music, .35), effects: volume(raw.effects, .45), dialogue: volume(raw.dialogue, .75), reducedMotion: typeof raw.reducedMotion === 'boolean' ? raw.reducedMotion : matchMedia('(prefers-reduced-motion: reduce)').matches };
+    return { music: volume(raw.music, .35), effects: volume(raw.effects, .45), dialogue: volume(raw.dialogue, .75), lookSensitivity: typeof raw.lookSensitivity === 'number' && Number.isFinite(raw.lookSensitivity) ? Math.max(.3, Math.min(2, raw.lookSensitivity)) : 1, reducedMotion: typeof raw.reducedMotion === 'boolean' ? raw.reducedMotion : matchMedia('(prefers-reduced-motion: reduce)').matches };
   } catch { return DEFAULT_SETTINGS; }
 }

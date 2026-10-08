@@ -1,0 +1,72 @@
+[
+  {
+    "Text": "Okay... still standing. Let's see what's in here.",
+    "Key": "threshold",
+    "Role": "avatar"
+  },
+  {
+    "Text": "Oh. Look at this place.",
+    "Key": "lights",
+    "Role": "avatar"
+  },
+  {
+    "Text": "Hang on... did that thing just move?",
+    "Key": "machine",
+    "Role": "avatar"
+  },
+  {
+    "Text": "Oh! A visitor. Give me a second... it's been quiet here.",
+    "Key": "robot",
+    "Role": "robot"
+  },
+  {
+    "Text": "I'm Orbit. You look like you've had quite a walk.",
+    "Key": "greeting",
+    "Role": "robot"
+  },
+  {
+    "Text": "A whole moon, and you found the one place with a pull up bar. I think we'll get along.",
+    "Key": "guide",
+    "Role": "robot"
+  },
+  {
+    "Text": "Here's the idea. Choose a station, show me a short clip, and we'll look at it together.",
+    "Key": "tour-review",
+    "Role": "robot"
+  },
+  {
+    "Text": "Your first mission? Finish one review, then step out of the station. That's when it counts.",
+    "Key": "tour-missions",
+    "Role": "robot"
+  },
+  {
+    "Text": "Reviews power this place. Your first five active days earn energy. Rest days are okay... we'll keep the rules in your journal.",
+    "Key": "tour-energy",
+    "Role": "robot"
+  },
+  {
+    "Text": "And if I'm talking too much, your sound and comfort controls are right up there.",
+    "Key": "tour-settings",
+    "Role": "robot"
+  },
+  {
+    "Text": "All right. Hold on a moment... I'm looking through your clip.",
+    "Key": "analysis-start",
+    "Role": "robot"
+  },
+  {
+    "Text": "I've got a few things we can look at. Let's take them one at a time.",
+    "Key": "analysis-ready",
+    "Role": "robot"
+  },
+  {
+    "Text": "Hmm. I can't see enough to be useful here. Let's try a clearer angle.",
+    "Key": "analysis-insufficient",
+    "Role": "robot"
+  },
+  {
+    "Text": "There we go. First review complete. Take a breath... I'll save this in your journal.",
+    "Key": "first-review",
+    "Role": "robot"
+  }
+]

@@ -135,6 +135,9 @@ export class AudioDirector {
     void this.speak(beat);
   }
   greet() { void this.speak('guide'); }
+  guide(key: string) {
+    if (['tour-review', 'tour-missions', 'tour-energy', 'tour-settings', 'analysis-start', 'analysis-ready', 'analysis-insufficient', 'first-review'].includes(key)) void this.speak(key);
+  }
   private async speak(key: string) {
     const ctx = this.context; if (!ctx || !this.dialogue) return;
     const version = ++this.voiceVersion;

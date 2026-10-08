@@ -90,3 +90,11 @@ Repairs found during verification: Babylon prevents the default pointer event, s
 - Some WebM files omit finite duration metadata. The preview permits local playback with an explicit duration-unavailable message; later server submission must validate duration before analysis.
 
 - Hands-on revision 0.2 replaces the original W-only obstacle route with free exploration and a corner map. It adds a much larger one-way-view dome, physical airlock, third-to-first-person reveal, delayed light activation, sealed rear sectors, service-bay robot startup, articulated hands, creatures, improved terrain/celestial graphics, title motion and temporary voiced audio. These changes are explicitly requested, not a scope reduction.
+
+## October 8 checkpoint — movement lab 0.3
+
+The current implementation adds the real browser-local evidence pipeline and connects it to a guest-only journal and progression flow. This advances slices 2 and 4 without marking their production criteria complete: representative human-reviewed accuracy validation, persistent identity, private durable storage and a transactional server ledger remain outstanding. Account creation is explicitly deferred by the learner.
+
+Implemented: Analyze movement action; real sampled pose findings; usable/insufficient states; cancellation/retry; timestamps and measured overlays; finish-only activity; guest journal selective deletion; four-step robot tour; exact weekly/reserve/protection rules; direct FPS capture and drag fallback; clear terrain/floor-plan map; low geodesic glass dome; continuous arrival and staged robot startup; more conversational temporary dialogue.
+
+Verification details and the design review are in verification-0.3.md. Earlier references to edge-turning and unavailable analysis describe historical build 0.2 and are superseded. Final characters and voices remain production work, and the user has not yet accepted this revision.

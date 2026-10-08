@@ -6,6 +6,7 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { FresnelParameters } from '@babylonjs/core/Materials/fresnelParameters';
 import { DynamicTexture } from '@babylonjs/core/Materials/Textures/dynamicTexture';
 import { VertexBuffer } from '@babylonjs/core/Buffers/buffer';
+import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';
 import { PointLight } from '@babylonjs/core/Lights/pointLight';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Color3 } from '@babylonjs/core/Maths/math.color';
@@ -20,46 +21,73 @@ export class Park {
   private lights: PointLight[] = [];
   private illuminants: StandardMaterial[] = [];
   private arrows: Mesh[] = [];
-  private dome: Mesh;
+  private robotFins: Mesh[] = [];
   private entranceDoors: Mesh[] = [];
   constructor(private scene: Scene) {
     const metal = material(scene, 'brushed-titanium', '#31434b');
     const pale = material(scene, 'structural-ceramic', '#83999f');
     const dark = material(scene, 'deck-composite', '#17262d');
     const amber = material(scene, 'standby-amber', '#bf935d', .18);
-    const glass = material(scene, 'reflective-outer-shell', '#374d58');
-    glass.specularColor.set(.72, .83, .86); glass.specularPower = 100;
+    const glass = material(scene, 'frosted-silicate-glass', '#93b2b6');
+    glass.alpha = .24; glass.specularColor.set(.8, .88, .9); glass.specularPower = 120;
     glass.emissiveFresnelParameters = new FresnelParameters();
     glass.emissiveFresnelParameters.leftColor = new Color3(.09, .16, .19);
     glass.emissiveFresnelParameters.rightColor = Color3.Black(); glass.emissiveFresnelParameters.power = 3;
-    this.dome = MeshBuilder.CreateSphere('opaque-exterior-dome', { diameter: 84, segments: 96, slice: .5 }, scene);
-    this.dome.position.set(0, .2, 60); this.dome.scaling.y = .66; this.dome.material = glass;
-    const shellPositions = this.dome.getVerticesData(VertexBuffer.PositionKind)!;
-    const shellIndices = this.dome.getIndices()!, entranceCut: number[] = [];
-    for (let i = 0; i < shellIndices.length; i += 3) {
-      const points = [shellIndices[i], shellIndices[i + 1], shellIndices[i + 2]];
-      const x = points.reduce((sum, index) => sum + shellPositions[index * 3], 0) / 3;
-      const y = points.reduce((sum, index) => sum + shellPositions[index * 3 + 1], 0) / 3 * .66;
-      const z = points.reduce((sum, index) => sum + shellPositions[index * 3 + 2], 0) / 3;
-      if (!(Math.abs(x) < 3.35 && y < 5.4 && z < -39)) entranceCut.push(...points);
+    // Individual triangular panes and warm structural members follow the supplied geodesic reference.
+    // A shallow cap (19m high across an 84m footprint) replaces the tall metallic shell.
+    const template = MeshBuilder.CreateIcoSphere('geodesic-template', { radius: 42, subdivisions: 5, flat: true }, scene);
+    const raw = template.getVerticesData(VertexBuffer.PositionKind)!;
+    const rawIndices = template.getIndices()!;
+    const positions: number[] = [], indices: number[] = [], edges = new Map<string, [Vector3, Vector3]>();
+    const key = (p: Vector3) => `${p.x.toFixed(3)},${p.y.toFixed(3)},${p.z.toFixed(3)}`;
+    const clip = (polygon: Vector3[], distance: (p: Vector3) => number) => {
+      const result: Vector3[] = [];
+      polygon.forEach((a, j) => {
+        const b = polygon[(j + 1) % polygon.length], da = distance(a), db = distance(b);
+        if (da >= 0) result.push(a);
+        if ((da >= 0) !== (db >= 0)) result.push(Vector3.Lerp(a, b, da / (da - db)));
+      });
+      return result;
+    };
+    for (let i = 0; i < rawIndices.length; i += 3) {
+      let polygon = [0, 1, 2].map(j => { const k = rawIndices[i + j] * 3; return new Vector3(raw[k], raw[k + 1], raw[k + 2]); });
+      const clipped: Vector3[] = [];
+      for (let j = 0; j < polygon.length; j++) {
+        const a = polygon[j], b = polygon[(j + 1) % polygon.length];
+        if (a.y >= 0) clipped.push(a);
+        if ((a.y >= 0) !== (b.y >= 0)) clipped.push(Vector3.Lerp(a, b, a.y / (a.y - b.y)));
+      }
+      polygon = clipped.map(p => new Vector3(p.x, .2 + p.y * .46, 60 + p.z));
+      if (polygon.length < 3) continue;
+      // Cut the actual doorway through intersecting panes and beams, not only face centroids.
+      const fragments = polygon.some(p => p.z < 25) ? [
+        clip(polygon, p => -3.65 - p.x),
+        clip(polygon, p => p.x - 3.65),
+        clip(clip(clip(polygon, p => p.x + 3.65), p => 3.65 - p.x), p => p.y - 5.4),
+      ] : [polygon];
+      for (const fragment of fragments) {
+        if (fragment.length < 3) continue;
+        const base = positions.length / 3;
+        fragment.forEach(p => positions.push(p.x, p.y, p.z));
+        for (let j = 1; j < fragment.length - 1; j++) indices.push(base, base + j, base + j + 1);
+        fragment.forEach((a, j) => { const b = fragment[(j + 1) % fragment.length]; if (Vector3.DistanceSquared(a, b) < .0001) return; const k = [key(a), key(b)].sort().join('|'); edges.set(k, [a, b]); });
+      }
     }
-    this.dome.setIndices(entranceCut);
-    // Separate back faces give the interior a clear outward view without showing equipment outside.
-    const inner = MeshBuilder.CreateSphere('transparent-interior-dome', { diameter: 83.8, segments: 64, slice: .5, sideOrientation: Mesh.BACKSIDE }, scene);
-    inner.position.copyFrom(this.dome.position); inner.scaling.y = .66;
+    template.dispose();
+    const normals: number[] = []; VertexData.ComputeNormals(positions, indices, normals);
+    const domeShell = new Mesh('triangular-glass-panels', scene), data = new VertexData();
+    data.positions = positions; data.indices = indices; data.normals = normals; data.applyToMesh(domeShell); domeShell.material = glass;
+    const inner = new Mesh('clear-interior-glass', scene), insideData = new VertexData();
+    insideData.positions = positions; insideData.indices = indices.flatMap((_, i) => i % 3 === 0 ? [indices[i + 2], indices[i + 1], indices[i]] : []);
+    insideData.normals = normals.map(v => -v); insideData.applyToMesh(inner);
     const insideGlass = material(scene, 'interior-glass', '#7eafbe'); insideGlass.alpha = .045;
     insideGlass.specularColor.set(.3, .6, .7); inner.material = insideGlass;
+    const frame = material(scene, 'champagne-geodesic-frame', '#bdac8c'); frame.specularColor.set(.45, .37, .24);
+    const beams = [...edges.values()].map(([a, b]) => this.tube('geodesic-member', [a, b], .066, frame));
+    Mesh.MergeMeshes(beams, true, true, undefined, false, true);
     const deck = MeshBuilder.CreateCylinder('habitat-deck', { diameter: 83.5, height: .35, tessellation: 128 }, scene);
     deck.position.set(0, -.04, 60); deck.material = metal; deck.receiveShadows = true;
     for (let x = -40; x <= 40; x += 2.5) this.box('deck-expansion-joint', [.016, .01, Math.sqrt(41 * 41 - x * x) * 2], [x, .14, 60], dark);
-    for (let i = 0; i < 8; i++) {
-      const theta = i * Math.PI / 8, points: Vector3[] = [];
-      for (let j = 0; j <= 48; j++) {
-        const a = j / 48 * Math.PI;
-        points.push(new Vector3(Math.cos(a) * 41.8 * Math.cos(theta), .2 + Math.sin(a) * 27.6, 60 + Math.cos(a) * 41.8 * Math.sin(theta)));
-      }
-      this.tube('dome-structural-rib', points, .07, pale);
-    }
     for (const radius of [40, 28, 12]) {
       const lightMat = this.lightMaterial(`floor-light-${radius}`);
       const ring = MeshBuilder.CreateTorus('habitat-light-ring', { diameter: radius * 2, thickness: .038, tessellation: 128 }, scene);
@@ -68,6 +96,8 @@ export class Park {
     for (const x of [-3.3, 3.3]) this.box('airlock-pier', [.65, 5.3, 4.7], [x, 2.6, 18.8], pale);
     this.box('airlock-lintel', [7.2, .5, 4.7], [0, 5.15, 18.8], pale);
     this.label('O U T P O S T   0 7', new Vector3(0, 4.25, 16.4), 4.7, .55);
+    const innerEntryLabel = this.label('O U T P O S T   0 7', new Vector3(0, 4.25, 21.3), 4.7, .55);
+    innerEntryLabel.rotation.y = Math.PI;
     this.box('entry-threshold', [6.3, .06, 5], [0, .05, 18.5], dark);
     for (const side of [-1, 1]) this.entranceDoors.push(this.box('airlock-sliding-door', [3.1, 5.05, .16], [side * 1.55, 2.6, 17.3], glass));
     for (const ex of EXERCISES) {
@@ -123,7 +153,7 @@ export class Park {
     this.robotEye = material(scene, 'robot-powered-eyes', '#8de9ed', 0);
     for (const x of [-.19, .19]) { const eye = this.box('robot-eye', [.075, .08, .03], [x, .05, -.42], this.robotEye); eye.parent = this.robot; }
     const hover = MeshBuilder.CreateTorus('robot-stabilizer', { diameter: .6, thickness: .05, tessellation: 40 }, scene); hover.parent = this.robot; hover.position.y = -.55; hover.material = this.robotEye;
-    for (const side of [-1, 1]) { const fin = this.box('robot-fin', [.25, .045, .5], [side * .58, -.1, .05], metal); fin.parent = this.robot; fin.rotation.z = side * .2; }
+    for (const side of [-1, 1]) { const fin = this.box('robot-fin', [.25, .045, .5], [side * .58, -.1, .05], metal); fin.parent = this.robot; fin.rotation.z = side * .2; this.robotFins.push(fin); }
     const route = material(scene, 'interior-guidance', '#8ce4e3', .8);
     for (let i = 0; i < 18; i++) { const arrow = this.box('station-navigation', [.1, .014, .35], [0, .25, 0], route); arrow.isVisible = false; this.arrows.push(arrow); }
   }
@@ -135,17 +165,28 @@ export class Park {
   private label(text: string, at: Vector3, width: number, height: number) {
     const texture = new DynamicTexture(text, { width: 1024, height: 128 }, this.scene, false); texture.hasAlpha = true;
     texture.drawText(text, null, 82, '38px monospace', '#afcdd1', 'transparent', true);
-    const m = material(this.scene, text, '#ffffff', .35); m.diffuseTexture = texture; m.opacityTexture = texture; m.backFaceCulling = false;
+    const m = material(this.scene, text, '#ffffff', .35); m.diffuseTexture = texture; m.opacityTexture = texture; m.backFaceCulling = true;
     const panel = MeshBuilder.CreatePlane(text, { width, height }, this.scene); panel.position.copyFrom(at); panel.material = m;
+    return panel;
   }
   update(time: number, power: number, robotProgress: number, player: Vector3, target: ExerciseId | null, reduced: boolean) {
     this.illuminants.forEach((m, i) => m.emissiveColor.set(.33 * smooth(power * 3 - i * .17), .75 * smooth(power * 3 - i * .17), .83 * smooth(power * 3 - i * .17)));
     this.lights.forEach((light, i) => { light.intensity = 1.2 * smooth(power * 2 - i * .3); });
-    this.doors.forEach((door, i) => { door.position.x = (i === 0 ? -1 : 1) * (.6 + smooth(robotProgress * 4) * .85); });
-    this.robotEye.emissiveColor.set(.3 * smooth(robotProgress * 3), 1.2 * smooth(robotProgress * 3), 1.3 * smooth(robotProgress * 3));
-    this.robot.position.copyFrom(Vector3.Lerp(new Vector3(-26, 1.2, 40), new Vector3(-1.2, 1.75, 36), smooth((robotProgress - .2) / .8)));
-    if (robotProgress > .1 && !reduced) this.robot.position.y += Math.sin(time * 1.7) * .055;
-    this.robot.rotation.y = Math.atan2(this.robot.position.x - player.x, this.robot.position.z - player.z);
+    this.doors.forEach((door, i) => { door.position.x = (i === 0 ? -1 : 1) * (.6 + smooth((robotProgress - .03) / .2) * .95); });
+    const awake = smooth((robotProgress - .15) / .18);
+    this.robotEye.emissiveColor.set(.3 * awake, 1.2 * awake, 1.3 * awake);
+    // First rise vertically off the charging cradle, then clear the shutters, then turn and approach.
+    const lift = smooth((robotProgress - .18) / .15), leave = smooth((robotProgress - .3) / .16), travel = smooth((robotProgress - .46) / .54);
+    const cradle = new Vector3(-26, 1.2 + lift * .55, 40);
+    const clearDoor = new Vector3(-24.5, 1.75, 37.4);
+    const from = Vector3.Lerp(cradle, clearDoor, leave);
+    const end = new Vector3(-2.3, 1.75, 35.4);
+    this.robot.position.copyFrom(Vector3.Lerp(from, end, travel));
+    if (!reduced) this.robot.position.y += awake * Math.sin(time * 1.5) * .018;
+    const facing = Math.atan2(this.robot.position.x - player.x, this.robot.position.z - player.z);
+    this.robot.rotation.y = -.65 + Math.atan2(Math.sin(facing + .65), Math.cos(facing + .65)) * smooth((robotProgress - .4) / .6);
+    this.robot.rotation.z = !reduced ? Math.sin(travel * Math.PI * 2) * .045 : 0;
+    this.robotFins.forEach((fin, i) => { fin.rotation.z = (i === 0 ? -1 : 1) * (.05 + lift * .15 + Math.sin(travel * Math.PI) * .08); });
     const exercise = EXERCISES.find(e => e.id === target);
     this.arrows.forEach((arrow, i) => {
       arrow.isVisible = !!exercise && power >= 1;

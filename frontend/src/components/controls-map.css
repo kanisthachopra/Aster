@@ -1,0 +1,18 @@
+.survey-map.terrain-survey { width: 222px; padding: 12px; background: #0a1820e8; border-color: #a6c4c040; border-radius: 7px; box-shadow: 0 9px 36px #0004; color: #d4e6df; transition: border-color 160ms ease, background-color 160ms ease; }
+.survey-map.terrain-survey.expanded { width: min(386px, 40vw); }
+.survey-map.terrain-survey:active { border-color: #beddd4; }
+.survey-map.terrain-survey:focus-visible { outline: 2px solid #d6f4de; outline-offset: 4px; }
+.survey-map.terrain-survey .map-caption { font-size: 8px; letter-spacing: .1em; color: #cadcd6; padding-bottom: 10px; }
+.survey-map.terrain-survey .map-footer { font-size: 8px; color: #bdd3cc; padding-top: 8px; border-top: 1px solid #bcd4cb25; }
+.terrain-survey .map-label { font: 9px Consolas, monospace; fill: #deeadf; paint-order: stroke; stroke: #102429; stroke-width: 3px; stroke-linejoin: round; letter-spacing: .3px; }
+.terrain-survey .map-exercise-label { font-size: 9px; }
+.terrain-survey .map-closed-label { fill: #d3ba8c; font-size: 8px; }
+.terrain-survey .map-station-number { font: 8px Consolas, monospace; fill: #d0ece2; }
+.terrain-survey .map-place { font: 8px Consolas, monospace; letter-spacing: 1px; fill: #bec8b2; opacity: .75; }
+.terrain-survey .map-north { color: #c7ded4; font: 10px Consolas, monospace; fill: currentColor; }
+.terrain-survey .map-scale, .terrain-survey .map-coordinate { font: 8px Consolas, monospace; fill: #c0d4cc; }
+.terrain-survey .map-legend { display: flex; justify-content: space-between; margin-top: 11px; color: #9cb7ae; font: 8px Consolas, monospace; letter-spacing: .05em; }
+.terrain-survey .map-legend i { display: inline-block; width: 0; height: 0; border-left: 3px solid transparent; border-right: 3px solid transparent; border-bottom: 7px solid #e0f5e9; margin-right: 5px; }
+@media (hover: hover) and (pointer: fine) { .survey-map.terrain-survey:hover { background: #0d2028f2; border-color: #a6c4c075; } }
+@media (max-width: 900px) { .survey-map.terrain-survey { width: 170px; right: 18px; } .survey-map.terrain-survey.expanded { width: min(340px, 48vw); } }
+@media (prefers-reduced-motion: reduce) { .survey-map.terrain-survey { transition: none; } }

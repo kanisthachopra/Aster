@@ -1,42 +1,45 @@
 # Aster — Outpost 07
 
-A computer-browser exercise park set on a distant moon. **Aster** is a working name. The approved product includes real video feedback, private accounts and journals, progression, and a cinematic character/audio experience. This repository currently implements the **first playable world slice**, not the completed product.
+A desktop-browser exercise park on a distant moon. Version **0.3** connects the explorable world to real local motion analysis, robot orientation, a guest journal and Energy Credits. The complete cinematic product and persistent private accounts remain in development.
 
-## Try the current build
+## Try it
 
-Requires Node.js 24 (the verified local version) and a desktop browser with hardware acceleration/WebGL2. From the project folder:
+Requires Node.js 24 and a desktop browser with WebGL2/hardware acceleration.
 
 ```powershell
 npm --prefix frontend ci
 npm --prefix frontend run dev -- --host 127.0.0.1 --port 5174
 ```
 
-Open **http://127.0.0.1:5174**. Start is deliberately silent until you select **Begin expedition**. No API key, account or external service is required for this slice.
+Open **http://127.0.0.1:5174** in Edge or Chrome for unrestricted FPS mouse capture.
 
-1. Watch or skip the opening, then choose **New to this world**.
-2. Explore with **WASD** and optional **Space** jumping. Click the world once to start mouse look; **Escape** releases it. When the browser blocks capture, moving the mouse still looks around without holding a button, and the screen edges keep turning. Arrow keys also turn the view.
-3. Use the corner survey map to find the initially concealed habitat. Its southern airlock starts a third-person arrival, first-person sky reveal, light activation and ORBIT service-bay startup. Give an optional callsign, then choose pull-ups, push-ups or squats and follow the interior blue markers.
-4. At a station, press **E** or click its entry prompt. Read capture guidance and choose a local recording.
-5. Leave the station or press **Escape** to return. Use Settings for music, effects, dialogue and reduced motion.
+1. Select **Begin expedition**. The silent title starts audio only on that interaction. The full opening lasts 12 seconds; skipping is optional.
+2. Choose **New to this world**. Explore with WASD, Space to jump, click the world to capture the mouse, Escape to release. Arrow keys also turn. If an embedded browser blocks capture, hold and drag to look; there is no edge panning. Settings includes mouse sensitivity.
+3. Find the dome using the terrain survey. Enter its southern airlock for the connected 29-second arrival: traveller enters, perspective returns to first person, lights start, ORBIT emerges and approaches. **Preview dome arrival** is a repeat-testing shortcut.
+4. Give an optional callsign. ORBIT introduces reviews, missions, energy and settings. Choose one of three stations and follow the blue floor markers. Press **E** near a station.
+5. Choose a steady side-view recording with one person and a full movement, **2–60 seconds**, under 150 MB. Press **Analyze movement**. Local MediaPipe inference produces measured observations, timestamp buttons and actual pose landmarks, or explains why the footage is insufficient.
+6. Read the findings and limitations, acknowledge them, then **Finish review & return**. Only that final return records activity and awards the daily energy. Leaving or cancelling earns nothing.
+7. Open **Missions** for rules and progress, or **Journal** for the source recording, findings and Master Control deletion.
 
-**Preview dome arrival** jumps to the arrival sequence for repeat testing. Returning-user access and Journal explain their current unavailable state without collecting credentials or inventing saved records.
+## What this build does
 
-## What works
+- Low 84m-wide geodesic glass dome inspired by the user's reference: triangular panes, warm frame, translucent exterior and clear outward views.
+- Continuous opening/entry cameras; human facial features and articulated limbs; staged robot lift and approach. Characters are procedural and stylized, not photoreal assets.
+- Direct relative mouse look with raw-input preference and a plain-pointer-lock compatibility retry. Drag-only fallback in capture-blocking windows.
+- North-up terrain relief from actual world elevations; floor plan with numbered stations, entrance, scale and locked sectors.
+- Real MediaPipe pose measurements in a background worker; pinned model/runtime served locally. No video leaves the computer and no API key is needed.
+- Timestamped observed motion, visible-joint overlays and source links. No invented safe-form score, reference-video match or clinical diagnosis.
+- Guest review completion, daily rewards, weekly resets, reserve cap and missed-day protection. The first five activity days award 5, 5, 5, 2.5 and 2.5 credits. All seven actual days without protection earn 2.5 reserve at rollover, capped at 100. Protection costs 10; at most three per week.
+- Four-step robot orientation, journal with selective media/review removal, first-mission cue and sound/mouse/motion preferences.
+- Original temporary music/effects, local synthesized dialogue auditions, subtitles and reading-time audio reduction.
 
-- Mineral-textured terrain, weathered rocks, roaming six-legged creatures, crisp star points and a banded ringed planet.
-- An 84-unit-diameter habitat with an opaque exterior, outward interior views, a sliding airlock, three spacious stations and sealed future sectors.
-- Silent animated title, opening with articulated hands, exploration, third-person entry, first-person reveal, service-bay robot activation and voiced/subtitled greeting.
-- Movement, jumping, mouse look, station proximity and floor guidance for all three exercises.
-- Native modal holographic panel with keyboard focus handling, capture guidance and local video preview.
-- File type/size/playability checks; known durations over 60 seconds rejected. Videos without finite duration metadata can be previewed, but length verification remains necessary before future analysis.
-- In-memory files only: replacement/closing revokes the object URL. No workout footage is uploaded or saved.
-- Original temporary layered music with reverb, breathing, footsteps, power and machinery cues, locally generated voice auditions, speech ducking and quiet reading intervals. Sound preferences persist locally.
+**Guest limitation:** callsign, video files, feedback and progress live in this tab's memory and clear on reload. Only sound, mouse and motion preferences persist. Account creation is deferred at the user's request. This is not a secure server reward ledger or durable private journal.
 
-## Still required
+## Analysis evidence and limits
 
-Real movement analysis and frame findings; evidence/reference-video comparison; Django/PostgreSQL accounts and private storage; recovery and deletion; actual reward ledger; rigged exercise/feedback animation; final original music and character voices. Optional reference-photo accuracy claims require evaluation. The temporary sounds and procedural character geometry are production scaffolding, not the finished cinematic assets.
+The real model processed a public-domain seven-second Navy push-up clip: 26/28 usable samples and two estimated movement cycles. It rejected the same clip at incompatible squat and pull-up stations. Tests also cover no-person footage, cancellation, pose initialization, projected-angle math, incomplete cycles and tracking gaps. Positive real squat/pull-up validation and a representative accuracy evaluation remain outstanding. Measurements are two-dimensional projections; they cannot establish safe range, pain, load suitability or hidden joint positions.
 
-The complete product remains tracked in [the build checklist](devpost/checklist.md), [PRD](devpost/prd.md), [technical plan](devpost/spec.md), and [sound brief](devpost/sound-design.md).
+See [model provenance and fixture instructions](frontend/public/models/README.md). Test exercise media are ignored local artifacts, not shipped assets.
 
 ## Verify
 
@@ -45,23 +48,21 @@ npm --prefix frontend run build
 npm --prefix frontend test
 ```
 
-The build performs strict TypeScript checks and bundles production assets. Five browser scenarios use installed Microsoft Edge and synthetic video data to cover title silence, all three stations, cancellation, invalid/playable files, sealed sectors, saved settings, returning-user boundaries, actual exploration and discovery, callsign personalization, native mouse capture and deliberately denied capture. Test screenshots and traces are ignored in Git. On a machine without Edge, select an installed Playwright-supported browser in `frontend/playwright.config.ts`.
+The build typechecks and bundles production assets. Browser tests use installed Microsoft Edge; change the Playwright browser setting if unavailable. Tests reuse the running local server. Optional real-media checks require the documented fixtures; they skip when those files are absent. Screenshots and traces are ignored. See [0.3 verification](devpost/verification-0.3.md) for this machine's results.
 
-If the development server is already running, the tests reuse it. A restricted execution environment may need local network permission to reach its own loopback server. No deployment has been performed.
+## Remaining product work
+
+Persistent accounts/recovery/private storage; qualified exercise-feedback validation; licensed professional reference-video comparison; avatar replay driven by supported evidence; finished character models, original score and human-quality voices. These remain tracked in the [checklist](devpost/checklist.md), [PRD](devpost/prd.md), [technical plan](devpost/spec.md) and [sound brief](devpost/sound-design.md).
 
 ## Source map
 
-- `frontend/src/App.tsx`: journey states and contextual interface.
-- `frontend/src/game/World.ts`: original 3D scene, camera, movement and station guidance.
-- `frontend/src/game/MouseLook.ts`: capture, fallback, edge turning and release.
-- `frontend/src/game/Environment.ts` and `terrain.ts`: landscape, sky and creatures.
-- `frontend/src/game/Park.ts` and `Characters.ts`: dome, airlock, robot, avatar and hands.
-- `frontend/src/components/SurveyMap.tsx`: position, heading and discovery map.
-- `frontend/src/game/AudioDirector.ts`: temporary original sound sketch and live mix controls.
-- `frontend/src/components/ClipPreview.tsx`: local-only video selection, validation and disposal.
-- `frontend/src/components/Panel.tsx`: native accessible dialog boundary.
-- `frontend/tests/journey.spec.ts`: reproducible browser checks.
+- `frontend/src/game/World.ts`, `Park.ts`, `Characters.ts`: world, cinematics and characters.
+- `frontend/src/game/MouseLook.ts`: captured relative input, drag fallback and release.
+- `frontend/src/components/SurveyMap.tsx`: terrain survey and habitat floor plan.
+- `frontend/src/analysis/`: frame sampling, measurements and report contracts.
+- `frontend/src/components/ClipPreview.tsx`: selection, analysis, evidence and completion.
+- `frontend/src/game/journey.ts`: guest activity and energy rules.
+- `frontend/src/components/RobotTour.tsx`, `Missions.tsx`, `Journal.tsx`: guided systems and records.
+- `frontend/src/game/AudioDirector.ts`: adaptive temporary sound and local dialogue.
 
-## Assets and privacy
-
-Current scene geometry, procedural textures and musical/effect cues are generated by project code. Temporary dialogue was synthesized locally using installed Windows voices; see `frontend/public/audio/README.md` for provenance and the final-voice production gate. No film/game soundtrack recording or third-party character asset is bundled. Dependencies have their own licenses. The ignored learner profile, local credentials, private recordings, generated artifacts and dependency directories must not be published. Only sound/motion preferences are stored in browser local storage in this build; the callsign lasts only for the current visit.
+Scene geometry, textures and musical/effect cues are generated by project code. Dialogue provenance is in `frontend/public/audio/README.md`. MediaPipe license and model provenance are bundled alongside their assets. No film/game soundtrack or third-party character is bundled. No deployment has been performed.

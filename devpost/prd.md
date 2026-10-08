@@ -509,3 +509,13 @@ To investigate in 4-spec:
 - Comparable, defensible measures of technique progress, reference-photo usefulness, and any supported transformation observations.
 
 The working project name can remain until the learner chooses a final name.
+
+## Revision 0.3 — October 8 implementation direction
+
+The learner's latest review prioritizes a working analysis action, normal FPS mouse look, reference-shaped glass dome, connected cinematics, human silhouette and robot-led introduction to progression/settings. Account creation may be postponed. This supersedes the former preview-only analysis boundary for the current build, without cancelling the full product roadmap.
+
+The station now uses actual browser-local pose inference and a guest journal/energy ledger. It accepts 2–60-second recordings, shows timestamped measured observations and rejects insufficient movement evidence. Only an acknowledged usable review followed by Finish review & return earns activity. Guest records clear on reload; the interface explains this at onboarding, journal and missions. Durable accounts and a server ledger remain separate required production work.
+
+The reference dome becomes a low geodesic translucent cap rather than an opaque metallic shell. Entry preserves camera continuity, and reduced motion retains the entire introduction. Robot orientation explicitly covers analysis, completion, credits, journal deletion and settings. Native pointer capture uses relative motion; capture-denied windows use hold-and-drag rather than edge turning.
+
+Measurements must remain distinct from proven safe technique. The current rules detect visible motion and projected angles; they do not compare the person to a professional reference video or establish that an exercise is safe. Those later capabilities require representative validation and licensed references.

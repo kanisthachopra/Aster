@@ -8,6 +8,7 @@ import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
 import { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 import { GlowLayer } from '@babylonjs/core/Layers/glowLayer';
 import '@babylonjs/core/Lights/Shadows/shadowGeneratorSceneComponent';
+import '@babylonjs/core/Culling/ray';
 import { Environment } from './Environment';
 import { Park } from './Park';
 import { createHands, createAvatar } from './Characters';
@@ -36,7 +37,9 @@ export class World {
   private phaseTime = 0;
   private clock = 0;
   private paused = false;
+  private stationFramePending = true;
   private reduced = false;
+  private lookSensitivity = 1;
   private keys = new Set<string>();
   private speed = 0;
   private height = 0;
@@ -49,6 +52,8 @@ export class World {
   private lastStep = 0;
   private lastBeat = '';
   private lastPhaseEvent = false;
+  private arrivalStart = Vector3.Zero();
+  private arrivalFocus = Vector3.Zero();
   private cleanups: Array<() => void> = [];
 
   constructor(canvas: HTMLCanvasElement, private events: Events) {
@@ -76,12 +81,22 @@ export class World {
       if (mesh.name.includes('boulder') || mesh.name.includes('pylon') || mesh.name.includes('barbell') || mesh.name.includes('support') || mesh.isDescendantOf(this.avatar.root)) shadows.addShadowCaster(mesh);
     }
     this.look = new MouseLook(canvas, () => !this.paused && ['guided', 'park'].includes(this.phase), (dx, dy) => {
-      this.camera.rotation.y += dx * .0022;
-      this.camera.rotation.x = clamp(this.camera.rotation.x + dy * .0022, -1.25, 1.25);
+      this.camera.rotation.y += dx * .0022 * this.lookSensitivity;
+      this.camera.rotation.x = clamp(this.camera.rotation.x + dy * .0022 * this.lookSensitivity, -1.25, 1.25);
     }, events.capture);
     this.bindKeys();
-    this.engine.runRenderLoop(() => { const dt = Math.min(this.engine.getDeltaTime() / 1000, .08); this.update(dt); this.scene.render(); });
-    const resize = () => this.engine.resize(); window.addEventListener('resize', resize); this.cleanups.push(() => window.removeEventListener('resize', resize));
+    let lastRender = performance.now();
+    this.engine.runRenderLoop(() => {
+      const now = performance.now();
+      const frozenReview = this.paused && this.phase === 'station';
+      if (frozenReview && !this.stationFramePending) return;
+      // Reading panels need only gentle background life. Leave CPU/GPU time for local video inference.
+      if (this.paused && !frozenReview && now - lastRender < 1000 / 12) return;
+      const dt = Math.min((now - lastRender) / 1000, .1);
+      lastRender = now; this.update(dt); this.scene.render();
+      this.stationFramePending = false;
+    });
+    const resize = () => { this.engine.resize(); this.stationFramePending = true; }; window.addEventListener('resize', resize); this.cleanups.push(() => window.removeEventListener('resize', resize));
   }
   private bindKeys() {
     const down = (event: KeyboardEvent) => {
@@ -98,45 +113,66 @@ export class World {
     this.cleanups.push(() => { window.removeEventListener('keydown', down); window.removeEventListener('keyup', up); window.removeEventListener('blur', blur); });
   }
   setPhase(phase: Phase) {
+    this.stationFramePending = true;
     const previous = this.phase;
     this.phase = phase; this.phaseTime = 0; this.keys.clear(); this.speed = 0; this.height = 0; this.vertical = 0; this.lastPhaseEvent = false;
-    if (phase === 'opening' || phase === 'guided') {
+    if (phase === 'opening' || (phase === 'guided' && previous !== 'entry' && previous !== 'opening')) {
       this.inside = false; this.discovered = false; this.park.setInside(false);
       this.camera.position.set(LANDING.x, terrainHeight(LANDING.x, LANDING.z) + 1.73, LANDING.z);
       this.camera.rotation.set(phase === 'opening' ? .5 : -.025, 0, 0);
     }
-    if (phase === 'arrival') { this.discovered = true; this.lastBeat = ''; this.avatar.root.setEnabled(true); }
+    if (phase === 'arrival') {
+      this.discovered = true; this.lastBeat = ''; this.avatar.root.setEnabled(true);
+      // A deliberately selected preview begins at the airlock; walking there retains the actual view.
+      if (Vector3.Distance(this.camera.position, new Vector3(0, 1.85, 15)) > 35) {
+        this.camera.position.set(0, 1.85, 12); this.camera.setTarget(new Vector3(0, 1.6, 24));
+      }
+      this.arrivalStart.copyFrom(this.camera.position);
+      this.arrivalFocus.copyFrom(this.camera.position.add(this.camera.getForwardRay().direction.scale(12)));
+    }
     if (phase === 'park' && previous !== 'station') {
-      this.inside = true; this.park.setInside(true); this.camera.position.set(0, 1.85, 32); this.camera.rotation.set(0, 0, 0);
+      this.inside = true; this.park.setInside(true);
+      if (previous !== 'arrival') { this.camera.position.set(0, 1.85, 32); this.camera.rotation.set(0, 0, 0); }
     }
     if (!['guided', 'park'].includes(phase)) this.releasePointer();
     this.avatar.root.setEnabled(phase === 'arrival');
   }
-  pause(value: boolean) { this.paused = value; this.keys.clear(); this.speed = 0; if (value) this.releasePointer(); }
+  pause(value: boolean) { this.paused = value; this.stationFramePending = true; this.keys.clear(); this.speed = 0; if (value) this.releasePointer(); }
   setReducedMotion(value: boolean) { this.reduced = value; }
+  setLookSensitivity(value: number) { this.lookSensitivity = clamp(Number.isFinite(value) ? value : 1, .3, 2); }
   releasePointer() { this.look?.release(); }
   select(id: ExerciseId) { this.selected = id; }
   private once(callback: () => void) { if (!this.lastPhaseEvent) { this.lastPhaseEvent = true; callback(); } }
   private arrival() {
-    const time = this.reduced ? this.phaseTime * 2 : this.phaseTime;
-    const third = time < 5.5;
+    const time = this.phaseTime;
+    const third = time > .5 && time < 9.4 && !this.reduced;
     this.avatar.root.setEnabled(third);
-    this.avatar.root.position.set(0, .2, 16 + smooth(time / 5.5) * 16);
-    this.avatar.legs.forEach((leg, i) => { leg.rotation.x = Math.sin(time * 6 + i * Math.PI) * .3; });
-    this.avatar.arms.forEach((arm, i) => { arm.rotation.x = -Math.sin(time * 6 + i * Math.PI) * .24; });
-    this.inside = time > 2; this.park.openEntrance(time / 1.5);
-    if (third) {
-      this.camera.position.copyFrom(Vector3.Lerp(new Vector3(7, 4.1, 12), new Vector3(2, 2.6, 28), smooth(time / 5.5)));
-      this.camera.setTarget(this.avatar.root.position.add(new Vector3(0, 1.4, 1)));
+    const walk = smooth((time - 1.5) / 6.5), gait = Math.sin(walk * Math.PI);
+    this.avatar.root.position.set(0, .2 + (!this.reduced ? Math.sin(time * 12) * .013 * gait : 0), 16 + walk * 16);
+    this.avatar.legs.forEach((leg, i) => { leg.rotation.x = Math.sin(time * 6 + i * Math.PI) * .34 * gait; });
+    this.avatar.arms.forEach((arm, i) => { arm.rotation.x = -Math.sin(time * 6 + i * Math.PI) * .22 * gait; });
+    this.avatar.knees.forEach((knee, i) => { knee.rotation.x = Math.max(0, -Math.sin(time * 6 + i * Math.PI)) * .46 * gait; });
+    this.inside = time > 4; this.park.openEntrance(time / 1.7);
+    let position: Vector3, focus: Vector3;
+    if (time < 10) {
+      if (this.reduced) position = Vector3.Lerp(this.arrivalStart, new Vector3(0, 1.85, 32), smooth(time / 10));
+      else if (time < 4) position = Vector3.Lerp(this.arrivalStart, new Vector3(1.8, 2.05, 25), smooth(time / 4));
+      else if (time < 7) position = Vector3.Lerp(new Vector3(1.8, 2.05, 25), new Vector3(3.5, 2.45, 35), smooth((time - 4) / 3));
+      else position = Vector3.Lerp(new Vector3(3.5, 2.45, 35), new Vector3(0, 1.85, 32), smooth((time - 7) / 3));
+      const portrait = this.avatar.root.position.add(new Vector3(0, 1.5, .12));
+      focus = Vector3.Lerp(this.arrivalFocus, portrait, smooth(time / 2.5));
+      focus = Vector3.Lerp(focus, new Vector3(0, 8, 60), smooth((time - 6) / 4));
     } else {
-      this.camera.position.set(0, 1.85, 32);
-      const focus = time < 9 ? new Vector3(Math.sin((time - 5.5) * .5) * 13, 12 - (time - 5.5), 60) : this.park.robot.position;
-      this.camera.setTarget(focus);
+      position = new Vector3(0, 1.85, 32);
+      const sky = new Vector3(0, 8, 60), bay = new Vector3(-26, 1.9, 40);
+      focus = Vector3.Lerp(sky, bay, smooth((time - 12) / 3));
+      focus = Vector3.Lerp(focus, this.park.robot.position, smooth((time - 17) / 3));
     }
-    const beat: ArrivalBeat = time < 5.5 ? 'threshold' : time < 9 ? 'lights' : time < 12 ? 'machine' : time < 17 ? 'robot' : 'greeting';
+    this.camera.position.copyFrom(position); this.camera.setTarget(focus);
+    const beat: ArrivalBeat = time < 10 ? 'threshold' : time < 14 ? 'lights' : time < 18 ? 'machine' : time < 24 ? 'robot' : 'greeting';
     if (beat !== this.lastBeat) { this.lastBeat = beat; this.events.beat(beat); }
-    if (time >= 20) this.once(this.events.introduced);
-    return { power: smooth((time - 5.5) / 4), robot: smooth((time - 9) / 8) };
+    if (time >= 29) this.once(this.events.introduced);
+    return { power: smooth((time - 10) / 4), robot: clamp((time - 14) / 13, 0, 1) };
   }
   private update(dt: number) {
     this.clock += dt; if (!this.paused) this.phaseTime += dt;
@@ -144,9 +180,10 @@ export class World {
     this.look.update(dt);
     let power = this.inside ? 1 : 0, robot = this.inside ? 1 : 0;
     if (this.phase === 'arrival') { const state = this.arrival(); power = state.power; robot = state.robot; }
-    const firstPerson = ['opening', 'guided', 'park', 'station'].includes(this.phase) || (this.phase === 'arrival' && this.phaseTime * (this.reduced ? 2 : 1) > 5.5);
+    const firstPerson = ['opening', 'entry', 'guided', 'park', 'station'].includes(this.phase) || (this.phase === 'arrival' && this.phaseTime > 9.5);
     this.hands.root.setEnabled(firstPerson);
-    this.hands.root.position.y = (this.phase === 'opening' ? .13 : -.08) + (this.reduced ? 0 : Math.sin(this.clock * (this.speed > .1 ? 8 : 1.6)) * (this.speed > .1 ? .008 : .003));
+    const handsHeight = (this.phase === 'opening' ? .13 : -.08) + (this.reduced ? 0 : Math.sin(this.clock * (this.speed > .1 ? 8 : 1.6)) * (this.speed > .1 ? .008 : .003));
+    this.hands.root.position.y += (handsHeight - this.hands.root.position.y) * Math.min(1, dt * 6);
     this.hands.fingers.forEach((finger, i) => { finger.rotation.x = this.phase === 'opening' ? Math.sin(this.phaseTime * .7 + i * .15) * .11 : .12; });
     if (this.phase === 'title') {
       this.camera.position.set(-64 + (this.reduced ? 0 : Math.sin(this.clock * .045) * 2), 24, -2);
@@ -154,11 +191,11 @@ export class World {
     }
     if (!this.paused && this.phase === 'opening') {
       this.camera.rotation.x = .5 - smooth((this.phaseTime - 3) / 7) * .68;
-      if (this.phaseTime >= (this.reduced ? 3 : 12)) this.once(this.events.opened);
+      if (this.phaseTime >= 12) this.once(this.events.opened);
     }
     if (!this.paused && ['guided', 'park'].includes(this.phase)) this.move(dt);
     this.park.update(this.clock, power, robot, this.camera.position, this.phase === 'park' ? this.selected : null, this.reduced);
-    if (this.clock - this.lastSurvey > .12) {
+    if (!this.paused && this.clock - this.lastSurvey > .12) {
       this.lastSurvey = this.clock;
       let nearest: ExerciseId | null = null, distance = Infinity;
       for (const ex of EXERCISES) {
