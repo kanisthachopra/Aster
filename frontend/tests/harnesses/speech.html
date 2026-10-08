@@ -1,0 +1,16 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Live review speech verification</title>
+<button id="listen">Read review</button><button id="long">Read long review</button><button id="stop">Stop</button><button id="abort">Cancel this reading</button><button id="mute">Mute</button><p role="status">Ready</p>
+<script type="module">
+import { AudioDirector } from '/src/game/AudioDirector.ts';
+import { DEFAULT_SETTINGS } from '/src/game/types.ts';
+const audio=new AudioDirector(DEFAULT_SETTINGS);
+const status=document.querySelector('[role=status]');
+let task;
+async function read(text){ task?.abort();task=new AbortController();const result=await audio.speakText(text,{signal:task.signal,onStatus:state=>status.textContent=state}); status.textContent=result.status+(result.message?': '+result.message:''); }
+document.querySelector('#listen').onclick=()=>read('At two seconds, your elbows were clearly visible. The lower body was outside the frame, so that part is uncertain.');
+document.querySelector('#long').onclick=()=>read(Array.from({length:15},(_,i)=>`Observation ${i+1}. ${'The visible movement needs another look. '.repeat(6)}`).join(' '));
+document.querySelector('#stop').onclick=()=>audio.stopDialogue();
+document.querySelector('#abort').onclick=()=>task?.abort();
+document.querySelector('#mute').onclick=()=>audio.applySettings({...DEFAULT_SETTINGS,dialogue:0});
+window.addEventListener('pagehide',()=>audio.dispose());
+</script></html>

@@ -1,6 +1,9 @@
 import type { Phase, Settings } from './types';
 import type { ArrivalBeat } from './World';
 import dialogueScript from './dialogue.json';
+import { getSpeechConfiguration, requestReviewSpeech, SpeechUnavailable, type SpeakOptions, type SpeechResult } from '../speech/client';
+import { chunkSpeechText, MAX_NARRATION_CHARACTERS, MAX_SPEECH_CHUNK } from '../speech/chunks';
+import { withSpeechAbort } from '../speech/abort';
 
 /** Original temporary synthesis for timing review, not the finished cinematic score. */
 export class AudioDirector {
@@ -11,6 +14,7 @@ export class AudioDirector {
   private reverb: ConvolverNode | null = null;
   private voice: AudioBufferSourceNode | null = null;
   private voiceVersion = 0;
+  private speechRequest: AbortController | null = null;
   private voiceCache = new Map<string, AudioBuffer>();
   private phrase = 0;
   private timer: ReturnType<typeof setInterval> | null = null;
@@ -46,8 +50,9 @@ export class AudioDirector {
   }
   applySettings(settings: Settings) {
     this.settings = settings;
+    if (settings.dialogue === 0 && this.speechRequest) { this.stopDialogue(); return; }
     if (!this.context || !this.music || !this.effects) return;
-    this.music.gain.setTargetAtTime(settings.music * (this.voice ? .12 : this.reading ? .13 : 1), this.context.currentTime, .12);
+    this.music.gain.setTargetAtTime(settings.music * (this.voice || this.speechRequest ? .12 : this.reading ? .13 : 1), this.context.currentTime, .12);
     this.effects.gain.setTargetAtTime(settings.effects, this.context.currentTime, .12);
     this.dialogue?.gain.setTargetAtTime(settings.dialogue * 1.8, this.context.currentTime, .12);
   }
@@ -130,7 +135,64 @@ export class AudioDirector {
   guide(key: string) {
     if (Object.hasOwn(dialogueScript, key)) void this.speak(key);
   }
-  stopDialogue() { this.voiceVersion++; this.voice?.stop(); this.voice = null; this.applySettings(this.settings); }
+  stopDialogue() {
+    this.voiceVersion++;
+    const request = this.speechRequest; this.speechRequest = null; request?.abort();
+    this.voice?.stop(); this.voice = null; this.applySettings(this.settings);
+  }
+  async getSpeechStatus() {
+    const status = await getSpeechConfiguration();
+    return { ...status, maxCharacters: MAX_NARRATION_CHARACTERS, maxChunkCharacters: MAX_SPEECH_CHUNK };
+  }
+  /** User-initiated reading of the actual report. Never substitutes a canned success line. */
+  async speakText(text: string, options: SpeakOptions = {}): Promise<SpeechResult> {
+    this.stopDialogue();
+    if (this.settings.dialogue === 0) return { status: 'muted', message: 'Voice volume is muted. Turn it up in Settings to hear this review.' };
+    const controller = new AbortController(); this.speechRequest = controller;
+    const version = this.voiceVersion;
+    const abort = () => controller.abort();
+    options.signal?.addEventListener('abort', abort, { once: true });
+    if (options.signal?.aborted) controller.abort();
+    try {
+      if (controller.signal.aborted) return { status: 'cancelled' };
+      const chunks = chunkSpeechText(text);
+      options.onStatus?.('preparing');
+      if (!this.context) await withSpeechAbort(this.start(), controller.signal);
+      const ctx = this.context;
+      if (!ctx || !this.dialogue || controller.signal.aborted || version !== this.voiceVersion) return { status: 'cancelled' };
+      await withSpeechAbort(ctx.resume(), controller.signal);
+      for (const chunk of chunks) {
+        if (controller.signal.aborted || version !== this.voiceVersion) return { status: 'cancelled' };
+        options.onStatus?.('preparing');
+        const bytes = await requestReviewSpeech(chunk, controller.signal);
+        const buffer = await withSpeechAbort(ctx.decodeAudioData(bytes), controller.signal);
+        if (controller.signal.aborted || version !== this.voiceVersion || ctx.state === 'closed') return { status: 'cancelled' };
+        const voice = ctx.createBufferSource(); voice.buffer = buffer; voice.connect(this.dialogue);
+        this.voice = voice;
+        this.music?.gain.setTargetAtTime(this.settings.music * .12, ctx.currentTime, .08);
+        await new Promise<void>(resolve => {
+          const finished = () => {
+            controller.signal.removeEventListener('abort', cancel);
+            voice.onended = null; voice.disconnect();
+            if (this.voice === voice) { this.voice = null; this.applySettings(this.settings); }
+            resolve();
+          };
+          const cancel = () => { voice.stop(); finished(); };
+          voice.onended = finished; controller.signal.addEventListener('abort', cancel, { once: true });
+          voice.start(); options.onStatus?.('speaking');
+        });
+      }
+      return { status: controller.signal.aborted ? 'cancelled' : 'completed' };
+    } catch (error) {
+      if (controller.signal.aborted || version !== this.voiceVersion) return { status: 'cancelled' };
+      return { status: error instanceof SpeechUnavailable ? 'unavailable' : 'error',
+        message: error instanceof Error ? error.message : 'Live voice is unavailable. Your written review is still available.' };
+    } finally {
+      options.signal?.removeEventListener('abort', abort);
+      if (this.speechRequest === controller) this.speechRequest = null;
+      this.applySettings(this.settings);
+    }
+  }
   private async loadVoice(key: string) {
     const ctx = this.context;
     if (!ctx || !Object.hasOwn(dialogueScript, key)) return null;
@@ -145,8 +207,7 @@ export class AudioDirector {
   }
   private async speak(key: string) {
     const ctx = this.context; if (!ctx || !this.dialogue) return;
-    const version = ++this.voiceVersion;
-    this.voice?.stop(); this.voice = null;
+    this.stopDialogue(); const version = this.voiceVersion;
     try {
       const buffer = await this.loadVoice(key);
       if (!buffer) return;
@@ -158,7 +219,7 @@ export class AudioDirector {
   }
   dispose() {
     if (this.timer) clearInterval(this.timer);
-    this.voiceVersion++; this.voice?.stop(); this.voice = null;
+    this.stopDialogue();
     for (const source of this.active) { try { source.stop(); } catch { /* Already ended. */ } }
     this.active.clear(); void this.context?.close(); this.context = null;
   }

@@ -26,7 +26,11 @@ function response(worker: Worker, signal: AbortSignal): Promise<{ landmarks?: La
   });
 }
 
-export async function analyzeVideo(file: File, exercise: ExerciseId, onProgress: (progress: AnalysisProgress) => void, signal: AbortSignal): Promise<AnalysisReport> {
+export interface AnalysisPreview {
+  /** Draw synchronously: the bitmap is closed immediately after this callback. */
+  onFrame: (bitmap: ImageBitmap, frame: EvidenceFrame) => void;
+}
+export async function analyzeVideo(file: File, exercise: ExerciseId, onProgress: (progress: AnalysisProgress) => void, signal: AbortSignal, preview?: AnalysisPreview): Promise<AnalysisReport> {
   aborted(signal);
   if (file.size > 150 * 1024 * 1024) throw new Error('Choose a clip smaller than 150 MB.');
   const url = URL.createObjectURL(file), video = document.createElement('video');
@@ -47,12 +51,21 @@ export async function analyzeVideo(file: File, exercise: ExerciseId, onProgress:
       const seeked = mediaEvent(video,'seeked',signal); video.currentTime = timestamp; await seeked;
       const bitmap = await createImageBitmap(video, { resizeWidth: Math.min(width,960), resizeHeight: Math.round(height * Math.min(width,960) / width) });
       if (signal.aborted) { bitmap.close(); aborted(signal); }
-      const resultPromise = response(worker,signal); worker.postMessage({ type:'frame', timestamp, bitmap },[bitmap]);
-      const result = await resultPromise;
-      // Multiple visible people cannot be reliably assigned to the exerciser.
-      const landmarks = result.landmarks?.length === 1 ? result.landmarks[0] : [];
-      const frame = { timestamp, landmarks, metrics: measure(landmarks,exercise,width,height) };
-      frames.push(frame); onProgress({ stage:'sampling', completed:i+1,total,message:`Following your movement · ${i+1} / ${total} frames`,frame });
+      // Keep the displayed image and its measurement together. Evaluation jobs
+      // omit this copy; interactive reviews retain at most one preview bitmap.
+      let display: ImageBitmap | undefined;
+      try {
+        if (preview) display = await createImageBitmap(bitmap);
+        aborted(signal);
+        const resultPromise = response(worker,signal); worker.postMessage({ type:'frame', timestamp, bitmap },[bitmap]);
+        const result = await resultPromise;
+        aborted(signal);
+        // Multiple visible people cannot be reliably assigned to the exerciser.
+        const landmarks = result.landmarks?.length === 1 ? result.landmarks[0] : [];
+        const frame = { timestamp, landmarks, metrics: measure(landmarks,exercise,width,height) };
+        if (display) preview?.onFrame(display, frame);
+        frames.push(frame); onProgress({ stage:'sampling', completed:i+1,total,message:`Following your movement · ${i+1} / ${total} frames`,frame });
+      } finally { display?.close(); bitmap.close(); }
     }
     onProgress({ stage:'summarizing',completed:total,total,message:'Finding the moments worth reviewing.' });
     aborted(signal); return summarize(frames,exercise,duration,width,height);

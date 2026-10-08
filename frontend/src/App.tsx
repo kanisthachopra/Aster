@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { World, type ArrivalBeat } from './game/World';
 import { AudioDirector } from './game/AudioDirector';
 import { EXERCISES, loadSettings, type ExerciseId, type Phase, type LookMode, type Survey } from './game/types';
 import { LANDING } from './game/terrain';
 import Panel from './components/Panel';
 import ClipPreview from './components/ClipPreview';
+import type { ReviewSpeech } from './components/ReportVoice';
 import SurveyMap from './components/SurveyMap';
 import RobotTour from './components/RobotTour';
 import Missions from './components/Missions';
@@ -46,6 +47,11 @@ export default function App() {
   const [message, setMessage] = useState('');
   const [journey, setJourney] = useState(() => createJourney());
   const speakGuide = useCallback((key: string) => audio.current?.guide(key), []);
+  const reviewSpeech = useMemo<ReviewSpeech>(() => ({
+    getStatus: async () => audio.current ? audio.current.getSpeechStatus() : { available: false, message: 'Voice is still starting. Your written feedback is ready.' },
+    speak: async (text, options) => audio.current ? audio.current.speakText(text, options) : { status: 'unavailable', message: 'Voice is not available yet.' },
+    stop: () => audio.current?.stopDialogue(),
+  }), []);
   const exercise = EXERCISES.find(item => item.id === selected)!;
   const nearbyExercise = EXERCISES.find(item => item.id === near);
   const nearbyGame = GAME_STATIONS.find(item => item.id === nearGame);
@@ -186,7 +192,7 @@ export default function App() {
 
     {overlay === 'review' && <Panel title={exercise.name} eyebrow={`TRAINING STATION ${exercise.number} / ${exercise.label}`} onClose={closePanel} wide>
       <div className="review-intro"><span className="orbit-icon">◈</span><p><strong>ORBIT</strong>“{exercise.cue} Let’s start with your recording.”</p><span className="phase-tag">CAPTURE</span></div>
-      <ClipPreview key={selected} exercise={exercise} onFinish={completeReview} onSpeak={speakGuide} />
+      <ClipPreview key={selected} exercise={exercise} onFinish={completeReview} onSpeak={speakGuide} speech={reviewSpeech} />
       <div className="panel-footer"><span>Leaving early keeps today’s activity unchanged.</span><button className="secondary" onClick={closePanel}>Leave station <span>↗</span></button></div>
     </Panel>}
 

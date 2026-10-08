@@ -106,3 +106,17 @@ User feedback on the 0.3 checkpoint exposed cropped-body detection failures, an 
 Implemented and checked: all three station identities, real video review and timestamp overlays, finish-only energy, journal media deletion, partial-review bookkeeping, actual rock/fixture collision, recreation console interaction, three mini-games, revised opening speech, keyboard/reduced-motion UI, settings and exploration through the terrain. Recording guides now use exercise-specific sketches and portrait previews keep the Analyze action visible. See verification-0.4.md for final checks, diagnostic evidence and limits; skills-review-0.4.md records all fourteen official skills and the scoped motion approval.
 
 The user has not yet accepted this revision. The production criteria above remain open: general technique-coaching validation, realistic finished character assets, final score/performance direction, private persistent accounts, reference-video comparison and evidence-driven avatar replay. No private video is part of the source repository or shipped app.
+
+## Revision 0.5 — core review and measured evaluation
+
+The learner explicitly pauses world dynamics and typography work. Current priorities are actual tracked movement during analysis, findings read aloud with uncertainty, a server-only Deepgram key, and an evaluated corpus of exactly 200 independently sourced clips for each supported exercise (600 total). The requested 80% target must refer to a measured task and credible labels, not the pose model's visibility or a made-up form score. Repeated inference and rule revision are evaluation/calibration, not reinforcement learning.
+
+- [x] Show sampled recording frames and their actual detected skeleton during processing; handle missing joints and cancellation without fabricating motion.
+- [x] Derive spoken feedback from each report, including timestamped observations, suggestions and uncertainty; add transcript and playback controls.
+- [x] Prepare an ignored server-only Deepgram key slot and local speech integration.
+- [ ] Verify real Deepgram synthesis after the learner supplies a key. Mocked transport checks do not establish real voice quality.
+- [ ] Acquire, deduplicate and decode 200 pull-up, 200 push-up and 200 squat clips with provenance and source-group splits.
+- [ ] Run the app's actual inference pipeline on all 600; retain reproducible aggregate results and evaluation protocol.
+- [ ] Evaluate and improve development-set failure modes; preserve separate calibration and held-out test sets.
+- [ ] Demonstrate at least 80% form-feedback accuracy on independently judged form labels. Action labels alone cannot close this item.
+- [ ] Learner tries the new tracking display and spoken feedback.

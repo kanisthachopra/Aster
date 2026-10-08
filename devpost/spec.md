@@ -203,3 +203,13 @@ This section supersedes the earlier Lite-model, 60-second, full-body-filter and 
 - All fourteen official Emil Kowalski skills were inspected at a recorded commit. Relevant CSS/WAAPI, interaction, focus and typography guidance is applied; no Expo or Swift runtime was introduced. See skills-review-0.4.md for applicability and the animation review.
 
 No private test footage, contact sheets, generated landmarks or reports are shipped. The checked-in tests use independently sourced public fixtures where available and separate mathematical/input/ledger tests. Private examples are diagnostic, not hard-coded references or a general accuracy benchmark.
+
+## Revision 0.5 — live evidence and speech boundary
+
+The core review is now the active workstream; world/typography production is paused at the learner's request. The analysis function optionally copies one bitmap before transferring the inference image to the worker. Once that exact frame is measured, a synchronous callback paints its image and visible skeleton to a canvas, then releases the bitmap. Headless evaluation omits the callback/copy. No pose interpolation fills uncertain gaps. Users can hide movement tracking; progress and cancellation remain available.
+
+Narration is assembled deterministically from the completed report's observations, timestamps, suggestions and limitations. It does not use a second language model to invent corrections. The review provides automatic reading when connected, specific-finding playback, stop/replay and a transcript. The existing music/dialogue controls still apply. Long readings are divided at sentence boundaries for the speech provider; cancellation covers both requests and playback.
+
+Deepgram credentials live only in ignored frontend/.env.local, without a VITE_ prefix. A local, same-origin Vite server endpoint validates and proxies bounded feedback text to Deepgram; video/landmarks are never sent. This is a local development integration, not an authenticated public production backend. Source examples and setup instructions contain no credential. See voice-setup.md for configuration and production limits.
+
+The benchmark target is 600 clips with 200 per action, source identifiers, hashes and grouped development/calibration/test splits. Activity recognition, visible measurement coverage, cycle estimates and form-correction accuracy are separate outcomes. Public action-only labels cannot validate good/bad technique, and the 80% form target remains open until an independently labeled form test supports it. Corpus media and raw inference results remain ignored local research artifacts; reproducible code, provenance metadata and aggregate results may be versioned.

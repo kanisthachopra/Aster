@@ -3,6 +3,8 @@ import type { Exercise } from '../game/types';
 import { analyzeVideo } from '../analysis/analyzeVideo';
 import { POSE_CONNECTIONS, type AnalysisProgress, type AnalysisReport, type EvidenceFrame } from '../analysis/types';
 import { visible } from '../analysis/measurements';
+import { drawTrackedFrame } from '../analysis/drawTrackedFrame';
+import ReportVoice, { type ReviewSpeech } from './ReportVoice';
 
 function PoseOverlay({ frame }: { frame?: EvidenceFrame }) {
   if (!frame) return null;
@@ -12,20 +14,23 @@ function PoseOverlay({ frame }: { frame?: EvidenceFrame }) {
     {points.map((point, i) => i >= 11 && visible(point) && <circle key={i} cx={point.x} cy={point.y} r=".005" />)}
   </svg>;
 }
-export default function ClipPreview({ exercise, onFinish, onSpeak }: { exercise: Exercise; onFinish: (report: AnalysisReport, file: File) => void; onSpeak: (key: string) => void }) {
+export default function ClipPreview({ exercise, onFinish, onSpeak, speech }: { exercise: Exercise; onFinish: (report: AnalysisReport, file: File) => void; onSpeak: (key: string) => void; speech?: ReviewSpeech }) {
   const [file, setFile] = useState<File | null>(null), [url, setUrl] = useState(''), [error, setError] = useState('');
   const [duration, setDuration] = useState<number | null>(null), [report, setReport] = useState<AnalysisReport | null>(null);
   const [progress, setProgress] = useState<AnalysisProgress | null>(null), [busy, setBusy] = useState(false), [acknowledged, setAcknowledged] = useState(false);
   const [frame, setFrame] = useState<EvidenceFrame>(), [showPose, setShowPose] = useState(false), [dimensions, setDimensions] = useState([16, 9]);
   const input = useRef<HTMLInputElement>(null), video = useRef<HTMLVideoElement>(null), controller = useRef<AbortController | null>(null);
   const results = useRef<HTMLElement>(null);
+  const liveCanvas = useRef<HTMLCanvasElement>(null);
+  const [showTracking, setShowTracking] = useState(true);
+  const trackedJoints = progress?.frame?.landmarks.filter((point, i) => i >= 11 && visible(point)).length ?? 0;
   const scrollBehavior = (): ScrollBehavior => document.querySelector('.app.reduce-motion') || matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
   useEffect(() => { if (report) results.current?.scrollIntoView({ block: 'start', behavior: scrollBehavior() }); }, [report]);
   useEffect(() => () => controller.current?.abort(), []);
   useEffect(() => { if (!file) { setUrl(''); return; } const objectUrl = URL.createObjectURL(file); setUrl(objectUrl); return () => URL.revokeObjectURL(objectUrl); }, [file]);
   function select(next?: File) {
     if (!next) return;
-    controller.current?.abort(); setBusy(false); setProgress(null); setReport(null); setAcknowledged(false); setFrame(undefined); setShowPose(false); setError(''); setDuration(null);
+    controller.current?.abort(); speech?.stop(); setBusy(false); setProgress(null); setReport(null); setAcknowledged(false); setFrame(undefined); setShowPose(false); setError(''); setDuration(null);
     if (!['video/mp4', 'video/webm', 'video/quicktime'].includes(next.type)) { setFile(null); setError('Choose an MP4, WebM or MOV video. Your browser must support its video codec.'); return; }
     if (next.size > 150 * 1024 * 1024 || next.size === 0) { setFile(null); setError('Choose a non-empty video under 150 MB.'); return; }
     setFile(next);
@@ -42,10 +47,11 @@ export default function ClipPreview({ exercise, onFinish, onSpeak }: { exercise:
     const task = new AbortController(); controller.current?.abort(); controller.current = task;
     setBusy(true); setError(''); setReport(null); setAcknowledged(false); setShowPose(false); video.current?.pause(); onSpeak('analysis-start');
     try {
-      const result = await analyzeVideo(file, exercise.id, update => { if (!task.signal.aborted) setProgress(update); }, task.signal);
+      const result = await analyzeVideo(file, exercise.id, update => { if (!task.signal.aborted) setProgress(update); }, task.signal, { onFrame: (bitmap, sample) => {
+        if (!task.signal.aborted && liveCanvas.current) drawTrackedFrame(liveCanvas.current, bitmap, sample);
+      } });
       if (task.signal.aborted) return;
       setReport(result); focus(result.findings[0]?.timestamp ?? result.frames.find(item => item.metrics)?.timestamp ?? 0, result.frames, false);
-      onSpeak(result.status === 'partial' ? 'analysis-partial' : result.status === 'usable' ? 'analysis-ready' : 'analysis-insufficient');
     } catch (cause) { if (!task.signal.aborted) setError(cause instanceof Error ? cause.message : 'I could not process this clip. Try a different recording.'); }
     finally { if (controller.current === task) { setBusy(false); setProgress(null); } }
   }
@@ -65,7 +71,7 @@ export default function ClipPreview({ exercise, onFinish, onSpeak }: { exercise:
       </section>
       <section className="clip-section"><p className="eyebrow">YOUR RECORDING / STAYS ON THIS COMPUTER</p>
         {url ? <div className="video-wrap"><div className="evidence-player" style={{ aspectRatio: `${dimensions[0]} / ${dimensions[1]}`, width: `min(100%, ${320 * dimensions[0] / dimensions[1]}px, ${38 * dimensions[0] / dimensions[1]}vh)`, marginInline: 'auto' }}>
-          <video ref={video} key={url} src={url} controls preload="metadata" aria-label={`${exercise.name} recording preview`} onPlay={() => setShowPose(false)}
+          <video ref={video} key={url} src={url} controls={!busy} tabIndex={busy ? -1 : 0} preload="metadata" aria-label={`${exercise.name} recording preview`} onPlay={() => setShowPose(false)}
             onSeeking={() => setShowPose(false)} onSeeked={event => {
               const element = event.currentTarget;
               const sample = report?.frames.find(item => Math.abs(item.timestamp - element.currentTime) < .05);
@@ -74,17 +80,23 @@ export default function ClipPreview({ exercise, onFinish, onSpeak }: { exercise:
             onLoadedMetadata={event => { const element = event.currentTarget, seconds = element.duration; setDimensions([element.videoWidth || 16, element.videoHeight || 9]); if (Number.isFinite(seconds) && (seconds < 2 || seconds > 120)) { setError('Choose a playable clip between 2 and 120 seconds.'); setFile(null); } else setDuration(Number.isFinite(seconds) ? seconds : null); }}
             onError={() => { setError('This browser could not play that recording. Try an MP4 with H.264 video or a WebM file.'); setFile(null); }} />
           {showPose && <PoseOverlay frame={frame} />}
+          {busy && <div className={`live-tracking ${showTracking ? '' : 'tracking-hidden'}`}>
+            <canvas ref={liveCanvas} aria-label="Live analysis: sampled recording with measured pose skeleton" />
+            <div className="tracking-label"><span>{progress?.frame ? `${progress.frame.timestamp.toFixed(2)}s / ${duration?.toFixed(1) ?? '…'}s` : 'Preparing first frame'}</span><span>{trackedJoints ? `${trackedJoints} VISIBLE JOINTS` : progress?.frame ? 'JOINTS UNCLEAR IN THIS FRAME' : 'WAITING FOR FIRST MEASUREMENT'}</span></div>
+          </div>}
         </div><div className="file-meta"><span title={file?.name}>{file?.name}</span><span>{duration === null ? 'Duration unavailable' : `${duration.toFixed(1)}s`}</span></div>
         {showPose && frame && <p className="evidence-caption">Sampled evidence · {frame.timestamp.toFixed(2)}s · visible landmarks only</p>}</div> : <button className="upload-area" onClick={() => input.current?.click()}><span className="upload-mark">↑</span><strong>Select your recording</strong><span>MP4, WebM or MOV · 2–120 seconds</span><small>150 MB maximum</small></button>}
         <input ref={input} className="visually-hidden" type="file" accept="video/mp4,video/webm,video/quicktime" aria-label="Choose exercise video" onChange={event => { select(event.target.files?.[0]); event.target.value = ''; }} />
         {url && !busy && <div className="analysis-actions"><button className="primary" onClick={() => void analyze()}>{report ? 'Analyze again' : 'Analyze movement'} <span>↗</span></button><button className="text-button" onClick={() => input.current?.click()}>Choose another clip</button></div>}
         {busy && <div className="analysis-progress" role="status" aria-live="polite"><strong>{progress?.message || 'Preparing ORBIT’s vision…'}</strong><progress aria-label="Movement analysis progress" max={progress?.total || 1} value={progress?.completed || 0}/><span>{progress?.completed || 0} / {progress?.total || '…'} samples</span><button className="text-button" onClick={cancel}>Stop analysis</button></div>}
+        {busy && <div className="tracking-explanation"><label><input type="checkbox" checked={showTracking} onChange={event => setShowTracking(event.target.checked)} /> Show movement tracking</label><p className="fine-print">The lines follow joints measured in this exact frame. Gaps mean a joint is hidden or uncertain. This is sampled motion, not a live form score.</p></div>}
         {error && <p role="alert" className="error-message">{error}</p>}
         <p className="fine-print">Actual pose detection runs locally in a background worker. Your recording is never sent to an AI service. Loading the model for the first review can take a moment.</p>
       </section>
     </div>
     {report && <section ref={results} className="analysis-results" aria-label="Movement analysis results"><p className="eyebrow">ORBIT / {report.status === 'usable' ? 'LET’S LOOK AT THE EVIDENCE' : report.status === 'partial' ? 'USEFUL OBSERVATIONS · LIMITED VIEW' : 'WHAT THIS RECORDING SHOWS'}</p>
       <h3>{report.status === 'usable' ? 'Here’s what I could measure.' : report.status === 'partial' ? 'Let’s work with what I can see.' : 'Here’s where the view falls short.'}</h3><p className="result-summary" role="status">{report.summary}</p>
+      <ReportVoice key={report.id} report={report} speech={speech} />
       <div className="measurement-stats"><span><strong>{report.poseFrames ?? report.frames.filter(f => f.landmarks.length).length}/{report.sampledFrames}</strong> person detected</span><span><strong>{report.usableFrames}/{report.sampledFrames}</strong> measurable {exercise.id === 'squat' ? 'knee' : 'elbow'} samples</span><span><strong>{report.estimatedRepetitions || 'Not confirmed'}</strong> estimated motion cycles</span></div>
       <p className="fine-print">Person detection and measurable joints are different. Neither is a form score. A hidden head or foot does not invalidate an arm measurement; I only discuss what is visible.</p>
       <div className="findings-list">{report.findings.map(finding => <article className="finding-card" key={finding.id}><button className="evidence-time" onClick={() => focus(finding.timestamp)} aria-label={`View evidence at ${finding.timestamp.toFixed(1)} seconds`}>▶ {finding.timestamp.toFixed(1)}s</button><div><h4>{finding.title}</h4><p>{finding.observation}</p><p className="finding-suggestion">{finding.suggestion}</p></div></article>)}</div>

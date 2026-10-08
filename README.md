@@ -1,6 +1,6 @@
 # Aster — Outpost 07
 
-A desktop-browser exercise park on a distant moon. Version **0.4** adds scanned terrain, solid objects, neural character dialogue, broader local movement analysis and three playable recreation stations. The complete cinematic product and persistent private accounts remain in development.
+A desktop-browser exercise park on a distant moon. Version **0.5** focuses on the movement review: actual tracked skeletons during processing and report-specific spoken feedback through an optional Deepgram connection. World production is paused while the core review and a 600-clip evaluation are developed. The complete cinematic product and persistent private accounts remain in development.
 
 ## Try it
 
@@ -17,12 +17,16 @@ Open **http://127.0.0.1:5174** in Edge or Chrome for unrestricted FPS mouse capt
 2. Choose **New to this world**. Explore with WASD, Space to jump, click the world to capture the mouse, Escape to release. Arrow keys also turn. If an embedded browser blocks capture, hold and drag to look; there is no edge panning. Settings includes mouse sensitivity.
 3. Find the dome using the terrain survey. Enter its southern airlock for the connected 29-second arrival: traveller enters, perspective returns to first person, lights start, ORBIT emerges and approaches. **Preview dome arrival** is a repeat-testing shortcut.
 4. Give an optional callsign. ORBIT introduces reviews, missions, energy, recreation and settings. Choose one of three exercise stations and follow the blue floor markers. Press **E** near a station.
-5. Choose a recording with one person, **2–120 seconds**, under 150 MB. A side or three-quarter view is helpful, but other views can provide observations too. Press **Analyze movement**. The local Full pose model measures visible joint chains independently and explains missing evidence.
-6. Read the findings and limitations, acknowledge them, then **Finish review & return**. Only that final return records qualifying activity and awards daily energy. Partial observations can be saved to the journal without rewards. Leaving or cancelling earns nothing.
+5. Choose a recording with one person, **2–120 seconds**, under 150 MB. A side or three-quarter view is helpful, but other views can provide observations too. Press **Analyze movement**. Watch the sampled recording and its actual tracked joints advance together. You can hide tracking or stop processing. Gaps are left unmeasured.
+6. Read the findings and limitations—or listen to the report and individual observations when live voice is connected—then acknowledge them and **Finish review & return**. Only that final return records qualifying activity and awards daily energy. Partial observations can be saved to the journal without rewards. Leaving or cancelling earns nothing.
 7. Open **Missions** for rules and progress, or **Journal** for the source recording, findings and Master Control deletion.
 8. Visit a recreation console or select **Play** for Signal response, Echo sequence or Orbital alignment. These games do not award workout credits.
 
 ## What this build does
+
+For live review narration, put `DEEPGRAM_API_KEY=your_key_here` in ignored `frontend/.env.local` and restart the local server. Do not put the key in chat or prefix it with `VITE_`. Only feedback text goes through the server to Deepgram; video inference remains local. See [voice setup](devpost/voice-setup.md). Static hosting alone does not provide this local speech endpoint.
+
+The [evaluation repository](evaluation/README.md) keeps acquisition, source-group splits, actual inference and accuracy claims auditable. Exercise recognition, repetition estimates and correctness of form are separate tasks; an activity label does not establish safe or correct technique.
 
 - Low 84m-wide geodesic glass dome inspired by the user's reference: triangular panes, warm frame, translucent exterior and clear outward views.
 - Locally served CC0 scanned boulders and surface maps, physically based materials, geological skyline, lighting and post-processing. Solid boulders, poles and fixtures use collision with sliding and small movement substeps.
@@ -63,7 +67,9 @@ Persistent accounts/recovery/private storage; qualified exercise-feedback valida
 - `frontend/src/game/MouseLook.ts`: captured relative input, drag fallback and release.
 - `frontend/src/components/SurveyMap.tsx`: terrain survey and habitat floor plan.
 - `frontend/src/analysis/`: frame sampling, measurements and report contracts.
-- `frontend/src/components/ClipPreview.tsx`: selection, analysis, evidence and completion.
+- `frontend/src/components/ClipPreview.tsx`, `ReportVoice.tsx`: selection, live tracking, evidence, spoken review and completion.
+- `frontend/server/speech.ts`, `frontend/src/speech/`: local Deepgram boundary, text chunking and cancellation.
+- `evaluation/`: reproducible public-video acquisition, inference and task-specific evaluation.
 - `frontend/src/game/journey.ts`: guest activity and energy rules.
 - `frontend/src/components/RobotTour.tsx`, `Missions.tsx`, `Journal.tsx`: guided systems and records.
 - `frontend/src/game/AudioDirector.ts`: adaptive temporary sound and local dialogue.
