@@ -49,6 +49,7 @@ export default function App() {
   const speakGuide = useCallback((key: string) => audio.current?.guide(key), []);
   const reviewSpeech = useMemo<ReviewSpeech>(() => ({
     getStatus: async () => audio.current ? audio.current.getSpeechStatus() : { available: false, message: 'Voice is still starting. Your written feedback is ready.' },
+    prepare: async () => audio.current ? audio.current.prepareSpeech() : { status: 'unavailable', message: 'Voice is still starting.' },
     speak: async (text, options) => audio.current ? audio.current.speakText(text, options) : { status: 'unavailable', message: 'Voice is not available yet.' },
     stop: () => audio.current?.stopDialogue(),
   }), []);
@@ -134,7 +135,7 @@ export default function App() {
             <button disabled={!ready} onClick={() => setOverlay('settings')}><span className="menu-number">02</span>Settings<span className="menu-arrow">↗</span></button>
           </nav>
         </div>
-        <div className="title-bottom"><span role="status"><i className="tiny-light" /> {ready ? 'SYSTEMS ONLINE' : 'PREPARING THE OUTPOST'}</span><span>MOVEMENT LAB / 0.4</span></div>
+        <div className="title-bottom"><span role="status"><i className="tiny-light" /> {ready ? 'SYSTEMS ONLINE' : 'PREPARING THE OUTPOST'}</span><span>MOVEMENT LAB / LIVE PREVIEW</span></div>
         <div className="coordinate-label"><span>SECTOR 07</span><strong>Somewhere worth<br />starting again.</strong><small>24° 18′ N &nbsp; / &nbsp; 61° 07′ E</small></div>
       </section>}
 
@@ -191,7 +192,6 @@ export default function App() {
     </Panel>}
 
     {overlay === 'review' && <Panel title={exercise.name} eyebrow={`TRAINING STATION ${exercise.number} / ${exercise.label}`} onClose={closePanel} wide>
-      <div className="review-intro"><span className="orbit-icon">◈</span><p><strong>ORBIT</strong>“{exercise.cue} Let’s start with your recording.”</p><span className="phase-tag">CAPTURE</span></div>
       <ClipPreview key={selected} exercise={exercise} onFinish={completeReview} onSpeak={speakGuide} speech={reviewSpeech} />
       <div className="panel-footer"><span>Leaving early keeps today’s activity unchanged.</span><button className="secondary" onClick={closePanel}>Leave station <span>↗</span></button></div>
     </Panel>}
@@ -203,7 +203,7 @@ export default function App() {
       <label className="setting-row"><span>Dialogue<small>Traveller & ORBIT · subtitles stay visible</small></span><input aria-label="Dialogue volume" type="range" min="0" max="1" step="0.05" value={settings.dialogue} onChange={e => setSettings(s => ({ ...s, dialogue: Number(e.target.value) }))} /><output>{Math.round(settings.dialogue * 100)}%</output></label>
       <label className="setting-row"><span>Mouse sensitivity<small>Direct aim, without camera smoothing</small></span><input aria-label="Mouse sensitivity" type="range" min="0.3" max="2" step="0.1" value={settings.lookSensitivity} onChange={e => setSettings(s => ({ ...s, lookSensitivity: Number(e.target.value) }))} /><output>{settings.lookSensitivity.toFixed(1)}×</output></label>
       <label className="setting-row"><span>Reduced motion<small>Gentler scenery and camera movement; full introduction</small></span><input type="checkbox" checked={settings.reducedMotion} onChange={e => setSettings(s => ({ ...s, reducedMotion: e.target.checked }))} /></label>
-      <p className="preview-note">Click the world to capture the mouse. Escape releases it. If this embedded window blocks capture, use Edge or Chrome for unrestricted game-style look. Original dialogue uses locally generated neural voices.</p>
+      <p className="preview-note">Click the world to capture the mouse. Escape releases it. Traveller and ORBIT use recorded Deepgram voices. New feedback is spoken as your review finishes.</p>
       <button className="primary" onClick={closePanel}>Return ↗</button>
     </Panel>}
 

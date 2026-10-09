@@ -5,6 +5,8 @@ status: approved
 
 # Exercise Form Feedback — Product Requirements
 
+Revision 0.6, requested 9 October 2026: the station review starts with a brief automatic voice reply. The default screen shows the video, a short summary, and a few marked moments. **View written feedback** opens everyday-language notes; numerical measurements, sources and detailed limitations remain available inside them. Users can replay or stop speech and retry a failed connection without losing their analysis. Cutscene and guide dialogue should use short, conversational lines with distinct traveller and ORBIT delivery, with enough time for each line to finish. The underlying evidence and workout-credit rules are unchanged.
+
 An immersive first-person space experience for people practicing pull-ups, push-ups, and squats independently, guided by a robot through personal setup, exercise selection, and evidence-linked video feedback. This is a descriptive working title, not a final brand name.
 
 The learner approved this product direction and the soundtrack-reference interpretation on 2026-10-07 by asking to continue forward after review. This document includes the accepted routine defaults originally proposed for review, while preserving their provenance below. The full game experience is required, following the learner's explicit expansion beyond the original hackathon time budget. Technical feasibility, implementation choices, and audible prototypes are the next work in 4-spec; product approval does not establish that the analysis or audio has already been built or validated.

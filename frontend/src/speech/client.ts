@@ -4,21 +4,23 @@ export type { SpeechConfiguration, SpeechStatus, SpeechResult, SpeakOptions } fr
 export class SpeechUnavailable extends Error {}
 export async function getSpeechConfiguration(signal?: AbortSignal): Promise<SpeechConfiguration> {
   try {
-    const response = await fetch('/api/speech/config', { cache: 'no-store', signal });
+    const boundedSignal = signal ? AbortSignal.any([signal, AbortSignal.timeout(5000)]) : AbortSignal.timeout(5000);
+    const response = await fetch('/api/speech/config', { cache: 'no-store', signal: boundedSignal });
     if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) throw new Error();
     return await response.json() as SpeechConfiguration;
   } catch (error) {
     if (signal?.aborted) throw error;
     return { available: false, provider: 'deepgram', model: null, maxCharacters: 1800,
-      message: 'Live voice is unavailable in this preview. Your written review is still ready to read.' };
+      message: 'The voice connection did not respond. Choose Try voice again; your written review is still ready.' };
   }
 }
 
 export async function requestReviewSpeech(text: string, signal: AbortSignal): Promise<ArrayBuffer> {
   const config = await getSpeechConfiguration(signal);
-  if (!config.available || !config.token) throw new SpeechUnavailable(config.message);
+  // An exhausted generation budget can still serve an exact cached replay.
+  if ((!config.available && config.remainingCharacters !== 0) || !config.token) throw new SpeechUnavailable(config.message);
   if (!text.trim() || text.length > config.maxCharacters) throw new Error(`Keep the spoken review under ${config.maxCharacters} characters.`);
-  const response = await fetch('/api/speech/review', { method: 'POST', cache: 'no-store', signal,
+  const response = await fetch('/api/speech/review', { method: 'POST', cache: 'no-store', signal: AbortSignal.any([signal, AbortSignal.timeout(30000)]),
     headers: { 'Content-Type': 'application/json', 'X-Aster-Speech-Token': config.token },
     body: JSON.stringify({ purpose: 'review', text }) });
   if (!response.ok) {

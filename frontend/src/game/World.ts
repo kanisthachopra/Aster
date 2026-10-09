@@ -199,10 +199,11 @@ export class World {
       focus = Vector3.Lerp(focus, this.park.robot.position, smooth((time - 17) / 3));
     }
     this.camera.position.copyFrom(position); this.camera.setTarget(focus);
-    const beat: ArrivalBeat = time < 10 ? 'threshold' : time < 14 ? 'lights' : time < 18 ? 'machine' : time < 24 ? 'robot' : 'greeting';
+    // Leave room after each performed line so the next cue does not cut it off.
+    const beat: ArrivalBeat = time < 10 ? 'threshold' : time < 14.5 ? 'lights' : time < 18.5 ? 'machine' : time < 24.5 ? 'robot' : 'greeting';
     if (beat !== this.lastBeat) { this.lastBeat = beat; this.events.beat(beat); }
-    if (time >= 29) this.once(this.events.introduced);
-    return { power: smooth((time - 10) / 4), robot: clamp((time - 14) / 13, 0, 1) };
+    if (time >= 30.1) this.once(this.events.introduced);
+    return { power: smooth((time - 10) / 4.5), robot: clamp((time - 14.5) / 13, 0, 1) };
   }
   private update(dt: number) {
     this.portraitLight.position.copyFrom(this.camera.position.add(new Vector3(1.8, .7, -.5)));

@@ -49,3 +49,48 @@ test('external cancellation settles even while browser audio resume is suspended
   await page.getByRole('button',{name:'Read review',exact:true}).click();await expect(page.getByRole('status')).toHaveText('preparing');
   await page.getByRole('button',{name:'Cancel this reading',exact:true}).click();await expect(page.getByRole('status')).toHaveText('cancelled');
 });
+
+test('blocked browser audio offers a retry instead of waiting forever or spending quota',async({page})=>{
+  let generated=0;
+  await page.addInitScript(()=>{AudioContext.prototype.resume=()=>new Promise<void>(()=>{});});
+  await page.route('**/api/speech/review',route=>{generated++;return route.abort();});
+  await page.goto('/tests/harnesses/speech.html');
+  await page.getByRole('button',{name:'Read review',exact:true}).click();
+  await expect(page.getByRole('status')).toContainText('error: Your browser paused audio. Choose Try voice again');
+  expect(generated).toBe(0);
+});
+
+test('a stalled opening asset cannot block report speech',async({page})=>{
+  await page.route('**/audio/opening.wav*',()=>{});
+  await page.route('**/api/speech/config',route=>route.fulfill({json:{available:true,provider:'deepgram',model:'mock',maxCharacters:1800,token:'mock-nonce',message:'Test voice'}}));
+  await page.route('**/api/speech/review',route=>route.fulfill({contentType:'audio/wav',body:wav()}));
+  await page.goto('/tests/harnesses/speech.html');
+  await page.getByRole('button',{name:'Read review',exact:true}).click();
+  await expect(page.getByRole('status')).toHaveText('completed',{timeout:4000});
+});
+
+test('an unresponsive voice configuration settles and a new click can retry',async({page})=>{
+  await page.route('**/api/speech/config',()=>{});
+  await page.goto('/tests/harnesses/speech.html');
+  await page.getByRole('button',{name:'Read review',exact:true}).click();
+  await expect(page.getByRole('status')).toContainText('unavailable: The voice connection did not respond.',{timeout:8000});
+  await page.route('**/api/speech/config',route=>route.fulfill({json:{available:true,provider:'deepgram',model:'mock',maxCharacters:1800,token:'mock-nonce',message:'Test voice'}}));
+  await page.route('**/api/speech/review',route=>route.fulfill({contentType:'audio/wav',body:wav()}));
+  await page.getByRole('button',{name:'Read review',exact:true}).click();
+  await expect(page.getByRole('status')).toHaveText('completed');
+});
+
+test('device suspension during playback settles and Listen resumes audio',async({page})=>{
+  await page.addInitScript(()=>{
+    const Native=AudioContext;
+    Object.defineProperty(window,'AudioContext',{value:class extends Native {constructor(){super();Object.assign(window,{testAudioContext:this});}}});
+  });
+  await page.route('**/api/speech/config',route=>route.fulfill({json:{available:true,provider:'deepgram',model:'mock',maxCharacters:1800,token:'mock-nonce',message:'Test voice'}}));
+  await page.route('**/api/speech/review',route=>route.fulfill({contentType:'audio/wav',body:wav(8)}));
+  await page.goto('/tests/harnesses/speech.html');
+  await page.getByRole('button',{name:'Read review',exact:true}).click();await expect(page.getByRole('status')).toHaveText('speaking');
+  await page.evaluate(()=> (window as unknown as {testAudioContext:AudioContext}).testAudioContext.suspend());
+  await expect(page.getByRole('status')).toContainText('error: Audio playback was interrupted.');
+  await page.route('**/api/speech/review',route=>route.fulfill({contentType:'audio/wav',body:wav()}));
+  await page.getByRole('button',{name:'Read review',exact:true}).click();await expect(page.getByRole('status')).toHaveText('completed');
+});

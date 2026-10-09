@@ -6,9 +6,12 @@ import ClipPreview from '/src/components/ClipPreview.tsx';
 import { EXERCISES } from '/src/game/types.ts';
 const exercise = EXERCISES.find(item => item.id === new URLSearchParams(location.search).get('exercise')) || EXERCISES[1];
 window.reviewSpeechCalls = [];
-const speech = new URLSearchParams(location.search).get('voice') === 'test' ? {
-  getStatus: async () => ({ available: true, message: 'Test voice transport' }),
-  speak: async (text, options) => { window.reviewSpeechCalls.push(text); options?.onStatus?.('speaking'); return {status:'completed'}; },
+const voiceMode = new URLSearchParams(location.search).get('voice');
+window.reviewVoiceAvailable = voiceMode !== 'recovery';
+window.reviewVoiceChecks = 0;
+const speech = ['test', 'recovery', 'slow'].includes(voiceMode) ? {
+  getStatus: async () => { if (voiceMode === 'slow') await new Promise(resolve => { window.releaseReviewVoice = resolve; }); window.reviewVoiceChecks++; return { available: window.reviewVoiceAvailable, message: 'Test voice connection unavailable' }; },
+  speak: async (text, options) => { if (!window.reviewVoiceAvailable) return {status:'unavailable', message:'Test voice connection unavailable'}; window.reviewSpeechCalls.push(text); options?.onStatus?.('speaking'); return {status:'completed'}; },
   stop: () => {},
 } : undefined;
 createRoot(document.querySelector('#harness')).render(React.createElement(Panel, {title:exercise.name, eyebrow:'TRAINING STATION', wide:true, onClose:()=>{}}, React.createElement(ClipPreview,{exercise,onFinish:()=>{},onSpeak:()=>{},speech})));

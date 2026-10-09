@@ -6,6 +6,7 @@ import type { Plugin } from 'vite';
 const MAX_TEXT = 1800;
 const MAX_BODY = 8192;
 const MAX_AUDIO = 2 * 1024 * 1024;
+const BUDGET_WINDOW = 24 * 60 * 60 * 1000;
 const MODELS = new Set(['aura-2-thalia-en', 'aura-2-apollo-en', 'aura-2-orpheus-en', 'aura-2-luna-en', 'aura-2-asteria-en']);
 type SpeechEnvironment = Record<string, string | undefined>;
 type Dependencies = { fetch?: typeof fetch; now?: () => number; timeoutMs?: number };
@@ -40,7 +41,7 @@ export function createSpeechMiddleware(env: SpeechEnvironment, dependencies: Dep
   const request = dependencies.fetch ?? fetch;
   const now = dependencies.now ?? Date.now;
   const cache = new Map<string, { audio: Buffer; expires: number }>();
-  let usedCharacters = 0;
+  let usage: Array<{ time: number; characters: number }> = [];
   let active = false;
   let requests: number[] = [];
 
@@ -50,11 +51,16 @@ export function createSpeechMiddleware(env: SpeechEnvironment, dependencies: Dep
     res.setHeader('Cache-Control', 'no-store'); res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
     if (!localRequest(req)) { json(res, 403, { message: 'Speech is available only from this local app.' }); return; }
+    usage = usage.filter(entry => entry.time > now() - BUDGET_WINDOW);
+    const usedCharacters = usage.reduce((sum, entry) => sum + entry.characters, 0);
+    const retryAfterSeconds = usage.length ? Math.max(1, Math.ceil((usage[0].time + BUDGET_WINDOW - now()) / 1000)) : 0;
     if (path === '/api/speech/config' && req.method === 'GET') {
-      json(res, 200, { available: Boolean(apiKey && model), provider: 'deepgram', model: model || null, maxCharacters: MAX_TEXT,
-        remainingCharacters: Math.max(0, budget - usedCharacters), token: nonce,
+      json(res, 200, { available: Boolean(apiKey && model && usedCharacters < budget), provider: 'deepgram', model: model || null, maxCharacters: MAX_TEXT,
+        remainingCharacters: Math.max(0, budget - usedCharacters), token: nonce, retryAfterSeconds: usedCharacters >= budget ? retryAfterSeconds : 0,
         message: !apiKey ? 'Live voice is not connected. Add your Deepgram key to frontend/.env.local and restart the preview.'
-          : !model ? 'The configured voice is not supported. Check DEEPGRAM_TTS_MODEL.' : 'Live voice is configured. Only the review text is sent to Deepgram.' }); return;
+          : !model ? 'The configured voice is not supported. Check DEEPGRAM_TTS_MODEL.'
+          : usedCharacters >= budget ? `The local voice budget is used up. New readings become available in about ${Math.ceil(retryAfterSeconds / 60)} minutes; recent cached readings can still replay.`
+          : 'Live voice is configured. Only the review text is sent to Deepgram.' }); return;
     }
     if (path !== '/api/speech/review' || req.method !== 'POST') { json(res, 405, { message: 'This speech action is not supported.' }); return; }
     if (!tokenMatches(req.headers['x-aster-speech-token'], nonce)) { json(res, 403, { message: 'Refresh the app before requesting speech.' }); return; }
@@ -81,9 +87,15 @@ export function createSpeechMiddleware(env: SpeechEnvironment, dependencies: Dep
     const cached = cache.get(hash);
     if (cached) { res.setHeader('Content-Type', 'audio/mpeg'); res.setHeader('X-Aster-Speech-Cache', 'hit'); res.end(cached.audio); return; }
     requests = requests.filter(time => time > now() - 60000);
-    if (active || requests.length >= 6) { res.setHeader('Retry-After', '10'); json(res, 429, { message: 'Voice is busy. Wait a moment, then try again.' }); return; }
-    if (usedCharacters + text.length > budget) { json(res, 429, { message: 'This preview has reached its voice character budget. The written review is still available.' }); return; }
-    usedCharacters += text.length; requests.push(now()); active = true;
+    if (active || requests.length >= 6) {
+      const wait = active ? 2 : Math.max(1, Math.ceil((requests[0] + 60000 - now()) / 1000));
+      res.setHeader('Retry-After', String(wait)); json(res, 429, { message: `Voice is busy. Wait ${wait} seconds, then click Listen again.` }); return;
+    }
+    if (usage.reduce((sum, entry) => sum + entry.characters, 0) + text.length > budget) {
+      res.setHeader('Retry-After', String(retryAfterSeconds));
+      json(res, 429, { message: `The local voice budget cannot fit this reading. More characters become available in about ${Math.ceil(retryAfterSeconds / 60)} minutes. Your written review remains available.` }); return;
+    }
+    usage.push({ time: now(), characters: text.length }); requests.push(now()); active = true;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), dependencies.timeoutMs ?? 25000);
     const disconnect = () => { if (!res.writableEnded) controller.abort(); };
@@ -121,8 +133,10 @@ export function createSpeechMiddleware(env: SpeechEnvironment, dependencies: Dep
 }
 
 export function speechPlugin(env: SpeechEnvironment): Plugin {
-  return { name: 'aster-local-review-speech', apply: 'serve', configureServer(server) {
-    const middleware = createSpeechMiddleware(env);
-    server.middlewares.use((req, res, next) => { void middleware(req, res, next); });
-  } };
+  const middleware = createSpeechMiddleware(env);
+  const handle = (req: IncomingMessage, res: ServerResponse, next: Next) => { void middleware(req, res, next); };
+  return { name: 'aster-local-review-speech',
+    configureServer(server) { server.middlewares.use(handle); },
+    configurePreviewServer(server) { server.middlewares.use(handle); },
+  };
 }

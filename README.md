@@ -1,6 +1,6 @@
 # Aster — Outpost 07
 
-A desktop-browser exercise park on a distant moon. Version **0.5** adds actual tracked skeletons during processing, report-specific Deepgram speech, and a completed 600-video evaluation. World production is paused while the core review is refined. The complete cinematic product and persistent private accounts remain in development.
+A desktop-browser exercise park on a distant moon. Version **0.6** leads with brief spoken feedback and puts written notes behind a button. Traveller and ORBIT have new Deepgram dialogue recordings, and voice recovery is tested through the full game. The complete cinematic product and persistent private accounts remain in development.
 
 ## Try it
 
@@ -15,10 +15,10 @@ Open **http://127.0.0.1:5174** in Edge or Chrome for unrestricted FPS mouse capt
 
 1. Select **Begin expedition**. The silent title starts audio only on that interaction. The full opening lasts 12 seconds; skipping is optional.
 2. Choose **New to this world**. Explore with WASD, Space to jump, click the world to capture the mouse, Escape to release. Arrow keys also turn. If an embedded browser blocks capture, hold and drag to look; there is no edge panning. Settings includes mouse sensitivity.
-3. Find the dome using the terrain survey. Enter its southern airlock for the connected 29-second arrival: traveller enters, perspective returns to first person, lights start, ORBIT emerges and approaches. **Preview dome arrival** is a repeat-testing shortcut.
+3. Find the dome using the terrain survey. Enter its southern airlock for the connected 30-second arrival: traveller enters, perspective returns to first person, lights start, ORBIT emerges and approaches. **Preview dome arrival** is a repeat-testing shortcut.
 4. Give an optional callsign. ORBIT introduces reviews, missions, energy, recreation and settings. Choose one of three exercise stations and follow the blue floor markers. Press **E** near a station.
 5. Choose a recording with one person, **2–120 seconds**, under 150 MB. A side or three-quarter view is helpful, but other views can provide observations too. Press **Analyze movement**. Watch the sampled recording and its actual tracked joints advance together. You can hide tracking or stop processing. Gaps are left unmeasured.
-6. Read the findings and limitations—or listen to the report and individual observations when live voice is connected—then acknowledge them and **Finish review & return**. Only that final return records qualifying activity and awards daily energy. Partial observations can be saved to the journal without rewards. Leaving or cancelling earns nothing.
+6. ORBIT automatically gives a short voice reply. Replay it, look at a marked moment, or select **View written feedback** for the notes. Measurements and sources are available inside those notes. Acknowledge the feedback and **Finish review & return**. Only that final return records qualifying activity and awards daily energy. Partial reviews can be saved without rewards. Leaving or cancelling earns nothing.
 7. Open **Missions** for rules and progress, or **Journal** for the source recording, findings and Master Control deletion.
 8. Visit a recreation console or select **Play** for Signal response, Echo sequence or Orbital alignment. These games do not award workout credits.
 
@@ -37,7 +37,7 @@ The [evaluation repository](evaluation/README.md) keeps acquisition, source-grou
 - Timestamped observed motion, visible-joint overlays and source links. No invented safe-form score, reference-video match or clinical diagnosis.
 - Guest review completion, daily rewards, weekly resets, reserve cap and missed-day protection. The first five activity days award 5, 5, 5, 2.5 and 2.5 credits. All seven actual days without protection earn 2.5 reserve at rollover, capped at 100. Protection costs 10; at most three per week.
 - Five-step robot orientation, journal with selective media/review removal, first-mission cue and sound/mouse/motion preferences.
-- Rewritten conversational dialogue generated locally with Kokoro neural voices. The opening starts with speech; the former surf-like breathing loop is removed. Original temporary music/effects, subtitles and reading-time audio reduction remain.
+- Seventeen rewritten dialogue clips generated with Deepgram Apollo for the traveller and Thalia for ORBIT. The browser plays these local recordings. Live feedback uses the selected Thalia voice, with short practical wording, replay/Stop controls and recoverable connection errors. Scene timing leaves room for the spoken lines; subtitles and quieter background music remain.
 - Three playable recreation games, keyboard controls, reduced-motion alternatives and focus restoration. All 14 official Emil Kowalski skills reviewed, with relevant browser guidance applied.
 
 **Guest limitation:** callsign, video files, feedback and progress live in this tab's memory and clear on reload. Only sound, mouse and motion preferences persist. Account creation is deferred at the user's request. This is not a secure server reward ledger or durable private journal.
@@ -59,7 +59,7 @@ npm --prefix frontend run build
 npm --prefix frontend test
 ```
 
-The build typechecks and bundles production assets. Browser tests use installed Microsoft Edge; change the Playwright browser setting if unavailable. Tests reuse the running local server. Optional real-media checks require the documented fixtures; they skip when those files are absent. Real-provider speech testing requires an explicit opt-in and otherwise skips. Screenshots and traces are ignored. See [0.5 verification](devpost/verification-0.5.md), [0.4 verification](devpost/verification-0.4.md), and the [skills review](devpost/skills-review-0.4.md).
+The build typechecks and bundles production assets. Browser tests use installed Microsoft Edge; change the Playwright browser setting if unavailable. Tests reuse the running local server. Optional real-media checks require the documented fixtures; they skip when those files are absent. Real-provider speech testing requires an explicit opt-in and otherwise skips. Screenshots and traces are ignored. See [0.6 verification](devpost/verification-0.6.md), [0.5 verification](devpost/verification-0.5.md), and the [skills review](devpost/skills-review-0.4.md).
 
 ## Remaining product work
 

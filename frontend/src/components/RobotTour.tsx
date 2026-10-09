@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import dialogue from '../game/dialogue.json';
 
 const STEPS = [
-  { key: 'tour-review', number: '01', title: 'Let’s work on something real.', detail: 'Pull-ups · Push-ups · Squats / Useful observations, visible limits, and timestamps to explore.', icon: '◉' },
-  { key: 'tour-missions', number: '02', title: 'One useful review at a time.', detail: 'Record → Analyze → Read the evidence → Finish & return', icon: '◇' },
+  { key: 'tour-review', number: '01', title: 'Bring a clip. We’ll take a look.', detail: 'Pull-ups · Push-ups · Squats / Listen first. Open the notes whenever you need them.', icon: '◉' },
+  { key: 'tour-missions', number: '02', title: 'One set at a time.', detail: 'Upload → Check → Listen or read → Finish & return', icon: '◇' },
   { key: 'tour-energy', number: '03', title: 'You bring the energy.', detail: '5 + 5 + 5 + 2.5 + 2.5 = 20 / 10 credits protect one missed day', icon: 'ϟ' },
   { key: 'tour-play', number: '04', title: 'A little room to play.', detail: 'Signal response · Echo sequence · Orbital alignment / Walk to a console or open Play.', icon: '✧' },
   { key: 'tour-settings', number: '05', title: 'Make the place feel like yours.', detail: 'Guest expedition · clips stay on this computer · this visit clears on reload', icon: '☷' },

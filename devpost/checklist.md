@@ -120,3 +120,14 @@ The learner explicitly pauses world dynamics and typography work. Current priori
 - [x] Evaluate and improve development-set failure modes; preserve separate calibration and held-out test sets. Shipped the frozen core refinement after its final audit; withheld the trained activity classifier when it missed the predeclared release criteria. See evaluation/results/summary.md.
 - [ ] Demonstrate at least 80% form-feedback accuracy on independently judged form labels. Action labels alone cannot close this item.
 - [ ] Learner tries the new tracking display and spoken feedback.
+
+## Revision 0.6 — voice first, notes on demand
+
+The learner reported failed voice playback, flat cutscene delivery and an overloaded review screen on 9 October 2026. This revision follows their requested design: short automatic spoken feedback, everyday wording, and an explicit button to access the notes. Every commit is pushed to the Aster repository, following their standing instruction.
+
+- [x] Keep default review compact; place written feedback and technical measurements behind explicit controls.
+- [x] Derive short practical speech from measured moments and one specific uncertainty, without inventing faults or changing inference.
+- [x] Replace 17 traveller/ORBIT clips with new voice performances; align scene timing to their measured lengths.
+- [x] Fix bounded audio activation, connection waits, preview endpoint and retry/Stop recovery.
+- [x] Verify real provider output through the complete game and station flow, plus failure recovery and written access.
+- [ ] Learner tries the new voices and compact screen; dramatic naturalness remains a listening judgment.

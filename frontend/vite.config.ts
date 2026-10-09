@@ -1,6 +1,6 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-import { speechPlugin } from './server/speech';
+import { speechPlugin } from './server/speech.ts';
 
 export default defineConfig(({ mode }) => ({
   plugins: [react(), speechPlugin(loadEnv(mode, process.cwd(), 'DEEPGRAM_'))],

@@ -1,56 +1,71 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { AnalysisReport } from '../analysis/types';
-import { narrateFinding, narrateReport } from '../analysis/narration';
+import { getCoachingReview } from '../analysis/coaching';
+import type { SpeakOptions, SpeechResult } from '../speech/types';
 
 export interface ReviewSpeech {
   getStatus: () => Promise<{ available: boolean; message: string }>;
-  speak: (text: string, options?: { signal?: AbortSignal; onStatus?: (status: 'preparing' | 'speaking') => void }) => Promise<{ status: 'completed' | 'unavailable' | 'error' | 'cancelled' | 'muted'; message?: string }>;
+  prepare?: () => Promise<SpeechResult>;
+  speak: (text: string, options?: SpeakOptions) => Promise<SpeechResult>;
   stop: () => void;
 }
-export default function ReportVoice({ report, speech }: { report: AnalysisReport; speech?: ReviewSpeech }) {
-  const transcript = narrateReport(report);
-  const [state, setState] = useState('Checking voice connection…');
-  const [playing, setPlaying] = useState(false);
-  const [available, setAvailable] = useState(false);
+type VoiceState = 'checking' | 'preparing' | 'speaking' | 'ready' | 'paused' | 'error' | 'muted';
+export default function ReportVoice({ report, speech, showDetails = false, onMoment }: {
+  report: AnalysisReport; speech?: ReviewSpeech; showDetails?: boolean; onMoment?: (timestamp: number) => void;
+}) {
+  const coaching = getCoachingReview(report), transcript = coaching.spokenText;
+  const [state, setState] = useState<VoiceState>('checking');
+  const [reason, setReason] = useState('');
+  const [hasPlayed, setHasPlayed] = useState(false);
   const [activeText, setActiveText] = useState(transcript);
   const controller = useRef<AbortController | null>(null);
   const mounted = useRef(false);
+  const interaction = useRef(0);
+  const busy = state === 'checking' || state === 'preparing' || state === 'speaking';
   const read = useCallback(async (text: string) => {
-    if (!speech) return;
+    interaction.current++;
+    if (!speech) { setReason('Voice is not connected in this window. Your written feedback is available.'); setState('error'); return; }
     controller.current?.abort(); speech.stop();
     const task = new AbortController(); controller.current = task;
-    setPlaying(true); setActiveText(text); setState('Preparing your spoken feedback…');
+    setActiveText(text); setReason(''); setState('preparing');
     try {
       const result = await speech.speak(text, { signal: task.signal, onStatus: status => {
-        if (!task.signal.aborted && mounted.current) setState(status === 'speaking' ? 'ORBIT is walking through your review.' : 'Preparing your spoken feedback…');
+        if (!task.signal.aborted && mounted.current) setState(status);
       } });
       if (!task.signal.aborted && mounted.current) {
-        setPlaying(false);
-        setState(result.status === 'completed' ? 'Review read aloud. You can listen again or choose a moment below.' : result.message || 'Voice paused. Your full review is still below.');
+        if (result.status === 'completed') { setHasPlayed(true); setState('ready'); }
+        else if (result.status === 'cancelled') setState('paused');
+        else { setReason(result.message || 'The voice connection stopped. Try again, or open your written feedback.'); setState(result.status === 'muted' ? 'muted' : 'error'); }
       }
     } catch {
-      if (!task.signal.aborted && mounted.current) { setPlaying(false); setState('The voice connection failed. Try again; your review is still here.'); }
+      if (!task.signal.aborted && mounted.current) { setState('error'); setReason('Voice couldn’t connect. Try again, or open your written feedback.'); }
     }
   }, [speech]);
   useEffect(() => {
     mounted.current = true;
     let active = true;
-    if (!speech) setState('Spoken feedback is not connected. You can read every observation below.');
+    const initialInteraction = interaction.current;
+    if (!speech) { setState('error'); setReason('Voice is not connected in this window. Your written feedback is available.'); }
     else void speech.getStatus().then(status => {
-      if (!active) return;
-      setAvailable(status.available); setState(status.message);
+      if (!active || interaction.current !== initialInteraction) return;
       if (status.available) void read(transcript);
-    }).catch(() => { if (active) setState('The voice connection is unavailable. Your written feedback is ready.'); });
+      else { setState('error'); setReason(status.message); }
+    }).catch(() => { if (active && interaction.current === initialInteraction) { setState('error'); setReason('Voice couldn’t connect. Try again, or open your written feedback.'); } });
     // Abort only this reading: closing the station may already have started
     // the next mission line, which must not be cancelled by old-view cleanup.
     return () => { active = false; mounted.current = false; controller.current?.abort(); };
   }, [report.id, speech, transcript, read]);
-  function stop() { controller.current?.abort(); speech?.stop(); setPlaying(false); setState('Voice paused. Listen again whenever you’re ready.'); }
-  return <section className="report-voice" aria-label="Spoken feedback">
-    <div className="voice-heading"><span className={`voice-indicator ${playing ? 'is-speaking' : ''}`} aria-hidden="true">◉</span><div><p className="eyebrow">ORBIT / YOUR REVIEW, OUT LOUD</p><p role="status">{state}</p></div></div>
-    <div className="analysis-actions">{playing ? <button className="text-button" onClick={stop}>Stop voice</button> : <button className="text-button" disabled={!available} onClick={() => void read(transcript)}>Listen to review</button>}</div>
-    {available && report.findings.length > 0 && <div className="voice-moments" aria-label="Listen to a specific observation">{report.findings.map(finding => <button className="text-button" key={finding.id} onClick={() => void read(narrateFinding(finding))}>Listen · {finding.timestamp.toFixed(1)}s · {finding.title}</button>)}</div>}
-    <details><summary>Spoken transcript</summary><p>{activeText}</p></details>
-    <p className="fine-print">When voice is connected, only this feedback text is sent to Deepgram. Your recording stays here.</p>
+  function stop() { interaction.current++; controller.current?.abort(); speech?.stop(); setState('paused'); }
+  const label = state === 'checking' || state === 'preparing' ? 'One moment. Getting your voice reply ready.'
+    : state === 'speaking' ? 'I’m talking you through your clip.'
+      : state === 'ready' ? 'That’s your review. Take another look whenever you like.'
+        : state === 'paused' ? 'Paused. Pick it up when you’re ready.'
+          : state === 'muted' ? 'Voice is muted. Turn up Dialogue in Settings.'
+            : 'Voice couldn’t play. You can retry or read your feedback.';
+  return <section className="report-voice voice-first" aria-label="Spoken feedback" data-voice-state={state}>
+    <div className="voice-heading"><span className={`voice-avatar ${state === 'speaking' ? 'is-speaking' : ''}`} aria-hidden="true"><i /><i /><i /><i /></span><div><p className="eyebrow">ORBIT</p><p role="status">{label}</p></div></div>
+    <div className="voice-actions">{busy ? <button className="secondary" onClick={stop}>Stop voice <span aria-hidden="true">Ⅱ</span></button> : <button className="secondary" onClick={() => void read(transcript)}>{state === 'error' ? 'Try voice again' : hasPlayed ? 'Listen again' : 'Play feedback'} <span aria-hidden="true">▶</span></button>}</div>
+    {(state === 'error' || state === 'muted') && <details className="voice-help"><summary>Voice connection help</summary><p>{reason}</p></details>}
+    {showDetails && <div className="voice-written">{coaching.moments.length > 0 && <div className="voice-moments" aria-label="Listen to one part">{coaching.moments.map(moment => <button className="text-button" key={moment.id} onClick={() => { onMoment?.(moment.timestamp); void read(moment.spokenText); }}>Hear {moment.title.toLowerCase()} · {moment.timestamp.toFixed(1)}s</button>)}</div>}<details><summary>What ORBIT says</summary><p>{activeText}</p></details><p className="fine-print">Only feedback text goes to the voice service. Your video stays here.</p></div>}
   </section>;
 }

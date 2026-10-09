@@ -45,8 +45,24 @@ export class AudioDirector {
       this.applySettings(this.settings);
       this.timer = setInterval(() => this.tick(), 350);
     }
-    await this.context.resume();
-    await this.loadVoice('opening');
+    await this.activateContext(new AbortController().signal);
+    // Opening assets must never block entering the world or a report-specific reading.
+    void this.loadVoice('opening').catch(() => {});
+  }
+  private async activateContext(signal: AbortSignal) {
+    const ctx = this.context;
+    if (!ctx || ctx.state === 'closed') throw new Error('Audio needs a fresh connection. Reload the app and click Begin expedition.');
+    await withSpeechAbort(ctx.resume(), signal, 2500, 'Your browser paused audio. Choose Try voice again to enable the spoken review.');
+    if (ctx.state !== 'running') throw new Error('Your browser paused audio. Choose Try voice again to enable the spoken review.');
+  }
+  /** Call directly from an Analyze/Listen click, before awaiting model or network work. */
+  async prepareSpeech(): Promise<SpeechResult> {
+    if (this.settings.dialogue === 0) return { status: 'muted', message: 'Voice volume is muted. Turn it up in Settings to hear this review.' };
+    try {
+      if (!this.context) await this.start();
+      else await this.activateContext(new AbortController().signal);
+      return { status: 'completed' };
+    } catch (error) { return { status: 'error', message: error instanceof Error ? error.message : 'Choose Try voice again to enable audio.' }; }
   }
   applySettings(settings: Settings) {
     this.settings = settings;
@@ -138,7 +154,8 @@ export class AudioDirector {
   stopDialogue() {
     this.voiceVersion++;
     const request = this.speechRequest; this.speechRequest = null; request?.abort();
-    this.voice?.stop(); this.voice = null; this.applySettings(this.settings);
+    try { this.voice?.stop(); } catch { /* The source may already have ended. */ }
+    this.voice = null; this.applySettings(this.settings);
   }
   async getSpeechStatus() {
     const status = await getSpeechConfiguration();
@@ -160,33 +177,45 @@ export class AudioDirector {
       if (!this.context) await withSpeechAbort(this.start(), controller.signal);
       const ctx = this.context;
       if (!ctx || !this.dialogue || controller.signal.aborted || version !== this.voiceVersion) return { status: 'cancelled' };
-      await withSpeechAbort(ctx.resume(), controller.signal);
+      await this.activateContext(controller.signal);
       for (const chunk of chunks) {
         if (controller.signal.aborted || version !== this.voiceVersion) return { status: 'cancelled' };
         options.onStatus?.('preparing');
         const bytes = await requestReviewSpeech(chunk, controller.signal);
         const buffer = await withSpeechAbort(ctx.decodeAudioData(bytes), controller.signal);
         if (controller.signal.aborted || version !== this.voiceVersion || ctx.state === 'closed') return { status: 'cancelled' };
+        // A hidden tab/device change can suspend audio during provider generation.
+        await this.activateContext(controller.signal);
         const voice = ctx.createBufferSource(); voice.buffer = buffer; voice.connect(this.dialogue);
         this.voice = voice;
         this.music?.gain.setTargetAtTime(this.settings.music * .12, ctx.currentTime, .08);
-        await new Promise<void>(resolve => {
-          const finished = () => {
+        await new Promise<void>((resolve, reject) => {
+          let settled = false;
+          const startedAt = performance.now();
+          const watchdog = setInterval(() => {
+            if (ctx.state !== 'running' || performance.now() - startedAt > (buffer.duration + 10) * 1000) {
+              finished(new Error('Audio playback was interrupted. Choose Try voice again.'));
+              try { voice.stop(); } catch { /* Already ended. */ }
+            }
+          }, 500);
+          const finished = (error?: Error) => {
+            if (settled) return; settled = true; clearInterval(watchdog);
             controller.signal.removeEventListener('abort', cancel);
             voice.onended = null; voice.disconnect();
             if (this.voice === voice) { this.voice = null; this.applySettings(this.settings); }
-            resolve();
+            if (error) reject(error); else resolve();
           };
-          const cancel = () => { voice.stop(); finished(); };
-          voice.onended = finished; controller.signal.addEventListener('abort', cancel, { once: true });
-          voice.start(); options.onStatus?.('speaking');
+          const cancel = () => { try { voice.stop(); } catch { /* Already ended. */ } finished(); };
+          voice.onended = () => finished(); controller.signal.addEventListener('abort', cancel, { once: true });
+          try { voice.start(); options.onStatus?.('speaking'); } catch { finished(new Error('Audio could not start. Choose Try voice again.')); }
         });
       }
       return { status: controller.signal.aborted ? 'cancelled' : 'completed' };
     } catch (error) {
       if (controller.signal.aborted || version !== this.voiceVersion) return { status: 'cancelled' };
       return { status: error instanceof SpeechUnavailable ? 'unavailable' : 'error',
-        message: error instanceof Error ? error.message : 'Live voice is unavailable. Your written review is still available.' };
+        message: error instanceof Error && error.name === 'TimeoutError' ? 'The voice connection took too long. Choose Try voice again.'
+          : error instanceof Error ? error.message : 'Live voice is unavailable. Your written review is still available.' };
     } finally {
       options.signal?.removeEventListener('abort', abort);
       if (this.speechRequest === controller) this.speechRequest = null;
@@ -198,9 +227,9 @@ export class AudioDirector {
     if (!ctx || !Object.hasOwn(dialogueScript, key)) return null;
     let buffer = this.voiceCache.get(key);
     if (!buffer) {
-      const response = await fetch(`/audio/${key}.wav`);
+      const response = await fetch(`/audio/${key}.wav?v=aura2-20261009`, { signal: AbortSignal.timeout(10000) });
       if (!response.ok) throw new Error(`Dialogue unavailable: ${key}`);
-      buffer = await ctx.decodeAudioData(await response.arrayBuffer());
+      buffer = await withSpeechAbort(ctx.decodeAudioData(await response.arrayBuffer()), new AbortController().signal, 10000);
       this.voiceCache.set(key, buffer);
     }
     return buffer;
@@ -211,6 +240,7 @@ export class AudioDirector {
     try {
       const buffer = await this.loadVoice(key);
       if (!buffer) return;
+      await this.activateContext(new AbortController().signal);
       if (version !== this.voiceVersion || ctx.state === 'closed') return;
       const voice = ctx.createBufferSource(); voice.buffer = buffer; voice.connect(this.dialogue);
       this.music?.gain.setTargetAtTime(this.settings.music * .12, ctx.currentTime, .08);

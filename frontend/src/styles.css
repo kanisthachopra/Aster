@@ -360,3 +360,62 @@ html[data-input-modality=keyboard] .app button:active { scale:1; }
 @keyframes voice-presence { from { opacity: .45; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .voice-indicator.is-speaking { animation: none; } }
 .reduce-motion .voice-indicator.is-speaking { animation: none; }
+
+/* The recording and a short voice reply lead. Reading is a deliberate action. */
+.voice-review .review-stage { grid-template-columns: 1fr; max-width: 620px; margin-inline: auto; gap: 28px; }
+.voice-review.has-review .review-stage { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); max-width: none; align-items: start; }
+.voice-review .recording-tips { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+.recording-tips > summary { width: fit-content; text-decoration: underline; text-underline-offset: 4px; }
+.recording-tips .capture-guide { border: 0; padding: 18px 0 8px; max-width: 620px; }
+.recording-tips .camera-guide { max-width: 320px; }
+.voice-review .clip-section { min-width: 0; }
+.voice-review .clip-section > .eyebrow { margin-bottom: 12px; }
+.voice-review .clip-privacy { text-align: center; color: var(--muted); font-size: 11px; margin: 16px 0 0; }
+.voice-review .upload-area { min-height: 225px; gap: 13px; }
+.voice-review .upload-area strong { font-size: 23px; letter-spacing: -.025em; }
+.voice-review .upload-area > span:not(.upload-mark) { font-size: 13px; }
+.voice-review .upload-area small { font-size: 10px; line-height: 1.5; }
+.voice-review .analysis-results { margin: 0; border: 0; padding: 0; }
+.voice-review .analysis-results h3 { margin: 0 0 10px; font-size: 27px; line-height: 1.18; }
+.voice-review .result-summary { font-size: 13px; line-height: 1.6; color: #bdd0ce; margin: 0 0 18px; }
+.voice-review .analysis-actions { justify-content: space-between; flex-wrap: wrap; }
+.voice-review .tracking-explanation { margin-top: 12px; }
+.voice-review .analysis-progress { gap: 14px; padding: 17px 19px; }
+.voice-review .tracking-label { font-size: 9px; }
+.report-voice.voice-first { background: #92cabb07; border-color: #c1e9d32e; padding: 20px; margin: 0 0 18px; }
+.voice-first .voice-heading { align-items: center; gap: 14px; }
+.voice-first .voice-heading .eyebrow { margin: 0 0 6px; color: #c4e6d7; font-size: 9px; }
+.voice-first .voice-heading p[role=status] { font-size: 13px; line-height: 1.55; color: #d7e7df; }
+.voice-avatar { display: flex; align-items: center; justify-content: center; gap: 4px; width: 48px; height: 48px; flex: 0 0 48px; border: 1px solid #b9e5d354; border-radius: 50%; background: radial-gradient(circle, #a1d8c515, #0b2020); }
+.voice-avatar i { width: 3px; height: 13px; border-radius: 2px; background: #b0e8d3; opacity: .45; }
+.voice-avatar i:nth-child(2), .voice-avatar i:nth-child(3) { height: 23px; }
+.voice-avatar.is-speaking i { animation: voice-presence 1.2s linear infinite alternate; }
+.voice-avatar.is-speaking i:nth-child(2) { animation-delay: -.3s; }
+.voice-avatar.is-speaking i:nth-child(3) { animation-delay: -.6s; }
+.voice-avatar.is-speaking i:nth-child(4) { animation-delay: -.9s; }
+.voice-actions { margin: 17px 0 0; }
+.voice-actions .secondary { width: 100%; display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin: 0; }
+.voice-first .voice-help { margin-top: 14px; font-size: 12px; }
+.voice-help p { overflow-wrap: anywhere; color: var(--muted); }
+.voice-written { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 12px; }
+.voice-written p { font-size: 12px; line-height: 1.65; }
+.review-moments { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.review-moment { display: flex; flex-direction: column; gap: 7px; text-align: left; border: 1px solid #c4e9d322; border-radius: 7px; background: #a5cbbb05; padding: 12px; min-width: 0; }
+.review-moment span { font-size: 10px; color: #9fc7bf; }
+.review-moment strong { font-size: 12px; font-weight: 500; line-height: 1.4; }
+.review-uncertainty { font-size: 11px; line-height: 1.65; color: #a9beba; margin: 16px 0; }
+.feedback-details-toggle { display: flex; width: 100%; justify-content: space-between; align-items: center; border: 0; border-top: 1px solid var(--line); background: none; padding: 14px 0 5px; color: #d0e7df; font-size: 12px; text-align: left; }
+.written-feedback { margin-top: 24px; border-top: 1px solid var(--line); padding-top: 24px; }
+.written-feedback[hidden] { display: none; }
+.written-feedback h3 { font-size: 20px; font-weight: 400; margin: 0 0 18px; }
+.plain-finding { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.plain-finding h4 { font-size: 15px; font-weight: 500; margin: 0 0 8px; }
+.plain-finding p { margin: 5px 0; color: #bfd1ce; line-height: 1.65; font-size: 13px; }
+.plain-finding p:last-child { color: #d4e7db; }
+.measurement-details { margin-top: 20px; font-size: 12px; }
+.voice-review .review-completion { margin-top: 22px; border: 0; border-top: 1px solid var(--line); background: none; padding: 20px 0 0; }
+.voice-review .review-completion label { font-size: 12px; }
+.voice-review .review-completion small { font-size: 10px; }
+@media (max-width: 760px) { .voice-review.has-review .review-stage { grid-template-columns: 1fr; gap: 22px; } .voice-review .analysis-results h3 { font-size: 24px; } }
+@media (prefers-reduced-motion: reduce) { .voice-avatar.is-speaking i { animation: none; opacity: .8; } }
+.reduce-motion .voice-avatar.is-speaking i { animation: none; opacity: .8; }

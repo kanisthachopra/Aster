@@ -1,20 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { existsSync } from 'node:fs';
-import { narrateReport, narrateFinding } from '../src/analysis/narration';
-import { summarize } from '../src/analysis/measurements';
-
-test('spoken reviews preserve findings and uncertainty without inventing a form verdict', () => {
-  const report = summarize([], 'squat', 3, 640, 480);
-  const spoken = narrateReport(report);
-  expect(spoken).toContain("couldn't get a dependable movement measurement");
-  for (const finding of report.findings) {
-    expect(spoken).toContain(narrateFinding(finding));
-    expect(narrateFinding(finding)).toContain(finding.suggestion);
-  }
-  expect(spoken).toContain(report.limitations[0]);
-  expect(spoken).not.toMatch(/your form is (correct|incorrect)|80% confident/);
-  expect(narrateFinding({ id: 'range', title: 'Bend', timestamp: 2.5, observation: 'At 2.5s, the visible elbow spans 80–150°. The middle 80% of samples are included.', suggestion: 'Compare these positions.' })).toBe('At 2.5 seconds, the visible elbow spans 80 to 150 degrees. The middle 80 percent of samples are included. Compare these positions.');
-});
 
 test('actual model processing paints successive evidence frames and speaks their completed report', async ({ page }) => {
   test.skip(!existsSync('artifacts/real-exercise.mp4'), 'Public-domain Navy clip required; see fixture provenance.');
@@ -30,13 +15,22 @@ test('actual model processing paints successive evidence frames and speaks their
   await page.screenshot({ path: 'artifacts/live-pose-analysis.png' });
   await expect(page.getByRole('region', { name: 'Movement analysis results' })).toBeVisible({ timeout: 60000 });
   await expect(live).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Listen to review' })).toBeEnabled();
+  await expect(page.getByRole('button', { name: /Listen again/ })).toBeEnabled();
   const spoken = await page.evaluate(() => (window as any).reviewSpeechCalls);
   expect(spoken).toHaveLength(1);
-  const observation = await page.locator('.finding-card p').first().textContent();
-  expect(spoken[0]).toContain(observation!.match(/visible (left|right) elbow/)![0]);
-  expect(spoken[0]).toContain(observation!.match(/about (\d+)°/)![1] + ' degrees');
-  await page.getByRole('button', { name: /^Listen ·/ }).first().click();
+  expect(spoken[0]).toMatch(/arm|elbow/i);
+  expect(spoken[0]).not.toMatch(/projected|degrees|—|middle 80/);
+  expect(spoken[0].length).toBeLessThan(800);
+  await expect(page.locator('#written-feedback')).toBeHidden();
+  await expect(page.locator('.measurement-stats')).toBeHidden();
+  await page.screenshot({ path: 'artifacts/voice-first-review.png' });
+  await page.getByRole('button', { name: 'View written feedback' }).click();
+  await expect(page.locator('.plain-finding').first()).toBeVisible();
+  await expect(page.locator('.measurement-stats')).toBeHidden();
+  await page.getByText('Measurements, limits and sources', { exact: true }).click();
+  await expect(page.locator('.measurement-stats')).toBeVisible();
+  await expect(page.locator('.finding-card').first()).toContainText('projected angle');
+  await page.getByRole('button', { name: /^Hear / }).first().click();
   expect(await page.evaluate(() => (window as any).reviewSpeechCalls.length)).toBe(2);
   await page.screenshot({ path: 'artifacts/spoken-review.png' });
 });
@@ -60,6 +54,39 @@ test('a clip with no person never gets a fabricated skeleton', async ({ page }) 
   const live = page.getByLabel('Live analysis: sampled recording with measured pose skeleton');
   await expect(live).toHaveAttribute('data-visible-joints', '0', { timeout: 60000 });
   await expect(page.getByRole('region', { name: 'Movement analysis results' })).toBeVisible({ timeout: 60000 });
-  await expect(page.getByRole('heading', { name: 'Here’s where the view falls short.' })).toBeVisible();
-  await expect(page.getByRole('region', { name: 'Spoken feedback' })).toContainText('Spoken feedback is not connected');
+  await expect(page.getByRole('region', { name: 'Spoken feedback' })).toHaveAttribute('data-voice-state', 'error');
+  await expect(page.getByRole('button', { name: /Try voice again/ })).toBeEnabled();
+  await page.getByRole('button', { name: 'View written feedback' }).click();
+  await expect(page.locator('#written-feedback')).toBeVisible();
+});
+
+test('voice can be retried after an unavailable connection without losing the report', async ({ page }) => {
+  await page.goto('/tests/harnesses/review.html?exercise=squat&voice=recovery');
+  await page.getByLabel('Choose exercise video').setInputFiles('tests/fixtures/playback.mp4');
+  await page.getByRole('button', { name: /Analyze movement/ }).click();
+  const voice = page.getByRole('region', { name: 'Spoken feedback' });
+  await expect(voice).toHaveAttribute('data-voice-state', 'error');
+  await expect(page.getByRole('button', { name: /Try voice again/ })).toBeEnabled();
+  await page.getByRole('button', { name: 'View written feedback' }).click();
+  await expect(page.locator('#written-feedback')).toBeVisible();
+  await page.evaluate(() => { (window as any).reviewVoiceAvailable = true; });
+  await page.getByRole('button', { name: /Try voice again/ }).click();
+  await expect(voice).toHaveAttribute('data-voice-state', 'ready');
+  expect(await page.evaluate(() => (window as any).reviewSpeechCalls.length)).toBe(1);
+});
+
+test('Stop during the initial connection check prevents a late automatic reading', async ({ page }) => {
+  await page.goto('/tests/harnesses/review.html?exercise=squat&voice=slow');
+  await page.getByLabel('Choose exercise video').setInputFiles('tests/fixtures/playback.mp4');
+  await page.getByRole('button', { name: /Analyze movement/ }).click();
+  const voice = page.getByRole('region', { name: 'Spoken feedback' });
+  await expect(voice).toHaveAttribute('data-voice-state', 'checking');
+  await expect.poll(() => page.evaluate(() => typeof (window as any).releaseReviewVoice)).toBe('function');
+  await page.getByRole('button', { name: /Stop voice/ }).click();
+  await page.evaluate(() => (window as any).releaseReviewVoice());
+  await expect.poll(() => page.evaluate(() => (window as any).reviewVoiceChecks)).toBe(1);
+  await expect(voice).toHaveAttribute('data-voice-state', 'paused');
+  expect(await page.evaluate(() => (window as any).reviewSpeechCalls.length)).toBe(0);
+  await page.getByRole('button', { name: /Play feedback/ }).click();
+  await expect(voice).toHaveAttribute('data-voice-state', 'ready');
 });

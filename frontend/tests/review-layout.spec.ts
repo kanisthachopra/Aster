@@ -11,6 +11,8 @@ test('portrait recordings retain proportions and keep the analysis action visibl
   });
   expect(layout.height).toBeLessThanOrEqual(321);
   expect(layout.ratio).toBeCloseTo(layout.source, 2);
+  await expect(page.getByRole('img', { name: /Suggested side view for squats/ })).toBeHidden();
+  await page.getByText('How should I record?', { exact: true }).click();
   await expect(page.getByRole('img', { name: /Suggested side view for squats/ })).toBeVisible();
   await page.screenshot({ path: 'artifacts/portrait-recording-guide.png' });
 });
