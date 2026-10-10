@@ -15,13 +15,14 @@ button { -webkit-tap-highlight-color: transparent; }
 .title-top { display: flex; align-items: center; gap: 17px; font: 10px/1.7 Consolas, monospace; letter-spacing: .18em; color: #bdcccc; }
 .title-top b { font-weight: 400; color: #78949f; font-size: 8px; letter-spacing: .13em; }
 .insignia { font: 52px/1 Georgia, serif; color: #d6e8e3; }
-.title-content { position: absolute; top: 30%; left: 6.2vw; width: 360px; }
+.title-content { position: absolute; top: clamp(110px,24vh,240px); left: 6.2vw; width: 360px; }
+.title-account-note { color:#a9c0c6; font-size:13px; line-height:1.6; max-width:310px; margin-top:16px; }
 .title-content .eyebrow { font-size: 9px; letter-spacing: .19em; }
 .title-content h1 { font-size: clamp(65px, 7.9vw, 125px); font-weight: 200; letter-spacing: .13em; line-height: .95; margin: 28px 0 0 -6px; }
 .title-content h1 span { display: block; margin: 22px 0 0 7px; font: 12px Consolas, monospace; letter-spacing: .65em; color: #b7c8cc; }
 .title-rule { height: 1px; width: 46px; background: #b6dad3; margin: 38px 0 26px; }
 .title-menu { width: 315px; }
-.title-menu button { display: flex; align-items: center; width: 100%; gap: 20px; background: transparent; border: 0; border-bottom: 1px solid #bedddd20; text-align: left; padding: 18px 0; font-size: 15px; transition: color 160ms ease; }
+.title-menu button { display: flex; align-items: center; width: 100%; gap: 20px; background: transparent; border: 0; border-bottom: 1px solid #bedddd20; text-align: left; padding: 14px 0; font-size: 15px; transition: color 160ms ease; }
 .menu-number { font: 9px Consolas, monospace; color: #a1c4c6; }
 .menu-arrow { margin-left: auto; color: #b6dcdc; }
 .title-bottom { position: absolute; bottom: 4vh; left: 6.2vw; right: 6.2vw; display: flex; justify-content: space-between; font: 9px Consolas, monospace; letter-spacing: .15em; color: #829ba7; }
@@ -419,3 +420,4 @@ html[data-input-modality=keyboard] .app button:active { scale:1; }
 @media (max-width: 760px) { .voice-review.has-review .review-stage { grid-template-columns: 1fr; gap: 22px; } .voice-review .analysis-results h3 { font-size: 24px; } }
 @media (prefers-reduced-motion: reduce) { .voice-avatar.is-speaking i { animation: none; opacity: .8; } }
 .reduce-motion .voice-avatar.is-speaking i { animation: none; opacity: .8; }
+@media (max-height:760px) { .title-content { top:125px; }.title-content h1 { font-size:72px; margin-top:18px; }.title-rule { margin:22px 0 12px; }.title-menu button { padding:12px 0; }.title-content h1 span { margin-top:15px; } }

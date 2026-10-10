@@ -79,7 +79,8 @@ export default function AccountPanel({ mode, session, onAuthenticated, onClose, 
     if (password !== confirm) { setError('The two passwords do not match yet.'); return false; }
     return true;
   };
-  const asSession = (result: AuthResult): AccountSession => ({ ...session, configured: true, authenticated: true, emailAvailable, profile: result.profile, journey: result.journey ?? session?.journey });
+  // Profile edits do not carry an older snapshot of the journal back into App.
+  const asSession = (result: AuthResult): AccountSession => ({ ...session, configured: true, authenticated: true, emailAvailable, profile: result.profile, journey: result.journey });
   const accept = (result: AuthResult) => {
     if (!active.current) return;
     const next = asSession(result);
@@ -114,19 +115,20 @@ export default function AccountPanel({ mode, session, onAuthenticated, onClose, 
     link.href = url; link.download = 'aster-private-recovery-kit.txt'; link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000); setNotice('Recovery kit downloaded. Keep it somewhere private, outside this browser.');
   };
-  const titles: Record<Screen, string> = { register: 'Make yourself known.', login: 'Welcome back, traveller.', manage: 'Your outpost identity.', recover: 'Let’s get you back in.', 'email-recovery': 'A signal back home.', kit: 'Keep a way back.' };
+  const titles: Record<Screen, string> = { register: 'Your journey starts here.', login: 'Welcome back.', manage: 'Your account.', recover: 'Recover your account.', 'email-recovery': 'Check your recovery email.', kit: 'Save your way back.' };
   const descriptions: Record<Screen, string> = {
-    register: '“A name for the door, a password for the lock. Then this journey is yours.”',
-    login: '“Your authorized ID and password will get us back to your journal.”',
-    manage: '“Changed your callsign? Need another way back in? We can sort that out here.”',
-    recover: '“Use the three-part command you saved. We’ll replace your password and give you a fresh command.”',
-    'email-recovery': '“If you linked and verified an email, I can send a recovery code there.”',
-    kit: '“One last thing. Save this somewhere you can find it, even if you forget your password.”',
+    register: 'Keep your reviews, progress and energy credits between visits.',
+    login: 'Sign in to pick up where you left off.',
+    manage: 'Your name, recovery options and sign-in settings.',
+    recover: 'Use your saved command to choose a new password. Your journal comes with you.',
+    'email-recovery': 'We’ll send a code to the email you previously verified.',
+    kit: 'One last step. Save this command so you can recover your account later.',
   };
-  return <Panel title={titles[screen]} eyebrow="ORBIT / CITIZEN ACCESS" onClose={close}>
+  return <Panel title={titles[screen]} eyebrow="ASTER / OUTPOST ID" onClose={close} className={`account-dialog account-${screen}`}>
     <div className="account-panel" aria-busy={busy}>
       <div className="account-orbit"><span aria-hidden="true">◈</span><p>{descriptions[screen]}</p></div>
-      <h3 ref={heading} tabIndex={-1} className="account-step">{screen === 'kit' ? 'SAVE YOUR PRIVATE RECOVERY KIT' : screen === 'manage' ? `AUTHORIZED ID / ${profile?.authorizedId ?? authorizedId}` : 'PRIVATE INPUT / ORBIT WON’T READ THESE DETAILS ALOUD.'}</h3>
+      {(screen === 'login' || screen === 'register') && <nav className="account-switch" aria-label="Account options"><button type="button" aria-current={screen === 'login' ? 'page' : undefined} disabled={busy} onClick={() => move('login')}>Sign in</button><button type="button" aria-current={screen === 'register' ? 'page' : undefined} disabled={busy} onClick={() => move('register')}>Create an ID</button></nav>}
+      <h3 ref={heading} tabIndex={-1} className="account-step">{screen === 'kit' ? 'Private recovery command' : screen === 'manage' ? `Authorized ID: ${profile?.authorizedId ?? authorizedId}` : 'Your details stay private. ORBIT won’t read them aloud.'}</h3>
       {error && <p className="account-message account-error" role="alert" tabIndex={-1} ref={errorRef}>{error}</p>}
       {notice && <p className="account-message" role="status">{notice}</p>}
       {screen === 'kit' ? <div className="account-kit">
@@ -177,13 +179,14 @@ export default function AccountPanel({ mode, session, onAuthenticated, onClose, 
             <Field label="Your local timezone" hint="Your daily missions use this local day."><select value={timezone} onChange={event => setTimezone(event.target.value)}>{TIMEZONES.map(zone => <option key={zone}>{zone}</option>)}</select></Field>
             <details className="account-optional"><summary>Add a citizen contact <span>Optional email</span></summary><p>Verify an email for a second recovery route. Either verified email or your secret command restores your full journey.</p>{emailAvailable ? <Field label="Recovery email"><input type="email" value={email} onChange={event => setEmail(event.target.value)} autoComplete="email" maxLength={254} /></Field> : <p className="account-hint">Email delivery isn’t connected yet. You can add one later; your recovery command works on its own.</p>}</details>
           </>}
-          <button type="submit" className="primary">{busy ? 'One moment…' : screen === 'register' ? 'Create my outpost ID' : screen === 'login' ? 'Authorize entry' : 'Restore my journey'} ↗</button>
+          <button type="submit" className="primary">{busy ? screen === 'login' ? 'Signing you in…' : screen === 'register' ? 'Creating your ID…' : 'Restoring your account…' : screen === 'register' ? 'Create my outpost ID' : screen === 'login' ? 'Sign in to the outpost' : 'Restore my journey'} ↗</button>
         </fieldset></form>}
-        {screen === 'login' ? <div className="account-bottom"><button type="button" className="account-link" disabled={busy} onClick={() => move('recover')}>I’ve lost my access. Help me back in.</button><button type="button" className="account-link" disabled={busy} onClick={() => move('register')}>New here? Create an ID</button></div>
+        {screen === 'login' ? <div className="account-bottom"><button type="button" className="account-link" disabled={busy} onClick={() => move('recover')}>Lost your access? Recover your account</button><button type="button" className="account-link" disabled={busy} onClick={() => move('register')}>New here? Create an ID</button></div>
           : screen === 'register' ? <div className="account-bottom"><span>Already have an authorized ID?</span><button type="button" className="account-link" disabled={busy} onClick={() => move('login')}>Sign in instead</button></div>
           : <div className="account-bottom"><button type="button" className="account-link" disabled={busy} onClick={() => move('login')}>Back to sign in</button>{screen === 'recover' && emailAvailable ? <button type="button" className="account-link" disabled={busy} onClick={() => move('email-recovery')}>Use my verified email instead</button> : screen === 'email-recovery' ? <button type="button" className="account-link" disabled={busy} onClick={() => move('recover')}>Use my recovery command</button> : null}</div>}
         {(screen === 'recover' || screen === 'email-recovery') && <p className="account-hint">You’ll need your authorized ID and either your saved command or access to a verified email. Without either recovery route, we can’t restore the account.</p>}
       </>}
+      {busy && <p className="account-wait" role="status">Connecting securely. This may take a few seconds.</p>}
     </div>
   </Panel>;
 }

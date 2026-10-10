@@ -29,6 +29,9 @@ export function createOutpostHandler(env: Env, dependencies: { fetch?: typeof fe
   const configured = Boolean(base?.startsWith('https://') && admin && publishable && pepper && pepper.length >= 32 && env.APP_ORIGIN);
   const emailAvailable = Boolean(env.RESEND_API_KEY && env.EMAIL_FROM);
   const origins = new Set([env.APP_ORIGIN, env.VERCEL_URL ? `https://${env.VERCEL_URL}` : undefined].filter(Boolean));
+  // Both owned production addresses serve this app. DNS problems must not make
+  // the working Vercel alias unable to sign in. Never trust an arbitrary Host.
+  if (env.APP_ORIGIN === 'https://aster.kcmira.me') origins.add('https://aster-ruddy.vercel.app');
   const localRequest = (req: IncomingMessage) => !env.VERCEL && ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket.remoteAddress || '') && /^(localhost|127\.0\.0\.1)(:\d{1,5})?$/.test(req.headers.host || '');
   const secureCookies = (req: IncomingMessage) => !localRequest(req) && env.APP_ORIGIN?.startsWith('https://');
   const names = (req: IncomingMessage) => secureCookies(req) ? ['__Host-aster-access', '__Host-aster-refresh', '__Host-aster-session'] : ['aster-access', 'aster-refresh', 'aster-session'];

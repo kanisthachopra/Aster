@@ -1,15 +1,25 @@
-.account-panel { color:#d9e7e9; font-size:14px; line-height:1.55; min-width:0; }
+.hologram.account-dialog { width:min(540px,92vw); padding:32px; border-radius:18px; background:linear-gradient(145deg,#112b39fa,#0a1823fc); box-shadow:0 24px 90px #0009; font-family:'Segoe UI Variable','Segoe UI',sans-serif; }
+.account-dialog .panel-header { margin-bottom:20px; padding-bottom:20px; }
+.account-dialog .panel-header h2 { font-size:34px; font-weight:550; letter-spacing:-.035em; line-height:1.15; }
+.account-dialog .panel-header .eyebrow { font-size:10px; letter-spacing:.14em; color:#9fbdc4; }
+.account-dialog .close-button { border-radius:8px; min-width:36px; min-height:36px; }
+.account-dialog .panel-code { font:10px/1.5 'Segoe UI',sans-serif; letter-spacing:.05em; padding-top:18px; margin-top:24px; }
+.account-panel { color:#d9e7e9; font-size:15px; line-height:1.55; min-width:0; }
+.account-switch { display:grid; grid-template-columns:1fr 1fr; padding:4px; border:1px solid #a5d1d52b; border-radius:10px; background:#06141c; margin-bottom:24px; gap:4px; }
+.account-switch button { border:0; border-radius:7px; background:transparent; color:#9fb7bf; min-height:40px; font-size:14px; }
+.account-switch button[aria-current] { background:#244451; color:#eef7f4; box-shadow:0 2px 6px #0003; }
+.account-wait { margin-top:16px!important; font-size:13px; color:#a8c8cf; }
 .account-panel p { margin:0 0 16px; }
 .account-orbit { display:flex; gap:15px; align-items:flex-start; padding:0 0 18px; }
 .account-orbit>span { flex-shrink:0; width:38px; height:38px; display:grid; place-items:center; border:1px solid #addbd94d; border-radius:50%; color:#b5efe4; background:#9be4d20b; font-size:22px; }
 .account-orbit p { color:#c2dbdf; font-size:16px; font-weight:300; margin:0; }
-.account-step { font:9px/1.6 Consolas,monospace; letter-spacing:.1em; color:#92b5be; margin:0 0 22px; overflow-wrap:anywhere; }
+.account-step { font:12px/1.5 'Segoe UI',sans-serif; color:#92b5be; margin:0 0 20px; overflow-wrap:anywhere; font-weight:400; }
 .account-step:focus { outline:none; }
 .account-fields { border:0; margin:0; padding:0; display:grid; gap:18px; min-width:0; }
 .account-field { display:flex; flex-direction:column; gap:7px; color:#d9e7e9; font-size:13px; min-width:0; }
 .account-field>span,.account-field>label { font-weight:500; }
-.account-field small,.account-hint,.account-recovery-parts>small { color:#9ebbc5; font-size:11px; line-height:1.6; }
-.account-field input,.account-field select { width:100%; min-width:0; box-sizing:border-box; border:1px solid #a9d8df40; border-radius:5px; padding:11px 12px; background:#071a26; color:#edf5f4; font:inherit; transition:border-color 140ms ease; }
+.account-field small,.account-hint,.account-recovery-parts>small { color:#a9c1c9; font-size:12px; line-height:1.6; }
+.account-field input,.account-field select { width:100%; min-width:0; min-height:48px; box-sizing:border-box; border:1px solid #a9d8df40; border-radius:8px; padding:12px 14px; background:#071a26; color:#edf5f4; font:400 16px/1.4 'Segoe UI',sans-serif; transition:border-color 140ms ease; }
 .account-field input:focus-visible,.account-field select:focus-visible { outline:2px solid #a9e7dc; outline-offset:3px; }
 .account-field input[readonly] { color:#a6c3ca; }
 .account-field select { font-family:inherit; }
@@ -17,9 +27,9 @@
 .account-password { display:flex; position:relative; }
 .account-password input { padding-right:64px; }
 .account-password button { position:absolute; right:6px; top:5px; bottom:5px; padding:0 9px; border:0; background:transparent; color:#afd8db; font-size:11px; border-radius:3px; }
-.account-panel .primary { width:100%; margin:4px 0 0; min-height:45px; border-radius:4px; }
+.account-panel .primary { width:100%; margin:4px 0 0; min-height:48px; border-radius:8px; font-size:15px; font-weight:600; background:#c2ece1; color:#0b2b31; }
 .account-secondary { padding:10px 14px; min-height:42px; border:1px solid #a8d4db4d; border-radius:4px; background:#a4d5d807; color:#d8eaea; font-size:12px; }
-.account-link { border:0; background:transparent; color:#b8dfdf; padding:6px 0; font-size:12px; text-align:left; text-decoration:underline; text-underline-offset:4px; text-decoration-color:#b8dfdf50; }
+.account-link { border:0; background:transparent; color:#b8dfdf; padding:6px 0; font-size:13px; text-align:left; text-decoration:underline; text-underline-offset:4px; text-decoration-color:#b8dfdf50; }
 .account-bottom { border-top:1px solid #b0d5df25; margin-top:23px; padding-top:16px; display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px 20px; align-items:center; }
 .account-bottom>span { font-size:11px; color:#a8c3cd; }
 .account-bottom+.account-hint { margin-top:17px; }
@@ -50,3 +60,5 @@
 @media(hover:hover) { .account-secondary:hover,.account-password button:hover { background:#b7e7e615; border-color:#b0e4e780; }.account-link:hover { color:#e0ffef; } }
 @media(max-width:520px) { .account-command { gap:6px; }.account-command code { font-size:13px; }.account-orbit p { font-size:14px; }.account-bottom { align-items:flex-start; flex-direction:column; }.account-recovery-parts>div { gap:6px; }.account-field input { padding:10px; }.account-password input { padding-right:58px; } }
 @media(prefers-reduced-motion:reduce) { .account-field input,.account-field select { transition:none; } }
+.account-panel button:not(:disabled):active { transform:translateY(1px); }
+@media(max-height:740px) { .account-dialog { padding:24px; }.account-dialog .panel-header h2 { font-size:29px; }.account-register .account-fields { gap:14px; } }

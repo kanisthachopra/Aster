@@ -8,6 +8,8 @@ Apply the complete Supabase migration, including `app_sessions`, before enabling
 
 All actions use `/api/outpost?action=ACTION`. GET actions: `session`, `journey`, `speech-config`. Other actions use JSON POST, at most 128 KiB, matching `APP_ORIGIN` or the exact trusted `VERCEL_URL` origin. Local non-Vercel use additionally accepts a loopback request whose Origin matches its validated localhost/127.0.0.1 Host. No wildcard preview origin is allowed. Responses are no-store. Errors expose a short app message, never provider errors or credentials.
 
+For Aster Production (`APP_ORIGIN=https://aster.kcmira.me`), the exact owned fallback address `https://aster-ruddy.vercel.app` is also allowed. This keeps sign-in, journal saves and voice usable when a visitor's DNS cannot resolve the custom domain. Cookies remain host-scoped; a visitor signs in separately on each address. Arbitrary request Host headers and other Vercel projects do not grant origin trust.
+
 | Action | Body | Result |
 | --- | --- | --- |
 | session | — | configured, authenticated, emailAvailable; profile and journey when signed in |

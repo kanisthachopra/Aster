@@ -1,8 +1,8 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { pointerInitiated } from './inputModality';
 
-export default function Panel({ title, eyebrow, children, onClose, wide = false }: {
-  title: string; eyebrow: string; children: ReactNode; onClose: () => void; wide?: boolean;
+export default function Panel({ title, eyebrow, children, onClose, wide = false, className = '' }: {
+  title: string; eyebrow: string; children: ReactNode; onClose: () => void; wide?: boolean; className?: string;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
@@ -21,7 +21,7 @@ export default function Panel({ title, eyebrow, children, onClose, wide = false 
       });
     };
   }, []);
-  return <dialog ref={ref} className={`hologram ${wide ? 'wide' : ''} ${pointerEntry.current ? 'pointer-entry' : ''}`} aria-labelledby={titleId}
+  return <dialog ref={ref} className={`hologram ${wide ? 'wide' : ''} ${pointerEntry.current ? 'pointer-entry' : ''} ${className}`} aria-labelledby={titleId}
     onCancel={event => { event.preventDefault(); onClose(); }}>
     <header className="panel-header">
       <div><p className="eyebrow">{eyebrow}</p><h2 id={titleId} tabIndex={-1}>{title}</h2></div>

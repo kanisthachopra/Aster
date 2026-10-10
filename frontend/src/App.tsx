@@ -50,19 +50,23 @@ export default function App() {
   const [journey, setJourney] = useState(() => createJourney());
   const [session, setSession] = useState<AccountSession | null>(null);
   const sessionRef = useRef<AccountSession | null>(null);
+  const sessionVersion = useRef(0);
   const [accountMode, setAccountMode] = useState<'register' | 'login' | 'manage'>('login');
   const [accountError, setAccountError] = useState('');
   const [saving, setSaving] = useState(false);
   const savingRef = useRef(false);
   const [saveProgress, setSaveProgress] = useState<number | null>(null);
   const signedIn = session?.authenticated === true;
-  function storeSession(next: AccountSession) { sessionRef.current = next; setSession(next); }
+  function storeSession(next: AccountSession) { sessionVersion.current++; sessionRef.current = next; setSession(next); }
   async function refreshSession() {
     setAccountError('');
+    const version = sessionVersion.current;
     try {
-      const next = await apiRequest<AccountSession>('session'); storeSession(next);
+      const next = await apiRequest<AccountSession>('session');
+      if (version !== sessionVersion.current) return;
+      storeSession(next);
       if (next.authenticated && next.profile) { setCallsign(next.profile.callsign); if (next.journey) setJourney(next.journey); }
-    } catch (reason) { setAccountError(reason instanceof Error ? reason.message : 'Account connection unavailable.'); }
+    } catch (reason) { if (version === sessionVersion.current) setAccountError(reason instanceof Error ? reason.message : 'Account connection unavailable.'); }
   }
   useEffect(() => { void refreshSession(); }, []);
   function openAccount(mode: 'register' | 'login' | 'manage') { setAccountMode(mode); setOverlay('access'); }
@@ -70,6 +74,7 @@ export default function App() {
     storeSession(next); setCallsign(next.profile?.callsign || '');
     if (next.journey) setJourney(next.journey);
     if (accountMode === 'manage') return;
+    void audio.current?.start().catch(() => setAudioFailure(true));
     setPhase('park'); setOverlay(next.profile?.onboardingComplete ? 'robot' : 'tour');
     setMessage('You’re back. Your journal and progress are ready.');
   }
@@ -136,7 +141,7 @@ export default function App() {
 
   async function start() {
     try { await audio.current?.start(); } catch { setAudioFailure(true); }
-    if (signedIn && session.profile?.onboardingComplete) { setPhase('park'); setOverlay('robot'); }
+    if (signedIn) { setPhase('park'); setOverlay(session.profile?.onboardingComplete ? 'robot' : 'tour'); }
     else setPhase('opening');
   }
   function closePanel() {
@@ -201,8 +206,11 @@ export default function App() {
           <div className="title-rule" />
           <nav className="title-menu" aria-label="Main menu">
             <button disabled={!ready} onClick={() => void start()}><span className="menu-number">01</span>{ready ? signedIn ? 'Resume expedition' : 'Begin expedition' : 'Establishing connection…'}<span className="menu-arrow">↗</span></button>
-            <button disabled={!ready} onClick={() => setOverlay('settings')}><span className="menu-number">02</span>Settings<span className="menu-arrow">↗</span></button>
+            <button onClick={() => openAccount(signedIn ? 'manage' : 'login')}><span className="menu-number">02</span>{signedIn ? 'My account' : 'Sign in'}<span className="menu-arrow">↗</span></button>
+            {!signedIn && <button onClick={() => openAccount('register')}><span className="menu-number">03</span>Create an outpost ID<span className="menu-arrow">↗</span></button>}
+            <button onClick={() => setOverlay('settings')}><span className="menu-number">{signedIn ? '03' : '04'}</span>Settings<span className="menu-arrow">↗</span></button>
           </nav>
+          <p className="title-account-note">{signedIn ? `Welcome back, ${session.profile?.callsign || 'traveller'}. Your journey is saved.` : 'Sign in to keep your journal. Or begin and explore as a guest.'}</p>
         </div>
         <div className="title-bottom"><span role="status"><i className="tiny-light" /> {ready ? 'SYSTEMS ONLINE' : 'PREPARING THE OUTPOST'}</span><span>MOVEMENT LAB / LIVE PREVIEW</span></div>
         <div className="coordinate-label"><span>SECTOR 07</span><strong>Somewhere worth<br />starting again.</strong><small>24° 18′ N &nbsp; / &nbsp; 61° 07′ E</small></div>
@@ -211,7 +219,7 @@ export default function App() {
       {phase !== 'title' && <header className="hud-header">
         <div className="hud-brand">✧ <span>ASTER<small>OUTPOST 07</small></span></div>
         <div className="hud-location"><span className="status-dot" />{['guided', 'opening', 'entry'].includes(phase) ? 'ARRIVAL SECTOR' : 'TRAINING HABITAT'}<small>DEVELOPMENT PREVIEW</small></div>
-        <div className="hud-actions">{['park', 'station'].includes(phase) && <><button className={journey.activity.length ? 'mission-unlocked' : ''} onClick={() => setOverlay('missions')}>Missions <span>◇ {journey.regular + journey.reserve}</span></button><button onClick={() => setOverlay('journal')}>Journal <span>▤</span></button><button onClick={() => setOverlay('games')}>Play <span>✧</span></button></>}<button onClick={() => setOverlay('settings')}>Settings <span>☷</span></button></div>
+        <div className="hud-actions">{['park', 'station'].includes(phase) && <><button className={journey.activity.length ? 'mission-unlocked' : ''} onClick={() => setOverlay('missions')}>Missions <span>◇ {journey.regular + journey.reserve}</span></button><button onClick={() => setOverlay('journal')}>Journal <span>▤</span></button><button onClick={() => setOverlay('games')}>Play <span>✧</span></button><button onClick={() => openAccount(signedIn ? 'manage' : 'login')}>{signedIn ? 'Account' : 'Sign in'} <span>◈</span></button></>}<button onClick={() => setOverlay('settings')}>Settings <span>☷</span></button></div>
       </header>}
 
       {phase === 'opening' && <><div className="cinematic-bars" aria-hidden="true" /><div className="cinematic-caption"><p className="eyebrow">SURFACE CONTACT ESTABLISHED</p><p><small>TRAVELLER</small>{dialogueScript.opening.text}</p></div><button className="skip-button" onClick={() => setPhase('entry')}>Skip opening →</button></>}
@@ -279,7 +287,7 @@ export default function App() {
       <button className="primary" onClick={closePanel}>Return ↗</button>
     </Panel>}
 
-    {overlay === 'access' && (session?.configured ? <AccountPanel key={accountMode} mode={accountMode} session={session} onAuthenticated={authenticated} onClose={closePanel} onLogout={signedOut} /> : <Panel title="Authorization terminal." eyebrow="EARTHAN INTERGALACTIC EMPIRE" onClose={closePanel}>
+    {overlay === 'access' && (session?.configured ? <AccountPanel key={accountMode} mode={accountMode} session={session} onAuthenticated={authenticated} onClose={closePanel} onLogout={signedOut} /> : <Panel title="Connecting to your account." eyebrow="ORBIT / ACCOUNT ACCESS" onClose={closePanel}>
       <p className="dialogue-line">“Your journey deserves a secure home.”</p><p className="subtle">{accountError || session?.message || 'Checking the account connection…'}</p>
       <button className="secondary" onClick={() => void refreshSession()}>Check connection again</button><button className="primary" onClick={() => { setOverlay(null); setPhase('guided'); }}>Explore as a guest ↗</button>
     </Panel>)}

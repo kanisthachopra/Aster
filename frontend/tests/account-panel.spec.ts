@@ -52,21 +52,31 @@ test('registration protects the recovery kit and authenticates once without clos
 test('failed login is announced and can be corrected without losing the ID', async ({ page }) => {
   const requests = await mock(page, true);
   await page.goto('/tests/harnesses/account.html?mode=login');
+  await page.screenshot({path:'artifacts/account-login-refined.png'});
   await page.getByLabel('Authorized ID', { exact: true }).fill('visitor_test');
   await page.getByLabel('Authorization password', { exact: true }).fill('wrong-test-password');
-  await page.getByRole('button', { name: 'Authorize entry' }).click();
+  await page.getByRole('button', { name: 'Sign in to the outpost' }).click();
   await expect(page.getByRole('alert')).toContainText('do not match');
   await expect(page.getByLabel('Authorized ID', { exact: true })).toHaveValue('visitor_test');
   await page.getByLabel('Authorization password', { exact: true }).fill('correct-test-password');
-  await page.getByRole('button', { name: 'Authorize entry' }).click();
+  await page.getByRole('button', { name: 'Sign in to the outpost' }).click();
   await expect.poll(() => events(page)).toEqual([{ event: 'authenticated', id: 'visitor_test' }]);
   expect(requests.map(row => row.action)).toEqual(['login', 'login']);
+});
+
+test('sign-in remains readable and the submit action stays visible on a smaller laptop',async({page})=>{
+  await mock(page);
+  await page.setViewportSize({width:1280,height:720});
+  await page.goto('/tests/harnesses/account.html?mode=login');
+  await expect(page.getByRole('button',{name:'Sign in to the outpost'})).toBeInViewport();
+  await expect(page.getByLabel('Authorization password',{exact:true})).toBeInViewport();
+  await page.screenshot({path:'artifacts/account-login-laptop.png'});
 });
 
 test('command recovery accepts a complete uppercase paste and requires a new saved kit', async ({ page }) => {
   const requests = await mock(page);
   await page.goto('/tests/harnesses/account.html?mode=login');
-  await page.getByRole('button', { name: 'I’ve lost my access.' }).click();
+  await page.getByRole('button', { name: 'Lost your access? Recover your account' }).click();
   await page.getByLabel('Authorized ID', { exact: true }).fill('visitor_test');
   await page.getByLabel('Part 1', { exact: true }).evaluate((input, value) => { const data = new DataTransfer(); data.setData('text', value); input.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true })); }, command.toUpperCase());
   await expect(page.getByLabel('Part 3', { exact: true })).toHaveValue('CCCC3333CCCC');
@@ -84,16 +94,16 @@ test('email availability is explicit and cannot strand a recovery flow', async (
   await expect(page.getByText('Email delivery isn’t connected yet.', { exact: false })).toBeVisible();
   await expect(page.getByLabel('Recovery email', { exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Sign in instead' }).click();
-  await page.getByRole('button', { name: 'I’ve lost my access.' }).click();
+  await page.getByRole('button', { name: 'Lost your access? Recover your account' }).click();
   await expect(page.getByRole('button', { name: 'Use my verified email instead' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Back to sign in' }).click();
-  await expect(page.getByRole('button', { name: 'Authorize entry' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Sign in to the outpost' })).toBeVisible();
 });
 
 test('verified email restores access and produces a fresh recovery kit', async ({ page }) => {
   const requests = await mock(page);
   await page.goto('/tests/harnesses/account.html?mode=login');
-  await page.getByRole('button', { name: 'I’ve lost my access.' }).click();
+  await page.getByRole('button', { name: 'Lost your access? Recover your account' }).click();
   await page.getByRole('button', { name: 'Use my verified email instead' }).click();
   await page.getByLabel('Authorized ID', { exact: true }).fill('visitor_test');
   await page.getByRole('button', { name: 'Send my recovery code' }).click();

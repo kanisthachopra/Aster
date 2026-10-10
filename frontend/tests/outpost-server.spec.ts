@@ -166,3 +166,12 @@ test('only the exact trusted preview origin is accepted',async()=>{
   const valid=await app.call('register',{authorizedId:'preview-test',password:'Valid preview password 33',timezone:'UTC'},{origin:'https://aster-preview.vercel.app'});expect(valid.status).toBe(201);
   const invalid=await app.call('profile',{callsign:'Not allowed'},{origin:'https://other-preview.vercel.app'});expect(invalid.status).toBe(403);
 });
+
+test('both owned production addresses can sign in while lookalikes remain blocked',async()=>{
+  const app=await setup({APP_ORIGIN:'https://aster.kcmira.me'});
+  await app.register();
+  const login={authorizedId:'test_traveller',password:'A strong test password 1'};
+  expect((await app.call('login',login,{origin:'https://aster-ruddy.vercel.app'})).status).toBe(200);
+  expect((await app.call('login',login,{origin:'https://aster-ruddy.vercel.app.attacker.example'})).status).toBe(403);
+  expect((await app.call('login',login,{origin:'https://other-project.vercel.app'})).status).toBe(403);
+});
