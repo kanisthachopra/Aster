@@ -1,0 +1,438 @@
+{
+  "createdAt": "2026-10-10T04:39:20.612Z",
+  "manifest": {
+    "total": 600,
+    "byClass": {
+      "pullup": 200,
+      "pushup": 200,
+      "squat": 200
+    },
+    "bySplit": {
+      "train": 360,
+      "validation": 120,
+      "test": 120
+    },
+    "sourceGroups": 600,
+    "sha256": "c72e3e69e87fc1cc4f54296a8f39d30001c255a689f41e525267e1d6f019121e"
+  },
+  "manifestFileHash": "94e404308ef7a2c892807365aeef25903f69f3b239d729ccd456fd35fe089191",
+  "engineKey": "6ef59e1c82fd6042913c",
+  "movementSourceHash": "d8764a53b725207aa3965ec859002024070ff2857448a3ff85405ea8cacd53ca",
+  "measurementSourceHash": "32201bc1044b0c32e1dce0f25a3865c216db748fd38dd236d6848bb15d17af49",
+  "measurementSnapshotHash": "78980bd329ed7ee79200a532cf445033104cf7ba0c3b1c1e008d04076081bd99",
+  "actualCachedRecordings": 600,
+  "totalFrames": 22536,
+  "networkRequests": 0,
+  "newInferenceRuns": 0,
+  "formLabels": 0,
+  "temporalAndSourceInvariantFailures": 0,
+  "aggregates": {
+    "all/all": {
+      "recordings": 600,
+      "usable": 291,
+      "partial": 286,
+      "insufficient": 23,
+      "correctionRecordings": 7,
+      "strengthRecordings": 127,
+      "anySpecificRecordings": 128,
+      "generalOnlyRecordings": 472,
+      "emittedCorrections": 7,
+      "emittedStrengths": 127,
+      "correctionIds": {
+        "pushup-hip-position": 7
+      },
+      "strengthIds": {
+        "pushup-together": 76,
+        "squat-together": 51
+      },
+      "limitations": {
+        "These are patterns in this camera view. They do not establish muscle activation, grip pressure, pain, or safe technique.": 267,
+        "Some of the clip is hidden or interrupted; these cues cover only the linked moments.": 134,
+        "I did not find a sustained pattern to correct in the parts I could track. That does not certify the whole set.": 260,
+        "I need a continuous view of the working arm or leg and your hips to compare how they move.": 229,
+        "I cannot follow one consistent exercise clearly enough to give a movement-specific cue.": 55,
+        "A camera angle can exaggerate the hip position. This is a position to check, not a diagnosis of a weak muscle or back problem.": 7,
+        "Moving together is one visible strength, not an all-clear on your whole form.": 127,
+        "This looks like a front-facing view, which hides the body-line and timing comparison I need. A side or angled view may show more.": 49
+      }
+    },
+    "train/all": {
+      "recordings": 360,
+      "usable": 169,
+      "partial": 178,
+      "insufficient": 13,
+      "correctionRecordings": 6,
+      "strengthRecordings": 80,
+      "anySpecificRecordings": 81,
+      "generalOnlyRecordings": 279,
+      "emittedCorrections": 6,
+      "emittedStrengths": 80,
+      "correctionIds": {
+        "pushup-hip-position": 6
+      },
+      "strengthIds": {
+        "pushup-together": 51,
+        "squat-together": 29
+      },
+      "limitations": {
+        "These are patterns in this camera view. They do not establish muscle activation, grip pressure, pain, or safe technique.": 163,
+        "Some of the clip is hidden or interrupted; these cues cover only the linked moments.": 85,
+        "I did not find a sustained pattern to correct in the parts I could track. That does not certify the whole set.": 157,
+        "I need a continuous view of the working arm or leg and your hips to compare how they move.": 142,
+        "I cannot follow one consistent exercise clearly enough to give a movement-specific cue.": 28,
+        "A camera angle can exaggerate the hip position. This is a position to check, not a diagnosis of a weak muscle or back problem.": 6,
+        "Moving together is one visible strength, not an all-clear on your whole form.": 80,
+        "This looks like a front-facing view, which hides the body-line and timing comparison I need. A side or angled view may show more.": 27
+      }
+    },
+    "all/pullup": {
+      "recordings": 200,
+      "usable": 91,
+      "partial": 105,
+      "insufficient": 4,
+      "correctionRecordings": 0,
+      "strengthRecordings": 0,
+      "anySpecificRecordings": 0,
+      "generalOnlyRecordings": 200,
+      "emittedCorrections": 0,
+      "emittedStrengths": 0,
+      "correctionIds": {},
+      "strengthIds": {},
+      "limitations": {
+        "These are patterns in this camera view. They do not establish muscle activation, grip pressure, pain, or safe technique.": 91,
+        "Some of the clip is hidden or interrupted; these cues cover only the linked moments.": 63,
+        "I did not find a sustained pattern to correct in the parts I could track. That does not certify the whole set.": 91,
+        "I need a continuous view of the working arm or leg and your hips to compare how they move.": 98,
+        "I cannot follow one consistent exercise clearly enough to give a movement-specific cue.": 11
+      }
+    },
+    "train/pullup": {
+      "recordings": 120,
+      "usable": 49,
+      "partial": 69,
+      "insufficient": 2,
+      "correctionRecordings": 0,
+      "strengthRecordings": 0,
+      "anySpecificRecordings": 0,
+      "generalOnlyRecordings": 120,
+      "emittedCorrections": 0,
+      "emittedStrengths": 0,
+      "correctionIds": {},
+      "strengthIds": {},
+      "limitations": {
+        "These are patterns in this camera view. They do not establish muscle activation, grip pressure, pain, or safe technique.": 53,
+        "Some of the clip is hidden or interrupted; these cues cover only the linked moments.": 35,
+        "I did not find a sustained pattern to correct in the parts I could track. That does not certify the whole set.": 53,
+        "I need a continuous view of the working arm or leg and your hips to compare how they move.": 61,
+        "I cannot follow one consistent exercise clearly enough to give a movement-specific cue.": 6
+      }
+    },
+    "test/all": {
+      "recordings": 120,
+      "usable": 58,
+      "partial": 58,
+      "insufficient": 4,
+      "correctionRecordings": 1,
+      "strengthRecordings": 28,
+      "anySpecificRecordings": 28,
+      "generalOnlyRecordings": 92,
+      "emittedCorrections": 1,
+      "emittedStrengths": 28,
+      "correctionIds": {
+        "pushup-hip-position": 1
+      },
+      "strengthIds": {
+        "pushup-together": 15,
+        "squat-together": 13
+      },
+      "limitations": {
+        "I need a continuous view of the working arm or leg and your hips to compare how they move.": 44,
+        "These are patterns in this camera view. They do not establish muscle activation, grip pressure, pain, or safe technique.": 55,
+        "Some of the clip is hidden or interrupted; these cues cover only the linked moments.": 27,
+        "I did not find a sustained pattern to correct in the parts I could track. That does not certify the whole set.": 54,
+        "I cannot follow one consistent exercise clearly enough to give a movement-specific cue.": 11,
+        "Moving together is one visible strength, not an all-clear on your whole form.": 28,
+        "This looks like a front-facing view, which hides the body-line and timing comparison I need. A side or angled view may show more.": 10,
+        "A camera angle can exaggerate the hip position. This is a position to check, not a diagnosis of a weak muscle or back problem.": 1
+      }
+    },
+    "test/pullup": {
+      "recordings": 40,
+      "usable": 19,
+      "partial": 20,
+      "insufficient": 1,
+      "correctionRecordings": 0,
+      "strengthRecordings": 0,
+      "anySpecificRecordings": 0,
+      "generalOnlyRecordings": 40,
+      "emittedCorrections": 0,
+      "emittedStrengths": 0,
+      "correctionIds": {},
+      "strengthIds": {},
+      "limitations": {
+        "I need a continuous view of the working arm or leg and your hips to compare how they move.": 19,
+        "These are patterns in this camera view. They do not establish muscle activation, grip pressure, pain, or safe technique.": 18,
+        "Some of the clip is hidden or interrupted; these cues cover only the linked moments.": 15,
+        "I did not find a sustained pattern to correct in the parts I could track. That does not certify the whole set.": 18,
+        "I cannot follow one consistent exercise clearly enough to give a movement-specific cue.": 3
+      }
+    },
+    "validation/all": {
+      "recordings": 120,
+      "usable": 64,
+      "partial": 50,
+      "insufficient": 6,
+      "correctionRecordings": 0,
+      "strengthRecordings": 19,
+      "anySpecificRecordings": 19,
+      "generalOnlyRecordings": 101,
+      "emittedCorrections": 0,
+      "emittedStrengths": 19,
+      "correctionIds": {},
+      "strengthIds": {
+        "pushup-together": 10,
+        "squat-together": 9
+      },
+      "limitations": {
+        "These are patterns in this camera view. They do not establish muscle activation, grip pressure, pain, or safe technique.": 49,
+        "Some of the clip is hidden or interrupted; these cues cover only the linked moments.": 22,
+        "I did not find a sustained pattern to correct in the parts I could track. That does not certify the whole set.": 49,
+        "I need a continuous view of the working arm or leg and your hips to compare how they move.": 43,
+        "I cannot follow one consistent exercise clearly enough to give a movement-specific cue.": 16,
+        "Moving together is one visible strength, not an all-clear on your whole form.": 19,
+        "This looks like a front-facing view, which hides the body-line and timing comparison I need. A side or angled view may show more.": 12
+      }
+    },
+    "validation/pullup": {
+      "recordings": 40,
+      "usable": 23,
+      "partial": 16,
+      "insufficient": 1,
+      "correctionRecordings": 0,
+      "strengthRecordings": 0,
+      "anySpecificRecordings": 0,
+      "generalOnlyRecordings": 40,
+      "emittedCorrections": 0,
+      "emittedStrengths": 0,
+      "correctionIds": {},
+      "strengthIds": {},
+      "limitations": {
+        "These are patterns in this camera view. They do not establish muscle activation, grip pressure, pain, or safe technique.": 20,
+        "Some of the clip is hidden or interrupted; these cues cover only the linked moments.": 13,
+        "I did not find a sustained pattern to correct in the parts I could track. That does not certify the whole set.": 20,
+        "I need a continuous view of the working arm or leg and your hips to compare how they move.": 18,
+        "I cannot follow one consistent exercise clearly enough to give a movement-specific cue.": 2
+      }
+    },
+    "all/pushup": {
+      "recordings": 200,
+      "usable": 123,
+      "partial": 72,
+      "insufficient": 5,
+      "correctionRecordings": 7,
+      "strengthRecordings": 76,
+      "anySpecificRecordings": 77,
+      "generalOnlyRecordings": 123,
+      "emittedCorrections": 7,
+      "emittedStrengths": 76,
+      "correctionIds": {
+        "pushup-hip-position": 7
+      },
+      "strengthIds": {
+        "pushup-together": 76
+      },
+      "limitations": {
+        "These are patterns in this camera view. They do not establish muscle activation, grip pressure, pain, or safe technique.": 101,
+        "A camera angle can exaggerate the hip position. This is a position to check, not a diagnosis of a weak muscle or back problem.": 7,
+        "Moving together is one visible strength, not an all-clear on your whole form.": 76,
+        "I need a continuous view of the working arm or leg and your hips to compare how they move.": 51,
+        "I did not find a sustained pattern to correct in the parts I could track. That does not certify the whole set.": 94,
+        "Some of the clip is hidden or interrupted; these cues cover only the linked moments.": 37,
+        "I cannot follow one consistent exercise clearly enough to give a movement-specific cue.": 10,
+        "This looks like a front-facing view, which hides the body-line and timing comparison I need. A side or angled view may show more.": 38
+      }
+    },
+    "train/pushup": {
+      "recordings": 120,
+      "usable": 74,
+      "partial": 44,
+      "insufficient": 2,
+      "correctionRecordings": 6,
+      "strengthRecordings": 51,
+      "anySpecificRecordings": 52,
+      "generalOnlyRecordings": 68,
+      "emittedCorrections": 6,
+      "emittedStrengths": 51,
+      "correctionIds": {
+        "pushup-hip-position": 6
+      },
+      "strengthIds": {
+        "pushup-together": 51
+      },
+      "limitations": {
+        "These are patterns in this camera view. They do not establish muscle activation, grip pressure, pain, or safe technique.": 64,
+        "A camera angle can exaggerate the hip position. This is a position to check, not a diagnosis of a weak muscle or back problem.": 6,
+        "Moving together is one visible strength, not an all-clear on your whole form.": 51,
+        "I need a continuous view of the working arm or leg and your hips to compare how they move.": 31,
+        "I cannot follow one consistent exercise clearly enough to give a movement-specific cue.": 4,
+        "I did not find a sustained pattern to correct in the parts I could track. That does not certify the whole set.": 58,
+        "This looks like a front-facing view, which hides the body-line and timing comparison I need. A side or angled view may show more.": 21,
+        "Some of the clip is hidden or interrupted; these cues cover only the linked moments.": 25
+      }
+    },
+    "test/pushup": {
+      "recordings": 40,
+      "usable": 24,
+      "partial": 15,
+      "insufficient": 1,
+      "correctionRecordings": 1,
+      "strengthRecordings": 15,
+      "anySpecificRecordings": 15,
+      "generalOnlyRecordings": 25,
+      "emittedCorrections": 1,
+      "emittedStrengths": 15,
+      "correctionIds": {
+        "pushup-hip-position": 1
+      },
+      "strengthIds": {
+        "pushup-together": 15
+      },
+      "limitations": {
+        "These are patterns in this camera view. They do not establish muscle activation, grip pressure, pain, or safe technique.": 20,
+        "Moving together is one visible strength, not an all-clear on your whole form.": 15,
+        "I did not find a sustained pattern to correct in the parts I could track. That does not certify the whole set.": 19,
+        "Some of the clip is hidden or interrupted; these cues cover only the linked moments.": 6,
+        "This looks like a front-facing view, which hides the body-line and timing comparison I need. A side or angled view may show more.": 9,
+        "I need a continuous view of the working arm or leg and your hips to compare how they move.": 9,
+        "A camera angle can exaggerate the hip position. This is a position to check, not a diagnosis of a weak muscle or back problem.": 1,
+        "I cannot follow one consistent exercise clearly enough to give a movement-specific cue.": 2
+      }
+    },
+    "validation/pushup": {
+      "recordings": 40,
+      "usable": 25,
+      "partial": 13,
+      "insufficient": 2,
+      "correctionRecordings": 0,
+      "strengthRecordings": 10,
+      "anySpecificRecordings": 10,
+      "generalOnlyRecordings": 30,
+      "emittedCorrections": 0,
+      "emittedStrengths": 10,
+      "correctionIds": {},
+      "strengthIds": {
+        "pushup-together": 10
+      },
+      "limitations": {
+        "I need a continuous view of the working arm or leg and your hips to compare how they move.": 11,
+        "These are patterns in this camera view. They do not establish muscle activation, grip pressure, pain, or safe technique.": 17,
+        "Moving together is one visible strength, not an all-clear on your whole form.": 10,
+        "I did not find a sustained pattern to correct in the parts I could track. That does not certify the whole set.": 17,
+        "I cannot follow one consistent exercise clearly enough to give a movement-specific cue.": 4,
+        "This looks like a front-facing view, which hides the body-line and timing comparison I need. A side or angled view may show more.": 8,
+        "Some of the clip is hidden or interrupted; these cues cover only the linked moments.": 6
+      }
+    },
+    "all/squat": {
+      "recordings": 200,
+      "usable": 77,
+      "partial": 109,
+      "insufficient": 14,
+      "correctionRecordings": 0,
+      "strengthRecordings": 51,
+      "anySpecificRecordings": 51,
+      "generalOnlyRecordings": 149,
+      "emittedCorrections": 0,
+      "emittedStrengths": 51,
+      "correctionIds": {},
+      "strengthIds": {
+        "squat-together": 51
+      },
+      "limitations": {
+        "These are patterns in this camera view. They do not establish muscle activation, grip pressure, pain, or safe technique.": 75,
+        "Moving together is one visible strength, not an all-clear on your whole form.": 51,
+        "I did not find a sustained pattern to correct in the parts I could track. That does not certify the whole set.": 75,
+        "I need a continuous view of the working arm or leg and your hips to compare how they move.": 80,
+        "Some of the clip is hidden or interrupted; these cues cover only the linked moments.": 34,
+        "I cannot follow one consistent exercise clearly enough to give a movement-specific cue.": 34,
+        "This looks like a front-facing view, which hides the body-line and timing comparison I need. A side or angled view may show more.": 11
+      }
+    },
+    "train/squat": {
+      "recordings": 120,
+      "usable": 46,
+      "partial": 65,
+      "insufficient": 9,
+      "correctionRecordings": 0,
+      "strengthRecordings": 29,
+      "anySpecificRecordings": 29,
+      "generalOnlyRecordings": 91,
+      "emittedCorrections": 0,
+      "emittedStrengths": 29,
+      "correctionIds": {},
+      "strengthIds": {
+        "squat-together": 29
+      },
+      "limitations": {
+        "These are patterns in this camera view. They do not establish muscle activation, grip pressure, pain, or safe technique.": 46,
+        "Moving together is one visible strength, not an all-clear on your whole form.": 29,
+        "I did not find a sustained pattern to correct in the parts I could track. That does not certify the whole set.": 46,
+        "I need a continuous view of the working arm or leg and your hips to compare how they move.": 50,
+        "Some of the clip is hidden or interrupted; these cues cover only the linked moments.": 25,
+        "I cannot follow one consistent exercise clearly enough to give a movement-specific cue.": 18,
+        "This looks like a front-facing view, which hides the body-line and timing comparison I need. A side or angled view may show more.": 6
+      }
+    },
+    "validation/squat": {
+      "recordings": 40,
+      "usable": 16,
+      "partial": 21,
+      "insufficient": 3,
+      "correctionRecordings": 0,
+      "strengthRecordings": 9,
+      "anySpecificRecordings": 9,
+      "generalOnlyRecordings": 31,
+      "emittedCorrections": 0,
+      "emittedStrengths": 9,
+      "correctionIds": {},
+      "strengthIds": {
+        "squat-together": 9
+      },
+      "limitations": {
+        "These are patterns in this camera view. They do not establish muscle activation, grip pressure, pain, or safe technique.": 12,
+        "Moving together is one visible strength, not an all-clear on your whole form.": 9,
+        "I did not find a sustained pattern to correct in the parts I could track. That does not certify the whole set.": 12,
+        "I need a continuous view of the working arm or leg and your hips to compare how they move.": 14,
+        "I cannot follow one consistent exercise clearly enough to give a movement-specific cue.": 10,
+        "This looks like a front-facing view, which hides the body-line and timing comparison I need. A side or angled view may show more.": 4,
+        "Some of the clip is hidden or interrupted; these cues cover only the linked moments.": 3
+      }
+    },
+    "test/squat": {
+      "recordings": 40,
+      "usable": 15,
+      "partial": 23,
+      "insufficient": 2,
+      "correctionRecordings": 0,
+      "strengthRecordings": 13,
+      "anySpecificRecordings": 13,
+      "generalOnlyRecordings": 27,
+      "emittedCorrections": 0,
+      "emittedStrengths": 13,
+      "correctionIds": {},
+      "strengthIds": {
+        "squat-together": 13
+      },
+      "limitations": {
+        "I need a continuous view of the working arm or leg and your hips to compare how they move.": 16,
+        "I cannot follow one consistent exercise clearly enough to give a movement-specific cue.": 6,
+        "These are patterns in this camera view. They do not establish muscle activation, grip pressure, pain, or safe technique.": 17,
+        "Moving together is one visible strength, not an all-clear on your whole form.": 13,
+        "I did not find a sustained pattern to correct in the parts I could track. That does not certify the whole set.": 17,
+        "Some of the clip is hidden or interrupted; these cues cover only the linked moments.": 6,
+        "This looks like a front-facing view, which hides the body-line and timing comparison I need. A side or angled view may show more.": 1
+      }
+    }
+  },
+  "claimBoundary": "Descriptive output coverage only, not accuracy, fault precision, correction helpfulness, clinical safety, or a new held-out efficacy result. General practice tips are not detected faults. No thresholds were selected or changed by this replay."
+}

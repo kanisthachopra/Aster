@@ -270,7 +270,7 @@ export default function App() {
     </Panel>}
 
     {overlay === 'review' && <Panel title={exercise.name} eyebrow={`TRAINING STATION ${exercise.number} / ${exercise.label}`} onClose={closePanel} wide>
-      <ClipPreview key={selected} exercise={exercise} onFinish={completeReview} onSpeak={speakGuide} speech={reviewSpeech} persistent={signedIn} />
+      <ClipPreview key={selected} exercise={exercise} onFinish={completeReview} onSpeak={speakGuide} speech={reviewSpeech} persistent={signedIn} reducedMotion={settings.reducedMotion} />
       {saving && <p role="status">{saveProgress !== null ? `Saving your private recording: ${saveProgress}%` : 'Saving your review and progress…'}</p>}
       <div className="panel-footer"><span>Leaving early keeps today’s activity unchanged.</span><button className="secondary" disabled={saving} onClick={closePanel}>Leave station <span>↗</span></button></div>
     </Panel>}

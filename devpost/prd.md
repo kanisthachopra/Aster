@@ -529,3 +529,13 @@ The learner requested a substantial visual redesign, solid-object collisions, ca
 Analysis must not require a perfect full-body side view to say anything useful. A useful result states which movement is observable and which is hidden; incomplete observations can be retained without claiming a completed exercise or awarding energy. Three supplied private recordings are diagnostic examples only, kept outside Git and never uploaded. The algorithm must generalize through joint visibility, camera geometry and temporal evidence rather than recognizing filenames or memorizing the examples. The recording ceiling becomes two minutes to accommodate short sets with setup time.
 
 The user's request for every skill in Emil Kowalski's public repository is handled by fetching the actual repository, reading its complete SKILL.md inventory and recording relevance in skills-review-0.4.md. Desktop-web-compatible guidance is applied; Expo-only APIs do not change the approved browser platform.
+
+## Revision 0.9: useful coaching before world polish
+
+The core loop is now: see a moving camera/framing example, optionally share a goal, variation and discomfort, upload a clip, watch actual tracking, hear one useful cue with a purpose, replay evidence and ask a follow-up. When a sustained visible pattern supports a cue, the review links its actual start/end times. General practice guidance is explicitly separate from detected faults. Written feedback and technical evidence stay behind disclosures.
+
+The user can ask why the cue matters, how to try it, what was hidden, or tell ORBIT that it hurt. Pain or recurrent instability changes the review and suppresses ordinary corrections. No ceiling-gaze, forced shoulder rotation, fixed reps or muscle-activation claims are adopted from anecdotal advice. Completing the review saves practical notes, without changing the approved activity/energy rules.
+
+The optional conversation provider may select reviewed explanation sections only. Sharing requires an explicit choice; media, body points and the injury check-in are excluded. The core local answer works without a provider. This remains a limited, guided conversation, not unrestricted coaching or a clinical assessment.
+
+The existing 600 clips contain activity labels, not independent good/bad-form labels. Replay produced 128 recordings with specific observations and only seven with corrections, all push-up hip position. No pull-up/squat corrections fired. Expert-labeled evaluation and broader useful corrections remain necessary before claiming general coaching accuracy. See coaching-research-0.9.md and evaluation/coaching-validation/protocol.md.

@@ -1,6 +1,6 @@
 # Aster — Outpost 07
 
-A desktop-browser exercise park on a distant moon. Version **0.6** leads with brief spoken feedback and puts written notes behind a button. Traveller and ORBIT have new Deepgram dialogue recordings, and voice recovery is tested through the full game. The complete cinematic product and persistent private accounts remain in development.
+A desktop-browser exercise park on a distant moon. Version **0.9** adds an animated recording guide, a short goal/comfort check-in, and conversational spoken coaching with a practical cue and its purpose. Persistent private accounts and journals are live. Exercise corrections remain exploratory and need independent expert validation.
 
 ## Try it
 
@@ -18,7 +18,7 @@ Open **http://127.0.0.1:5174** in Edge or Chrome for unrestricted FPS mouse capt
 3. Find the dome using the terrain survey. Enter its southern airlock for the connected 30-second arrival: traveller enters, perspective returns to first person, lights start, ORBIT emerges and approaches. **Preview dome arrival** is a repeat-testing shortcut.
 4. Give an optional callsign. ORBIT introduces reviews, missions, energy, recreation and settings. Choose one of three exercise stations and follow the blue floor markers. Press **E** near a station.
 5. Choose a recording with one person, **2–120 seconds**, under 150 MB. A side or three-quarter view is helpful, but other views can provide observations too. Press **Analyze movement**. Watch the sampled recording and its actual tracked joints advance together. You can hide tracking or stop processing. Gaps are left unmeasured.
-6. ORBIT automatically gives a short voice reply. Replay it, look at a marked moment, or select **View written feedback** for the notes. Measurements and sources are available inside those notes. Acknowledge the feedback and **Finish review & return**. Only that final return records qualifying activity and awards daily energy. Partial reviews can be saved without rewards. Leaving or cancelling earns nothing.
+6. ORBIT gives one next step and explains why. Replay the marked movement, ask **Why does that help?** or **How do I try it?**, or mention discomfort. General practice tips are labeled separately from detected patterns. Written notes, measurements and sources remain behind disclosures. Acknowledge the feedback and **Finish review & return** to save useful coaching notes. Only that final return records qualifying activity and awards daily energy. Partial reviews can be saved without rewards.
 7. Open **Missions** for rules and progress, or **Journal** for the source recording, findings and Master Control deletion.
 8. Visit a recreation console or select **Play** for Signal response, Echo sequence or Orbital alignment. These games do not award workout credits.
 
@@ -46,6 +46,12 @@ The [evaluation repository](evaluation/README.md) keeps acquisition, source-grou
 
 ## Analysis evidence and limits
 
+The new coaching checks use continuous, visible movement across frames rather than narrating elbow angles. They cover push-up coordination/hip position, squat coordination, and conditional strict-pull-up swing/lowering timing. Pull-up lowering examines complete individual reps within a longer set. They do not infer muscle activation, injury, safe loads or a prescribed rep count. An optional pain/instability disclosure overrides the usual cue; assisted and momentum-based variations change which observations are applicable.
+
+Replaying the existing **600 cached recordings** through these checks yielded specific observations on **128/600**, including corrections on **7/600** (all push-up hip-position checks). No pull-up or squat corrections fired in this corpus. These are coverage counts, not evidence of correct technique or correction accuracy. The archive lacks independent form labels. See [the reproducible coaching audit](evaluation/coaching-validation/protocol.md) and [research findings](devpost/coaching-research-0.9.md). No reinforcement learning or 80% form-accuracy claim is made.
+
+Optional Nebius explanations require server-only `NEBIUS_API_KEY` and `NEBIUS_COACH_MODEL` settings; the tested model is `Qwen/Qwen3-30B-A3B-Instruct-2507`. Signed-in users explicitly opt in to sharing a question and a reviewed cue. The provider selects existing explanation sections under a strict schema; it cannot invent new video findings. Video, body points and the injury check-in are excluded. Health-related questions stay local, and provider failures retain a local answer. Never prefix the key with `VITE_`. [Server setup](frontend/server/README.md) describes this boundary.
+
 All **600 distinct public clips** completed actual local inference: 200 pull-ups, 200 push-ups and 200 squats. Sources were split into 360 training, 120 validation and 120 held-out clips. The shipped rule refinement reduced insufficient held-out reviews from 8 to 4, preserved 58 confirmed-cycle reviews, and kept wrong-station completions at 0/240 trials. It improves access to partial observations; it does not validate technique corrections. See the [complete benchmark and limitations](evaluation/results/summary.md).
 
 The trained activity classifier remains **research-only**: its 94.1% accepted-prediction precision came with 84.2% coverage, and the squat precision interval missed the predeclared confidence gate. Repetition counts remain exploratory. **80% form-correction accuracy has not been established**; action labels cannot provide that evidence. A separate [form-validation audit and annotation protocol](evaluation/form-validation/README.md) records available sources and the missing ground truth. This work uses supervised evaluation, not reinforcement learning.
@@ -65,7 +71,7 @@ The build typechecks and bundles production assets. Browser tests use installed 
 
 ## Remaining product work
 
-Persistent accounts/recovery/private storage; qualified exercise-feedback validation; licensed professional reference-video comparison; avatar replay driven by supported evidence; finished character models, composed score and final voice direction. Neural voices are synthetic, not recordings of human actors. These remain tracked in the [checklist](devpost/checklist.md), [PRD](devpost/prd.md), [technical plan](devpost/spec.md) and [sound brief](devpost/sound-design.md).
+Qualified exercise-feedback validation and broader useful corrections; licensed professional reference-video comparison; avatar replay driven by supported evidence; finished character models, composed score and final voice direction. Neural voices are synthetic, not recordings of human actors. These remain tracked in the [checklist](devpost/checklist.md), [PRD](devpost/prd.md), [technical plan](devpost/spec.md) and [sound brief](devpost/sound-design.md).
 
 ## Source map
 
@@ -80,4 +86,4 @@ Persistent accounts/recovery/private storage; qualified exercise-feedback valida
 - `frontend/src/components/RobotTour.tsx`, `Missions.tsx`, `Journal.tsx`: guided systems and records.
 - `frontend/src/game/AudioDirector.ts`: adaptive temporary sound and local dialogue.
 
-Scene assets combine original procedural work with attributed CC0 Poly Haven scans; provenance is bundled in `frontend/public/textures` and `frontend/public/models/boulder`. Dialogue provenance is in `frontend/public/audio/README.md`. MediaPipe license and model provenance are bundled alongside their assets. No film/game soundtrack or third-party character is bundled. No deployment has been performed.
+Scene assets combine original procedural work with attributed CC0 Poly Haven scans; provenance is bundled in `frontend/public/textures` and `frontend/public/models/boulder`. Dialogue provenance is in `frontend/public/audio/README.md`. MediaPipe license and model provenance are bundled alongside their assets. No film/game soundtrack or third-party character is bundled.

@@ -3,6 +3,8 @@ import { createHmac, randomBytes, randomInt, randomUUID, scrypt as derive, timin
 import { promisify } from 'node:util';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { Plugin } from 'vite';
+import {coachingConfiguration,explainCoachQuestion} from './coachingService.ts';
+import {trustedCoachingCard} from '../src/analysis/coachingCards.ts';
 
 type Env = Record<string, string | undefined>;
 type Row = Record<string, any>;
@@ -140,7 +142,7 @@ export function createOutpostHandler(env: Env, dependencies: { fetch?: typeof fe
     res.setHeader('Cache-Control', 'no-store'); res.setHeader('X-Content-Type-Options', 'nosniff');
     try {
       const action = new URL(req.url || '/', 'http://localhost').searchParams.get('action') || 'session';
-      const readOnly = ['session', 'journey', 'speech-config'].includes(action);
+      const readOnly = ['session', 'journey', 'speech-config', 'coach-config'].includes(action);
       if (req.method !== (readOnly ? 'GET' : 'POST')) fail(405, 'This action uses a different request method.');
       const localOrigin = localRequest(req) && req.headers.origin === `http://${req.headers.host}`;
       if (!readOnly && ((!origins.has(req.headers.origin) && !localOrigin) || (req.headers['sec-fetch-site'] && req.headers['sec-fetch-site'] !== 'same-origin'))) fail(403, 'Open this action from the outpost itself.');
@@ -213,6 +215,20 @@ export function createOutpostHandler(env: Env, dependencies: { fetch?: typeof fe
       }
       const current = await user(req, res), row = await profile(current.id); if (!row) fail(401, 'Your profile could not be found.');
       await rate(`request:${current.id}`, 120, 60);
+      if(action==='coach-config'){send(res,200,coachingConfiguration(env));return;}
+      if(action==='coach-question'){
+        if(body.consent!==true)fail(400,'Choose whether to share this question with the conversation provider.');
+        const exercise=string(body.exercise,10),cueId=string(body.cueId,100),question=string(body.question,600);
+        const focus=trustedCoachingCard(exercise,cueId);
+        if(!focus)fail(400,'Choose an explanation from this exercise review.');
+        const goal=string(body.goal||'control',30);
+        if(!['control','strength','comfortable'].includes(goal))fail(400,'Choose a review goal.');
+        await rate(`coach:${current.id}`,8,60);
+        await rate(`coach-daily:${current.id}`,16000,86400,question.length+800);
+        await rate('coach-global',100000,86400,question.length+800);
+        const answer=await explainCoachQuestion(env,{exercise:focus.exercise,question,focus,goal},{fetch:request});
+        send(res,200,answer);return;
+      }
       if (action === 'logout') { await supa(`/rest/v1/app_sessions?id_hash=eq.${current.sessionHash}`, { service: true, method: 'DELETE' }); cookies(res); await supa('/auth/v1/logout?scope=local', { token: current.token, method: 'POST' }).catch(() => {}); send(res, 200, { ok: true }); return; }
       if (action === 'profile') {
         const update: Row = {};

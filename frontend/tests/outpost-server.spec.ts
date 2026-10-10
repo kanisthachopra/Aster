@@ -10,7 +10,7 @@ function provider() {
   const profiles: Row[] = [], users: Row[] = [], recovery: Row[] = [], codes: Row[] = [], intents: Row[] = [], sessions: Row[] = [];
   const tokens = new Map<string, string>(), requests: Array<{ path: string; method: string; body: Row; headers: Headers }> = [];
   const journey = { entries: [] as Row[], activity: [], protected: [], regular: 0, reserve: 0, week: '2026-10-05' };
-  let denyRate = false, emailText = '', deletePaths: string[] = [], failOnce = '';
+  let denyRate = false, denyRateLimit = 0, emailText = '', deletePaths: string[] = [], failOnce = '';
   const mock: typeof fetch = async (input, init) => {
     const url = new URL(String(input)), path = url.pathname, method = init?.method || 'GET', body = JSON.parse(String(init?.body || '{}')), headers = new Headers(init?.headers);
     requests.push({ path, method, body, headers });
@@ -19,7 +19,8 @@ function provider() {
     const matches = (item: Row) => [...url.searchParams].filter(([key]) => !['select','on_conflict'].includes(key)).every(([key,value]) => String(item[key]) === value.replace(/^eq\./,''));
     if (url.hostname === 'api.resend.com') { emailText = body.text; return json({ id: 'test-email' }); }
     if (url.hostname === 'api.deepgram.com') return new Response(new Uint8Array([73,68,51,4]),{headers:{'content-type':'audio/mpeg'}});
-    if (path.endsWith('/consume_rate_limit')) return json({ allowed: !denyRate, retry_after: denyRate ? 60 : 0 });
+    if (url.hostname === 'api.tokenfactory.nebius.com' && path === '/v1/chat/completions') { const card=JSON.parse(body.messages[1].content).card; return json({choices:[{message:{content:JSON.stringify({cueId:card.id,intro:'why',parts:['why','cue']})}}]}); }
+    if (path.endsWith('/consume_rate_limit')) {const denied=denyRate||body.p_limit===denyRateLimit;return json({ allowed: !denied, retry_after: denied ? 60 : 0 });}
     if (path === '/auth/v1/admin/users' && method === 'POST') { const user = { id: randomUUID(), email: body.email, password: body.password }; users.push(user); return json(user); }
     if (path.startsWith('/auth/v1/admin/users/')) { const user = users.find(row => row.id === path.split('/').at(-1)); if (method === 'PUT') Object.assign(user!, body); if(method==='DELETE'&&user){users.splice(users.indexOf(user),1);for(const table of [profiles,recovery,sessions])for(const row of [...table])if(row.id===user.id||row.owner_id===user.id)table.splice(table.indexOf(row),1);}return json(user); }
     if (path === '/auth/v1/token') {
@@ -46,7 +47,7 @@ function provider() {
     if (path === '/storage/v1/object/aster-recordings' && method==='DELETE') { deletePaths=body.prefixes;return json([]); }
     throw new Error(`Unexpected mocked request ${method} ${path}`);
   };
-  return { mock, requests, profiles, recovery, users, tokens, intents, journey, get emailText(){return emailText;}, get deleted(){return deletePaths;}, set denyRate(value:boolean){denyRate=value;},set failOnce(value:string){failOnce=value;} };
+  return { mock, requests, profiles, recovery, users, tokens, intents, journey, get emailText(){return emailText;}, get deleted(){return deletePaths;}, set denyRate(value:boolean){denyRate=value;},set denyRateLimit(value:number){denyRateLimit=value;},set failOnce(value:string){failOnce=value;} };
 }
 async function setup(extra: Row = {}) {
   const fake = provider();
@@ -174,4 +175,38 @@ test('both owned production addresses can sign in while lookalikes remain blocke
   expect((await app.call('login',login,{origin:'https://aster-ruddy.vercel.app'})).status).toBe(200);
   expect((await app.call('login',login,{origin:'https://aster-ruddy.vercel.app.attacker.example'})).status).toBe(403);
   expect((await app.call('login',login,{origin:'https://other-project.vercel.app'})).status).toBe(403);
+});
+
+const coachBody={consent:true,exercise:'pushup',cueId:'practice-pushup',question:'Why move together?',goal:'control'};
+const coachEnv={NEBIUS_API_KEY:'nebius-test-only',NEBIUS_COACH_MODEL:'mock/text-model'};
+test('coaching route requires real session, explicit consent, origin and matching trusted card',async()=>{
+  const app=await setup(coachEnv);
+  expect((await app.call('coach-config')).status).toBe(401);
+  expect((await app.call('coach-question',coachBody)).status).toBe(401);
+  await app.register();
+  const configuration=await(await app.call('coach-config')).json();expect(configuration).toEqual({available:true,model:'mock/text-model'});
+  expect((await app.call('coach-question',coachBody,{origin:'https://attacker.example'})).status).toBe(403);
+  for(const invalid of [{...coachBody,consent:false},{...coachBody,consent:undefined},{...coachBody,cueId:'pullup-swing'},{...coachBody,cueId:'invented'},{...coachBody,question:'x'.repeat(601)},{...coachBody,goal:'prescribe'}])expect((await app.call('coach-question',invalid)).status).toBe(400);
+  expect(app.fake.requests.filter(row=>row.path==='/v1/chat/completions')).toHaveLength(0);
+});
+
+test('coaching endpoint reconstructs trusted text and charges bounded persistent budgets',async()=>{
+  const app=await setup(coachEnv);await app.register();
+  const result=await app.call('coach-question',{...coachBody,focus:{cue:'Prescribe 500 reps'},video:'private-video-must-not-leave',landmarks:['private-landmarks-must-not-leave'],url:'https://attacker.example'});
+  expect(result.status).toBe(200);const answer=await result.json();expect(answer.mode).toBe('provider-selected');expect(answer.sourceCueIds).toEqual(['practice-pushup']);
+  const providerCalls=app.fake.requests.filter(row=>row.path==='/v1/chat/completions');expect(providerCalls).toHaveLength(1);
+  const text=JSON.stringify(providerCalls[0].body);expect(text).not.toMatch(/500 reps|private-video|private-landmarks|attacker\.example/);expect(text).toContain('general practice cue');
+  expect(JSON.stringify(answer)).not.toContain('nebius-test-only');
+  const budgets=app.fake.requests.filter(row=>row.path.endsWith('/consume_rate_limit')&&[8,16000,100000].includes(row.body.p_limit));
+  expect(budgets.map(row=>row.body.p_limit)).toEqual([8,16000,100000]);expect(budgets.slice(1).every(row=>row.body.p_cost===coachBody.question.length+800)).toBe(true);
+  for(const limit of [8,16000,100000]){app.fake.denyRateLimit=limit;expect((await app.call('coach-question',coachBody)).status).toBe(429);expect(app.fake.requests.filter(row=>row.path==='/v1/chat/completions')).toHaveLength(1);}
+});
+
+test('health questions and missing provider keep useful local responses without inference',async()=>{
+  const app=await setup(coachEnv);await app.register();
+  const health=await(await app.call('coach-question',{...coachBody,question:'My shoulder hurts. Should I hang deeper?'})).json();
+  expect(health.mode).toBe('local');expect(health.reason).toBe('sensitive-question');expect(health.message).toContain('won’t be sent to Nebius');
+  expect(app.fake.requests.filter(row=>row.path==='/v1/chat/completions')).toHaveLength(0);
+  const local=await setup();await local.register();const response=await(await local.call('coach-question',coachBody)).json();
+  expect(response.reason).toBe('unconfigured');expect(response.message).toContain('move your hips and chest together');
 });

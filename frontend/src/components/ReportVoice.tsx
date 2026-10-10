@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { AnalysisReport } from '../analysis/types';
-import { getCoachingReview } from '../analysis/coaching';
+import { getCoachingReview, type CoachingReview } from '../analysis/coaching';
 import type { SpeakOptions, SpeechResult } from '../speech/types';
 
 export interface ReviewSpeech {
@@ -10,10 +10,10 @@ export interface ReviewSpeech {
   stop: () => void;
 }
 type VoiceState = 'checking' | 'preparing' | 'speaking' | 'ready' | 'paused' | 'error' | 'muted';
-export default function ReportVoice({ report, speech, showDetails = false, onMoment }: {
-  report: AnalysisReport; speech?: ReviewSpeech; showDetails?: boolean; onMoment?: (timestamp: number) => void;
+export default function ReportVoice({ report, review, speech, showDetails = false, onMoment }: {
+  report: AnalysisReport; review?: CoachingReview; speech?: ReviewSpeech; showDetails?: boolean; onMoment?: (timestamp: number) => void;
 }) {
-  const coaching = getCoachingReview(report), transcript = coaching.spokenText;
+  const coaching = review ?? getCoachingReview(report), transcript = coaching.spokenText;
   const [state, setState] = useState<VoiceState>('checking');
   const [reason, setReason] = useState('');
   const [hasPlayed, setHasPlayed] = useState(false);

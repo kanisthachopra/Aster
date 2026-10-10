@@ -4,7 +4,7 @@ import { speechPlugin } from './server/speech.ts';
 import { outpostPlugin } from './server/outpost.ts';
 
 export default defineConfig(({ mode }) => {
-  const prefixes = ['DEEPGRAM_', 'SUPABASE_', 'APP_ORIGIN', 'RECOVERY_', 'RESEND_', 'EMAIL_'];
+  const prefixes = ['DEEPGRAM_', 'SUPABASE_', 'APP_ORIGIN', 'RECOVERY_', 'RESEND_', 'EMAIL_', 'NEBIUS_'];
   const env = { ...loadEnv('deployment', process.cwd(), prefixes), ...loadEnv(mode, process.cwd(), prefixes) };
   return {
   plugins: [react(), outpostPlugin(env), speechPlugin(env)],

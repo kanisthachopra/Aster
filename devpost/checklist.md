@@ -133,3 +133,16 @@ The learner reported failed voice playback, flat cutscene delivery and an overlo
 - [x] Fix bounded audio activation, connection waits, preview endpoint and retry/Stop recovery.
 - [x] Verify real provider output through the complete game and station flow, plus failure recovery and written access.
 - [ ] Learner tries the new voices and compact screen; dramatic naturalness remains a listening judgment.
+
+## Core coaching revision 0.9
+
+- [x] Replace isolated angle narration with a practical cue, reason and bounded replay.
+- [x] Distinguish observed movement from general practice guidance.
+- [x] Add animated phone-placement/framing guidance for all three exercises, with reduced motion.
+- [x] Ask optional goal, variation and discomfort; alter advice for pain/instability.
+- [x] Add local follow-up questions, spoken explanations and readable saved notes.
+- [x] Fix complete-rep pull-up lowering segmentation in multi-rep sets.
+- [x] Integrate bounded, consent-based server-only Nebius explanation selection; verify actual provider behavior.
+- [x] Audit all 600 cached clips for new cue coverage without inventing correction accuracy.
+- [ ] Independently label fresh form recordings with qualified reviewers and evaluate useful-correction precision/coverage.
+- [ ] Expand well-supported pull-up/squat coaching beyond the current narrow checks.

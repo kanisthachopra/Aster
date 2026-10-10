@@ -62,3 +62,13 @@ npx playwright test --config=tests/server.config.ts tests/outpost-live.spec.ts -
 ```
 
 Without this opt-in it skips. Environment values and generated recovery commands remain in memory; traces/video/screenshots are disabled. The aggregate record contains only checks and cleanup status. Failed runs also attempt cleanup. The HTTP-only configuration avoids starting or interrupting the shared Vite server.
+
+## Optional conversational explanation
+
+Set NEBIUS_API_KEY and NEBIUS_COACH_MODEL in the ignored local environment and Vercel Production environment. The actual tested model is Qwen/Qwen3-30B-A3B-Instruct-2507. Never expose the key through a VITE_ variable. Existing Supabase/Deepgram settings and recovery pepper must be preserved.
+
+Authenticated GET coach-config returns availability. POST coach-question requires consent=true, exercise, cueId and a question of at most 600 characters; goal is an approved enum. The server constructs the fixed educational cue itself. Client-submitted observations, corrections, URLs and raw landmarks are not accepted as prompt content. Rate limits are eight requests/minute, 16,000 input-equivalent characters/day per user, plus 100,000/day globally; failed attempts count conservatively. These are application guardrails, not a hard provider billing cap.
+
+The fixed Nebius endpoint returns a strict schema selection of existing card parts. The server validates again and assembles the response from its reviewed text. It cannot add a new exercise fault, diagnosis, safe range, load or rep count. Identified health questions remain local; this keyword guard is not a claim to detect every possible sensitive disclosure. The client advises users to keep private details out of opted-in questions. No conversation history or raw media is stored by this route. Provider errors use a local explanation, with a 25-second deadline and 16-KiB response bound.
+
+Eight service tests and three additional outpost guard tests cover strict selection, malformed output, sensitive-question bypass, timeout/cancellation, consent, trusted-card matching, authentication and budgets. A small live synthetic request verified actual strict schema behavior; mocked tests alone did not catch the initial json_object shape mismatch.

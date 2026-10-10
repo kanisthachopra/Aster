@@ -1,0 +1,31 @@
+.coach-checkin { border:1px solid #b9d9cf2b; border-radius:12px; background:#afdfcb06; padding:17px 18px; margin:12px 0 22px; }
+.coach-checkin summary { font-size:15px; font-weight:500; color:#d6ece2; }
+.coach-checkin fieldset { border:0; padding:17px 0 0; margin:0; display:grid; gap:15px; min-width:0; }
+.coach-options { display:flex; flex-wrap:wrap; gap:7px; }
+.coach-options button,.coach-followup button { border:1px solid #afd3cc39; border-radius:8px; background:#081b25; padding:9px 12px; color:#b9d6d3; font-size:12px; }
+.coach-options button[aria-pressed=true] { background:#b8e1d21c; border-color:#bde2c8a1; color:#eef9e7; }
+.coach-question { display:grid; grid-template-columns:1fr minmax(0,1.25fr); align-items:center; gap:12px; font-size:12px; color:#b3ccce; }
+.coach-question select { border:1px solid #a8c7c638; background:#081b25; color:#d8ebe5; border-radius:7px; padding:9px; font:inherit; min-width:0; width:100%; }
+.coach-private { font-size:11px; line-height:1.5; color:#95b5bc; margin:0; }
+.coach-action { background:#a8d7bc0b; border:1px solid #b9dbb746; padding:18px; border-radius:12px; margin:16px 0; }
+.coach-action .eyebrow { margin-bottom:7px; font-size:9px; }
+.coach-action h4 { font-size:19px; line-height:1.35; letter-spacing:-.02em; margin:0 0 10px; font-weight:500; color:#e1efda; }
+.coach-action p { font-size:14px; line-height:1.65; color:#c7dcd8; margin:0 0 12px; }
+.coach-action .text-button { padding:0; margin:0; }
+.coach-followup { border-top:1px solid #b5d4cd30; padding-top:18px; margin-top:20px; }
+.coach-followup h4 { font-size:16px; font-weight:500; margin:0 0 12px; }
+.coach-followup-choices { display:flex; flex-wrap:wrap; gap:7px; }
+.coach-reply { font-size:14px; line-height:1.7; border-left:2px solid #b2d5bb; padding:4px 0 4px 14px; margin:16px 0; color:#d3e5de; white-space:pre-line; }
+.coach-followup form { display:flex; gap:8px; margin-top:12px; }
+.coach-followup input[type=text] { min-width:0; flex:1; border:1px solid #b1d5d138; border-radius:7px; padding:11px 12px; color:#e2eee9; background:#081b25; font:13px/1.5 inherit; }
+.coach-provider { font-size:11px; color:#9ab6bd; line-height:1.6; margin-top:13px; }
+.coach-provider label { display:flex; align-items:flex-start; gap:8px; }
+.coach-provider input { flex-shrink:0; accent-color:#b9dec7; margin-top:3px; }
+.coach-source { font-size:11px; color:#b3d7d2; text-underline-offset:3px; }
+@media(max-width:650px) { .coach-question { grid-template-columns:1fr; gap:7px; }.coach-followup form { flex-wrap:wrap; }.coach-followup input[type=text] { flex-basis:100%; } }
+.coach-focus { margin: 18px 0; padding: 16px 18px; border: 1px solid #62d9ce38; border-radius: 12px; background: #5de3d509; }
+.coach-focus-label { color: #8fddd4; font-size: 10px; font-weight: 650; letter-spacing: .09em; }
+.coach-focus p { margin: 8px 0 0; line-height: 1.6; color: #e6efeb; }
+.voice-review .review-stage.with-checkin { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); max-width: none; align-items: start; }
+.with-checkin .coach-checkin { margin-top: 0; }
+@media(max-width:760px) { .voice-review .review-stage.with-checkin { grid-template-columns: 1fr; } }

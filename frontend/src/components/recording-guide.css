@@ -1,0 +1,51 @@
+.recording-guide { width:100%; max-width:720px; min-width:0; color:#d2e6e6; --rg-line:#a5d8da35; }
+.recording-guide-heading { display:flex; align-items:center; justify-content:space-between; gap:15px; margin-bottom:20px; }
+.recording-guide-eyebrow { margin:0 0 8px; font:8px/1.5 Consolas,monospace; letter-spacing:.16em; color:#96c8ca; }
+.recording-guide .recording-guide-heading h3 { margin:0; font-size:23px; font-weight:350; letter-spacing:-.025em; color:#e0f0ed; }
+.recording-guide-tag { padding:6px 10px; border:1px solid var(--rg-line); border-radius:30px; font-size:10px; white-space:nowrap; color:#b5d9d3; }
+.recording-guide-steps { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; margin-bottom:14px; }
+.recording-guide-steps button { display:flex; align-items:center; gap:9px; padding:11px 10px; min-height:43px; border:1px solid #a5d8da20; border-radius:5px; background:#0a1b2580; color:#9fb8c0; font-size:11px; text-align:left; }
+.recording-guide-steps button span { font:10px Consolas,monospace; color:#779ca5; }
+.recording-guide-steps button[aria-selected=true] { color:#e0f0e8; border-color:#aedfd95c; background:#a8e6d410; }
+.recording-guide-steps button[aria-selected=true] span { color:#b3e5d9; }
+.recording-guide [role=tabpanel]:focus-visible { outline:2px solid #afdfd9; outline-offset:4px; }
+.recording-guide-visual { overflow:hidden; background:radial-gradient(ellipse at 65% 42%,#29505b35,transparent 67%),#071a24; border:1px solid var(--rg-line); border-radius:9px; }
+.recording-guide-visual svg { display:block; width:100%; height:auto; }
+.rg-ground { stroke:#8ebfc03b; stroke-width:1; fill:none; }
+.rg-ray { fill:none; stroke:#acd5ca77; stroke-width:1; stroke-dasharray:4 4; }
+.rg-note { fill:#88aeb8; font:9px Consolas,monospace; letter-spacing:.04em; }
+.rg-label { fill:#d0e8df; font:9px Consolas,monospace; letter-spacing:.01em; }
+.rg-tripod { stroke:#6f939f; stroke-width:3; stroke-linecap:round; fill:none; }
+.rg-phone { fill:#142e3a; stroke:#b2d9da; stroke-width:1.5; }
+.rg-phone-screen { fill:#0a202c; stroke:#5e8e9a; stroke-width:1; }
+.rg-phone-corners { fill:none; stroke:#97c8c7; stroke-width:1.5; }
+.rg-camera-frame { fill:#b4e8dc03; stroke:#769eaa65; stroke-width:1; stroke-dasharray:3 5; }
+.rg-camera-frame.is-active { stroke:#a9d9c891; }
+.rg-frame-corners { fill:none; stroke:#c0e5d8; stroke-width:2; }
+.rg-equipment { fill:none; stroke:#426672; stroke-width:5; stroke-linecap:round; }
+.rg-bar { stroke:#a1c4c8; stroke-width:5; stroke-linecap:round; }
+.rg-bone { transform-origin:0 0; }
+.rg-bone line { stroke:#c7e9df; stroke-width:5; stroke-linecap:round; }
+.rg-bone.rg-far line { stroke:#658f96; stroke-width:4; }
+.rg-joint { transform-origin:0 0; }
+.rg-joint circle { fill:#c0e6d7; stroke:#132e38; stroke-width:1.5; }
+.rg-joint .rg-head { fill:#c6e6d9; stroke:none; }
+.rg-face { stroke:#304e56; stroke-width:2; stroke-linecap:round; }
+.rg-room { stroke:#a0c7bb; fill:none; stroke-width:1; }
+.recording-guide .recording-guide-caption { min-height:42px; display:flex; align-items:center; gap:9px; margin:0; padding:10px 14px; border-top:1px solid #a1d3d219; color:#b9d9d3; font-size:11px; line-height:1.5; }
+.recording-guide-caption>span { font-size:12px; color:#b8dfcd; }
+.recording-guide-controls { display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin:12px 0 18px; }
+.recording-guide-controls button { border:1px solid #a8d8d431; background:#91cccf08; color:#a9c6cd; border-radius:4px; font-size:10px; padding:7px 10px; min-height:32px; }
+.recording-guide-orientation,.recording-guide-playback,.recording-guide-playback>div { display:flex; gap:5px; flex-wrap:wrap; }
+.recording-guide-controls button[aria-pressed=true] { background:#aedcc517; border-color:#b9e0cf62; color:#dcecdf; }
+.recording-guide .recording-guide-detail { font-size:13px; line-height:1.65; color:#cfdfdf; margin:0 0 10px; }
+.recording-guide .recording-guide-small,.recording-guide .recording-guide-reduced { font-size:11px; line-height:1.6; color:#94b3bd; margin:0 0 12px; }
+.recording-guide-footer { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; color:#789ca6; font-size:9px; }
+.recording-guide-read { border:0; background:transparent; color:#b9ded7; padding:7px 0; font-size:11px; text-decoration:underline; text-underline-offset:4px; }
+.recording-guide .recording-guide-existing { margin:18px 0 0; display:flex; align-items:flex-start; gap:12px; padding:14px; border:1px solid #a2d7c72b; border-radius:5px; background:#9edbc206; color:#a6c5c5; font-size:11px; line-height:1.6; }
+.recording-guide-existing>span:first-child { color:#badbd0; font-size:18px; line-height:1.2; }
+.recording-guide-existing strong { color:#d5e8df; font-weight:500; }
+@media(hover:hover) and (pointer:fine) { .recording-guide button:hover { background-color:#b3dfd614; color:#d6eae4; } }
+@media(max-width:600px) { .recording-guide-steps button { display:block; font-size:10px; padding:9px 8px; }.recording-guide-steps button span { display:block; margin-bottom:5px; }.recording-guide .recording-guide-heading h3 { font-size:21px; }.recording-guide .recording-guide-caption { font-size:10px; }.recording-guide-controls { gap:10px; }.recording-guide-controls button { min-height:36px; }.recording-guide-tag { font-size:9px; } }
+@media(prefers-reduced-motion:reduce) { .recording-guide button { transition:none; } }
+.reduce-motion .recording-guide button { transition:none; }

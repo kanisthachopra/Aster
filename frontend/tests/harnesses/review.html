@@ -14,5 +14,6 @@ const speech = ['test', 'recovery', 'slow'].includes(voiceMode) ? {
   speak: async (text, options) => { if (!window.reviewVoiceAvailable) return {status:'unavailable', message:'Test voice connection unavailable'}; window.reviewSpeechCalls.push(text); options?.onStatus?.('speaking'); return {status:'completed'}; },
   stop: () => {},
 } : undefined;
-createRoot(document.querySelector('#harness')).render(React.createElement(Panel, {title:exercise.name, eyebrow:'TRAINING STATION', wide:true, onClose:()=>{}}, React.createElement(ClipPreview,{exercise,onFinish:()=>{},onSpeak:()=>{},speech})));
+window.savedReviews = [];
+createRoot(document.querySelector('#harness')).render(React.createElement(Panel, {title:exercise.name, eyebrow:'TRAINING STATION', wide:true, onClose:()=>{}}, React.createElement(ClipPreview,{exercise,onFinish:report=>{window.savedReviews.push(report);},onSpeak:()=>{},speech,persistent:new URLSearchParams(location.search).has('account')})));
 </script></body></html>

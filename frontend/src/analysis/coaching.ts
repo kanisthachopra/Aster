@@ -1,163 +1,68 @@
-import type { AnalysisReport, Finding } from './types';
+import type {AnalysisReport,Finding} from './types';
+import {getMovementReview, type MovementEvidence} from './movementReview';
+import {DEFAULT_COACHING_CONTEXT,SHOULDER_SOURCE,injuryResponse,type CoachingContext} from './coachingContext';
 
-export interface CoachingMoment {
-  id: string;
-  title: string;
-  timestamp: number;
-  observation: string;
-  cue: string;
-  spokenText: string;
-}
-export interface CoachingReview {
-  title: string;
-  summary: string;
-  moments: CoachingMoment[];
-  uncertainty: string;
-  spokenText: string;
-}
-
-const notes = (report: AnalysisReport) => (report.captureNotes ?? []).join(' ');
-const trackingChanged = (report: AnalysisReport) => /shifts abruptly|change of tracked person/i.test(notes(report));
-const stationUnclear = (report: AnalysisReport) => /do not consistently establish the selected exercise|does not consistently match this station/i.test(notes(report) + ' ' + report.summary);
-const finite = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
-
-/** One specific limitation takes priority over a list of generic disclaimers. */
-function captureAdvice(report: AnalysisReport): { uncertainty: string; cue: string } {
-  const text = notes(report);
-  if (trackingChanged(report)) return {
-    uncertainty: 'The dots jump between moments, so I can’t follow a whole rep.',
-    cue: 'Keep the camera still and one person clearly in view for the next recording.',
-  };
-  if (stationUnclear(report)) return {
-    uncertainty: 'I’m not sure this is the exercise you picked.',
-    cue: 'Check which exercise you picked and see whether the dots line up with your body.',
-  };
-  if (/shoulders are missing|shoulder.*obscured/i.test(text)) return {
-    uncertainty: 'Your shoulders go out of view or get hidden during part of the movement.',
-    cue: 'Move the camera back or tilt it up a little to keep your shoulders visible.',
-  };
-  if (/wrists or hands.*out of view/i.test(text)) return {
-    uncertainty: 'Your hands go out of view or get hidden in part of the clip.',
-    cue: report.exercise === 'pullup' ? 'Include your hands and the bar in the next clip.' : 'Leave enough space in the picture for your hands throughout the movement.',
-  };
-  if (/hip is difficult to locate/i.test(text)) return {
-    uncertainty: 'I can’t see your hips clearly through this clip.',
-    cue: 'Leave more space around your body and avoid a bright light behind you.',
-  };
-  if (/feet or ankles.*hidden|ankles are outside or obscured/i.test(text)) return {
-    uncertainty: report.exercise === 'squat' ? 'Your feet are hidden in part of this view.' : 'I can’t see enough of your legs to comment on how they move.',
-    cue: report.exercise === 'squat' ? 'Include your feet and the floor in the next recording.' : 'Use a wider view if you want feedback on your legs too.',
-  };
-  if (/tracking drops out/i.test(text)) return {
-    uncertainty: 'I lose sight of your movement during part of the clip.',
-    cue: 'Keep yourself in the picture and check that the lighting stays clear.',
-  };
-  if (/frontal or oblique/i.test(text)) return {
-    uncertainty: 'This camera angle hides some of the movement toward or away from the camera.',
-    cue: 'Keep a similar camera position when comparing your next clip.',
-  };
-  if (/head is often cropped/i.test(text)) return {
-    uncertainty: 'Your head is out of view, so I can’t comment on its position.',
-    cue: 'You can keep this view for the rest of your body, or widen it to include your head.',
-  };
-  if (report.status === 'insufficient') return {
-    uncertainty: 'I can’t see enough of your body clearly to judge this movement.',
-    cue: 'Record a short clip with yourself in view and clear lighting.',
-  };
-  if (report.status === 'partial') return {
-    uncertainty: 'I can see these positions, but I can’t follow a whole rep.',
-    cue: 'Include the start, the movement, and the return in your next clip.',
-  };
-  return {
-    uncertainty: 'This view can’t tell me for sure that your form is right.',
-    cue: 'See whether the dots line up with your body before using the feedback.',
-  };
-}
-
-const timeLabel = (time: number) => {
-  const rounded = Number(time.toFixed(1));
-  return `${rounded} ${rounded === 1 ? 'second' : 'seconds'}`;
+export interface CoachingMoment {id:string;title:string;timestamp:number;endTimestamp?:number;observation:string;cue:string;why:string;spokenText:string;sourceKey:string;}
+export interface CoachingFocus {id:string;title:string;observation:string;cue:string;why:string;sourceKey:string;detected:boolean;timestamp?:number;}
+export interface CoachingReview {title:string;summary:string;moments:CoachingMoment[];uncertainty:string;spokenText:string;focus:CoachingFocus;strength:string;sources:{title:string;url:string}[];safetyFirst:boolean;}
+const SOURCE = {
+ pushup:{title:'Push-up guidance · ACE',url:'https://www.acefitness.org/resources/everyone/exercise-library/41/push-up/'},
+ pullup:{title:'Pull-up guidance · ACE',url:'https://www.acefitness.org/resources/everyone/exercise-library/191/pull-ups/'},
+ squat:{title:'Squat guidance · ACE',url:'https://www.acefitness.org/resources/everyone/exercise-library/135/bodyweight-squat/'},
 };
-function moment(finding: Finding, title: string, observation: string, cue: string): CoachingMoment {
-  return { id: finding.id, timestamp: finding.timestamp, title, observation, cue,
-    spokenText: `At ${timeLabel(finding.timestamp)}, ${sentenceFragment(observation)} ${cue}` };
+function captureAdvice(report:AnalysisReport){
+ if((report.poseFrames ?? report.frames.filter(frame=>frame.landmarks.length).length)===0)return {why:'I couldn’t reliably find a person in this recording.',cue:'Keep yourself in view with light in front of you, and use a playable clip. The guide shows how to leave space around the movement.'};
+ const text=(report.captureNotes??[]).join(' ');
+ if(/shifts abruptly|change of tracked person/i.test(text))return {why:'The camera or tracked person changes, so I can’t follow a rep continuously.',cue:'Keep the camera still and one person in view. That lets me follow the movement from start to finish.'};
+ if(/do not consistently establish the selected exercise|does not consistently match this station/i.test(text))return {why:'I’m not sure this clip matches the exercise you picked.',cue:'Check the station first. Then include the start and return of the exercise in your clip.'};
+ if(/shoulders are missing|shoulder.*obscured/i.test(text))return {why:'Your shoulders are hidden in part of this view.',cue:'Move the camera back or tilt it up a little. Keep your shoulders in the picture at both ends of the rep.'};
+ if(/wrists or hands.*out of view/i.test(text))return {why:'Your hands leave the picture in part of this clip.',cue:report.exercise==='pullup'?'Include your hands and the bar, even at the lowest position.':'Step the camera back so your hands stay visible throughout the rep.'};
+ if(/hip is difficult to locate/i.test(text))return {why:'I can’t follow your hips clearly in this view.',cue:'Use a wider view with light in front of you. I need your hips and chest together to check their timing.'};
+ if(/feet or ankles.*hidden|ankles are outside or obscured/i.test(text))return {why:'Your feet are outside the view or hidden.',cue:'Include your feet in the next clip if you want me to check your whole-body movement too.'};
+ if(report.status!=='usable')return {why:'I can’t follow a complete rep clearly in this recording.',cue:'Show the start, the movement and the return. An existing angle is fine; the animated guide can help with your next recording.'};
+ return {why:'I can check visible movement here, but not pain or how much a muscle is working.',cue:'Keep the same camera position for your next clip so we can compare the same movement.'};
 }
-const sentenceFragment = (text: string) => /^I\b/.test(text) ? text : text.charAt(0).toLowerCase() + text.slice(1);
-
-/** Presentation only. Findings remain linked to their original, measured frame. */
-export function getCoachingMoment(report: AnalysisReport, finding: Finding): CoachingMoment | null {
-  if (!finite(finding.timestamp) || finding.timestamp < 0 || finding.timestamp > report.duration) return null;
-  const advice = captureAdvice(report);
-  if (finding.id === 'capture' || finding.id === 'visibility') {
-    return moment(finding, finding.id === 'capture' ? 'Clearer view' : 'What I could see',
-      advice.uncertainty, advice.cue);
-  }
-  // Do not turn unknown future finding types, absent joints or mismatched
-  // activities into a new movement claim just because their text sounds useful.
-  if (stationUnclear(report)) return null;
-  const frame = report.frames.find(f => Math.abs(f.timestamp - finding.timestamp) < .001);
-  const metrics = frame?.metrics;
-  if (!metrics || metrics.orientation === 'incompatible') return null;
-  const joint = report.exercise === 'squat' ? 'knee' : 'elbow';
-  if (finding.id === 'range' && finite(metrics[joint])) {
-    const other = report.findings.find(f => f.id === 'return');
-    const otherAngle = other && report.frames.find(f => Math.abs(f.timestamp - other.timestamp) < .001)?.metrics?.[joint];
-    const observation = finite(otherAngle) && otherAngle > metrics[joint]
-      ? `Your ${joint} is more bent here.` : `I can see your ${joint} position here.`;
-    const title = finite(otherAngle) && otherAngle > metrics[joint]
-      ? joint === 'knee' ? 'Knee bent' : 'Arm bent'
-      : joint === 'knee' ? 'Knee position' : 'Arm position';
-    return moment(finding, title, observation,
-      'Pause here and see whether the dots line up with your body. Then compare the other moment.');
-  }
-  if (finding.id === 'return' && finite(metrics[joint])) {
-    const range = report.findings.find(f => f.id === 'range');
-    const earlier = range && report.frames.find(f => Math.abs(f.timestamp - range.timestamp) < .001)?.metrics?.[joint];
-    if (!finite(earlier) || metrics[joint] <= earlier) return null;
-    const cue = trackingChanged(report) ? 'Compare these as separate positions. The dots jump, so I can’t follow what happens between them.'
-      : report.status !== 'usable' ? 'Compare this with the bent position. I can’t follow a whole rep between them.'
-      : report.exercise === 'pullup' ? 'Watch your shoulders move toward the bar, then come back down with control.'
-      : report.exercise === 'squat' ? finite(metrics.hip)
-        ? 'Watch whether your hips and chest come back up together.'
-        : 'Compare how your knee bends and straightens between these two moments.'
-      : finite(metrics.hip) ? 'Watch whether your hips and shoulders come back up together.'
-        : 'Compare how your elbow bends and straightens between these two moments.';
-    return moment(finding, joint === 'knee' ? 'Knee straighter' : 'Arm straighter', `Your ${joint} is straighter here.`, cue);
-  }
-  if (finding.id === 'body-line' && report.exercise === 'pushup' && finite(metrics.hip)) {
-    return moment(finding, 'Body position', 'I can see your shoulder, hip and ankle together here.',
-      'Watch whether your hips move with your shoulders. One frame can’t tell me that something is wrong.');
-  }
-  return null;
+function toMoment(item:MovementEvidence):CoachingMoment{
+ return {...item,spokenText:`Around ${item.timestamp.toFixed(1)} seconds, ${item.observation} ${item.cue} ${item.why}`};
 }
-
-export function getCoachingReview(report: AnalysisReport): CoachingReview {
-  const advice = captureAdvice(report);
-  const candidates = report.findings.map(f => getCoachingMoment(report, f)).filter((m): m is CoachingMoment => !!m);
-  const movement = candidates.filter(m => m.id !== 'capture' && m.id !== 'visibility');
-  // Two movement checkpoints are enough for the first listen. Capture guidance
-  // replaces a redundant third checkpoint when this view has a specific limit.
-  const capture = candidates.find(m => m.id === 'capture' || m.id === 'visibility');
-  const moments = movement.slice(0, 2);
-  if (capture && (moments.length < 2 || (report.captureNotes?.length ?? 0) > 0)) moments.push(capture);
-  const title = report.status === 'insufficient' ? 'Let’s get a clearer view'
-    : report.status === 'partial' ? 'A few moments to work with' : 'One thing to try next';
-  const summary = stationUnclear(report) ? 'Check which exercise you picked before using this feedback.'
-    : report.status === 'insufficient' ? 'This view is too hard to read for useful feedback yet.'
-    : movement.length ? 'Start with these moments, then use one small cue on your next set.'
-    : 'There isn’t much I can follow here. A clearer view will help.';
-  const spokenMoments = movement.slice(0, 2).map(m => `At ${timeLabel(m.timestamp)}, ${sentenceFragment(m.observation)}`);
-  const practicalCue = movement.length ? movement.slice(0, 2).at(-1)!.cue : advice.cue;
-  const cameraCue = movement.length && report.captureNotes?.length ? advice.cue : '';
-  const openings = {
-    pullup: { usable: 'Here’s what I could follow in your pull-up.', partial: 'I caught a few positions in this pull-up clip.' },
-    pushup: { usable: 'For your push-up, compare these moments.', partial: 'Parts of this push-up clip are clear enough to look at.' },
-    squat: { usable: 'Take a look at these moments in your squat.', partial: 'There are a few squat positions we can look at here.' },
-  };
-  const opening = stationUnclear(report) ? 'Check which exercise you picked before we go further.'
-    : report.status === 'usable' && movement.length ? openings[report.exercise].usable
-    : report.status === 'partial' ? openings[report.exercise].partial
-    : 'A clearer clip will help me give you something useful to work on.';
-  const spokenText = [opening, ...spokenMoments, practicalCue, cameraCue, advice.uncertainty].filter(Boolean).join(' ');
-  return { title, summary, moments, uncertainty: advice.uncertainty, spokenText };
+export function getCoachingMoment(report:AnalysisReport,finding:Finding):CoachingMoment|null{
+ const candidate=getMovementReview(report).observations.find(item=>item.id===finding.id&&Math.abs(item.timestamp-finding.timestamp)<.001);
+ return candidate?toMoment(candidate):null;
+}
+export function getCoachingReview(report:AnalysisReport,context:CoachingContext=DEFAULT_COACHING_CONTEXT):CoachingReview{
+ const movement=getMovementReview(report),capture=captureAdvice(report),safety=injuryResponse(context);
+ const allowed=movement.observations.filter(item=> !(report.exercise==='pullup'&&context.variant==='dynamic'&&item.id==='pullup-swing') && !(report.exercise==='pushup'&&context.variant==='assisted'&&item.id==='pushup-hip-position'));
+ if(context.goal==='control')allowed.sort((a,b)=>Number(/timing|descent/.test(b.id))-Number(/timing|descent/.test(a.id)));
+ const moments=safety?[]:allowed.slice(0,2).map(toMoment),first=moments[0];
+ const unclear=report.status==='insufficient'||(report.status==='partial'&&!first&&!movement.strengths.length)||/shifts abruptly|do not consistently establish the selected exercise/i.test((report.captureNotes??[]).join(' '));
+ let focus:CoachingFocus=first?{...first,detected:true}: {id:'practice-'+report.exercise,title:movement.practiceTip.title,observation:'A general practice cue, not a fault I detected in your clip.',cue:movement.practiceTip.cue,why:movement.practiceTip.why,sourceKey:movement.practiceTip.sourceKey,detected:false};
+ if(report.exercise==='pullup'&&context.variant==='dynamic'&&!first)focus={...focus,title:'Keep the version you’re practicing clear',cue:'You said the momentum is intentional. I won’t treat swinging by itself as a mistake. A coach familiar with that variation can help assess it.',why:'Strict and momentum-based pull-ups have different goals. I can’t compare them as if they were the same exercise.'};
+ if(report.exercise==='pushup'&&context.variant==='assisted'&&!first)focus={...focus,title:'Move together in your chosen version',cue:'In your kneeling or raised-hand version, practice bringing your hips and chest down and back up together, within a comfortable range.',why:'The aim is coordinated movement, not forcing your body into a full push-up before you’re ready.'};
+ if(unclear)focus={id:'capture',title:'Help me see the whole movement',observation:capture.why,cue:capture.cue,why:'A continuous view helps me distinguish a movement pattern from a missing frame.',sourceKey:'capture',detected:false};
+ if(safety)focus={id:'comfort-first',title:'Let’s put your comfort first',observation:'You mentioned discomfort or instability in your check-in.',cue:safety,why:'A video cannot choose an injury-specific exercise plan.',sourceKey:'shoulder',detected:false};
+ const strength=!safety&&movement.strengths[0]?movement.strengths[0].observation:'';
+ const summary=safety?'Thanks for telling me. Let’s pause the exercise advice and look after that first.':first?first.observation:unclear?'Let’s make your next recording useful.':'I don’t have a specific correction from this view. Let’s work on one practice cue.';
+ const relevantLimit=movement.limits.find(line=>/front-facing|continuous view|camera angle|only the linked moments|does not prove/.test(line));
+ const uncertainty=safety?'Your injury check-in is excluded from Nebius requests. Spoken feedback uses the voice service, and saved notes stay in your private journal.':[capture.why,relevantLimit].filter(Boolean).join(' ');
+ const opening=safety?'':first?'Thanks for showing me your set. I’ve got one place to start.':unclear?'I want to give you something you can use, but this clip leaves a gap.':'Thanks for showing me. Let’s keep the next step simple.';
+ const closing=context.goal==='strength'?'For your strength goal, start with a rep you can repeat with control; this clip can’t choose your load or rep count.':context.goal==='comfortable'?'For your comfort goal, tell me how this felt. If it hurt or felt unstable, let’s change the advice before you try again.':'Try that cue in your next comfortable set, then tell me how it felt.';
+ const spokenText=[opening,strength,first?`Around ${first.timestamp.toFixed(1)} seconds, ${first.observation}`:'',focus.cue,focus.why,!safety&&!unclear?closing:''].filter(Boolean).join(' ');
+ return {title:focus.title,summary,moments,uncertainty,spokenText,focus,strength,sources:safety?[SHOULDER_SOURCE]:[SOURCE[report.exercise]],safetyFirst:!!safety};
+}
+export function localCoachingReply(review:CoachingReview,context:CoachingContext,question:string):string{
+ const safety=injuryResponse(context,question);if(safety)return safety;
+ if(/\b(neck|ceiling|look up|head|look forward)\b/i.test(question))return 'Keep your head comfortably in line with your body instead of forcing your neck up to look at the ceiling. I can’t see muscle activation in a clip, and a change in gaze alone doesn’t prove that your back is doing more work. If your neck or shoulder feels uncomfortable, don’t push through it.';
+ if(/\b(reps?|sets?|how many|weight|load)\b/i.test(question))return 'I can’t choose your rep count or load from this recording. Use a set you can control comfortably, and pause when the movement starts changing or feels uncomfortable. Your training history and recovery matter too. For now, focus on this cue: '+review.focus.cue;
+ if(/\b(grip|shoulder rotation|lock.*shoulder)\b/i.test(question))return 'I can’t check grip pressure or precise shoulder rotation from these body dots. Please don’t force your shoulders into a position because an app called it “locked.” A closer view can show hand placement, but comfort and an injury-specific plan need a qualified coach or clinician. For the visible movement, we can work on this: '+review.focus.cue;
+ if(/\b(why|help|matter|reason)\b/i.test(question))return review.focus.why+' '+(review.focus.detected?'That connects to the movement I marked in your clip: '+review.focus.observation:'This is general practice guidance; I’m not claiming I saw that fault in your clip.');
+ if(/\b(miss|unclear|see|certain|confident|understand)\b/i.test(question))return review.uncertainty+' '+(review.focus.detected?'The marked moment is something I could follow, but that doesn’t tell me every part of your form.':'I don’t have enough evidence to call a specific fault. I’d rather tell you what would help than invent one.');
+ if(/\b(how|try|practice|do|change|next|easier)\b/i.test(question))return review.focus.cue+' '+review.focus.why+' Change one thing at a time, and tell me whether it felt steadier or less comfortable.';
+ if(/\b(fine|okay|comfortable|better|steadier)\b/i.test(question))return 'That’s useful to know. Keep the same cue and camera position for your next clip so we can compare it. Feeling better matters, but I won’t call the movement safe or corrected from that alone.';
+ return 'I can help with the marked movement, how to try the cue, or getting a clearer recording. '+review.focus.cue+' If you mean a different part of the exercise, tell me which part and what you felt.';
+}
+/** Persist useful notes; original measurements remain available during this review. */
+export function coachingReport(report:AnalysisReport,review:CoachingReview):AnalysisReport{
+ const findings=review.moments.map(item=>({id:item.id,title:item.title,timestamp:item.timestamp,observation:item.observation,suggestion:`${item.cue} ${item.why}`}));
+ if(!findings.length)findings.push({id:review.focus.id,title:review.focus.title,timestamp:0,observation:review.focus.detected?review.focus.observation:'General guidance, not a detected form fault.',suggestion:review.focus.cue+' '+review.focus.why});
+ return {...report,summary:review.summary,findings,sources:review.sources};
 }

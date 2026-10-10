@@ -1,97 +1,58 @@
-import { test, expect } from '@playwright/test';
-import { existsSync, readFileSync } from 'node:fs';
-import { getCoachingReview, getCoachingMoment } from '../src/analysis/coaching';
-import type { AnalysisReport, EvidenceFrame, Finding } from '../src/analysis/types';
+import {test,expect} from '@playwright/test';
+import {existsSync,readFileSync} from 'node:fs';
+import {getCoachingReview,getCoachingMoment,localCoachingReply,coachingReport} from '../src/analysis/coaching';
+import {DEFAULT_COACHING_CONTEXT} from '../src/analysis/coachingContext';
+import type {AnalysisReport,Landmark} from '../src/analysis/types';
 
-const finding = (id: string, timestamp: number): Finding => ({ id, timestamp, title: 'Technical evidence',
-  observation: 'The projected elbow angle is 83° and spans 80–160°.', suggestion: 'Compare the measurements.' });
-function report(overrides: Partial<AnalysisReport> = {}): AnalysisReport {
-  const frames: EvidenceFrame[] = [1, 3].map((timestamp, i) => ({ timestamp, landmarks: [], metrics: {
-    elbow: i ? 160 : 83, knee: null, hip: 170, bodyTilt: 80, side: 'left', orientationMatches: true,
-  } }));
-  return { id: 'synthetic-presentation-only', exercise: 'pushup', status: 'usable', duration: 5,
-    width: 640, height: 480, sampledFrames: 2, usableFrames: 2, coverage: 1, poseFrames: 2,
-    frames, findings: [finding('range', 1), finding('return', 3), finding('body-line', 1)],
-    summary: 'Technical summary.', limitations: ['Technical limitations.'], sources: [], estimatedRepetitions: 1,
-    captureNotes: [], ...overrides };
+function report(wave=false):AnalysisReport {
+ const frames=Array.from({length:33},(_,i)=>{
+  const phase=Math.sin(i*.25*Math.PI/2),landmarks:Landmark[]=Array.from({length:33},()=>({x:0,y:0,z:0,visibility:0}));
+  for(const [id,x,y] of [[11,.2,.38+.06*phase],[13,.24,.51],[15,.2,.7],[23,.5,.5+(wave?-.065:.033)*phase],[25,.65,.57],[27,.8,.62]])landmarks[id]={x,y,z:0,visibility:1};
+  return {timestamp:i*.25,landmarks,metrics:{elbow:100,knee:null,hip:170,bodyTilt:70,side:'left' as const,orientationMatches:true,orientation:'compatible' as const}};
+ });
+ return {id:'independent-coaching-test',exercise:'pushup',status:'usable',duration:8,width:640,height:640,sampledFrames:33,usableFrames:33,coverage:1,poseFrames:33,frames,findings:[{id:'range',title:'Measurement',timestamp:1,observation:'Projected elbow angle is 100°',suggestion:'Compare angles.'}],summary:'Technical summary',limitations:[],sources:[],estimatedRepetitions:1,captureNotes:[]};
 }
-
-test('brief coaching preserves source timestamps and leaves original technical evidence unchanged', () => {
-  const input = report(), before = JSON.stringify(input), review = getCoachingReview(input);
-  expect(review.moments.map(m => [m.id, m.timestamp])).toEqual([['range', 1], ['return', 3]]);
-  expect(review.spokenText).toContain('At 1 second');
-  expect(review.spokenText).toContain('At 3 seconds');
-  expect(review.spokenText).toMatch(/hips and shoulders.*up together/);
-  expect(review.spokenText.length).toBeLessThanOrEqual(700);
-  expect(review.spokenText).not.toMatch(/projected|degrees|°|80|160|your form is correct|your hips are sagging|establish|dependable|visible joints|selected exercise|torso|—/i);
-  expect(JSON.stringify(input)).toBe(before);
+test('a sustained observed pattern becomes an action and purpose linked to its actual frames',()=>{
+ const input=report(true),before=JSON.stringify(input),review=getCoachingReview(input);
+ expect(review.focus.id).toBe('pushup-timing');expect(review.focus.detected).toBe(true);
+ expect(review.focus.cue).toMatch(/slower rep.*hips and shoulders moving together/);
+ expect(review.focus.why).toMatch(/steady/);expect(review.moments[0].endTimestamp).toBeGreaterThan(review.moments[0].timestamp);
+ expect(input.frames.some(frame=>frame.timestamp===review.moments[0].timestamp)).toBe(true);
+ expect(review.spokenText).not.toMatch(/projected|degrees|°|your form is correct|muscle activation|—/i);
+ expect(JSON.stringify(input)).toBe(before);
+ const saved=coachingReport(input,review);expect(saved.findings[0].id).toBe('pushup-timing');expect(saved.findings[0].suggestion).toContain(review.focus.why);
 });
-
-test('missing joint measurements never become a visible bend or body-line claim', () => {
-  const input = report();
-  input.frames.forEach(f => { f.metrics!.elbow = null; f.metrics!.hip = null; });
-  expect(getCoachingMoment(input, input.findings[0])).toBeNull();
-  expect(getCoachingMoment(input, input.findings[2])).toBeNull();
-  expect(getCoachingReview(input).spokenText).not.toMatch(/hips and shoulders.*up together/);
-  expect(getCoachingMoment(input, finding('range', 2))).toBeNull();
+test('general practice guidance is explicitly separate from a detected fault',()=>{
+ const input=report(),review=getCoachingReview(input);
+ expect(review.moments).toHaveLength(0);expect(review.focus.detected).toBe(false);
+ expect(review.focus.observation).toMatch(/not a fault/);expect(review.summary).toContain('don’t have a specific correction');
+ expect(getCoachingMoment(input,input.findings[0])).toBeNull();
+ expect(localCoachingReply(review,DEFAULT_COACHING_CONTEXT,'Why does that help?')).toContain('not claiming I saw that fault');
 });
-
-test('cropped shoulder feedback gives one concrete camera action without claiming a full movement', () => {
-  const input = report({ status: 'partial', estimatedRepetitions: 0,
-    captureNotes: ['Your shoulders are missing or obscured in much of this view.'],
-    findings: [finding('range', 1), finding('return', 3), finding('capture', 1)] });
-  const review = getCoachingReview(input);
-  expect(review.spokenText).toContain('Move the camera back or tilt it up');
-  expect(review.uncertainty).toContain('shoulders');
-  expect(review.moments).toHaveLength(3);
-  expect(review.moments[1].cue).toMatch(/can.t follow a whole rep/);
-  expect(input.status).toBe('partial');
-  expect(input.estimatedRepetitions).toBe(0);
+test('missing shoulders or an interrupted track gives concrete capture help, not an invented correction',()=>{
+ const input=report(true);input.status='partial';input.captureNotes=['Your shoulders are missing or obscured in much of this view.'];input.frames.forEach(frame=>frame.landmarks=[]);
+ const review=getCoachingReview(input);expect(review.moments).toHaveLength(0);expect(review.uncertainty).toContain('shoulders');
+ input.status='insufficient';expect(getCoachingReview(input).focus.cue).toContain('Move the camera back or tilt it up');
+ input.captureNotes=['The tracked body shifts abruptly between sampled frames.'];expect(getCoachingReview(input).focus.cue).toContain('camera still and one person');
 });
-
-test('unclear exercise and abrupt tracking retain capture advice instead of invented corrections', () => {
-  const input = report({ status: 'partial', captureNotes: [
-    'Visible positions do not consistently establish the selected exercise.',
-    'The tracked body shifts abruptly between sampled frames.',
-  ], findings: [finding('range', 1), finding('return', 3), finding('capture', 1)] });
-  const review = getCoachingReview(input);
-  expect(review.moments.map(m => m.id)).toEqual(['capture']);
-  expect(review.summary).toContain('which exercise you picked');
-  expect(review.spokenText).toContain('camera still and one person');
-  expect(review.spokenText).not.toMatch(/rise together|straighter|correct form|complete repetition/i);
+test('pain and recurrent instability override generic cues and rep prescriptions',()=>{
+ const context={...DEFAULT_COACHING_CONTEXT,discomfort:'instability' as const},review=getCoachingReview(report(true),context);
+ expect(review.safetyFirst).toBe(true);expect(review.moments).toHaveLength(0);expect(review.spokenText).toContain('physiotherapist');
+ expect(review.sources[0].url).toContain('orthoinfo');expect(review.focus.cue).not.toMatch(/six|6 reps|ceiling|lock your shoulder/i);
+ const normal=getCoachingReview(report(true));
+ expect(localCoachingReply(normal,DEFAULT_COACHING_CONTEXT,'That felt painful')).toContain('stop the set');
+ expect(localCoachingReply(normal,DEFAULT_COACHING_CONTEXT,'My shoulder keeps slipping out')).toContain('assessment');
+ expect(localCoachingReply(normal,DEFAULT_COACHING_CONTEXT,'How many reps?')).toContain('can’t choose your rep count');
+ expect(localCoachingReply(normal,DEFAULT_COACHING_CONTEXT,'Should I look up at the ceiling?')).toContain('instead of forcing your neck');
 });
-
-test('unknown findings and insufficient tracking do not get fabricated movement advice', () => {
-  const input = report({ status: 'insufficient', frames: [], poseFrames: 0, estimatedRepetitions: 0,
-    findings: [finding('unknown-new-finding', 1), finding('visibility', 0)] });
-  const review = getCoachingReview(input);
-  expect(getCoachingMoment(input, input.findings[0])).toBeNull();
-  expect(review.moments.map(m => m.id)).toEqual(['visibility']);
-  expect(review.spokenText).toMatch(/yourself in view.*lighting/);
-  expect(review.spokenText).not.toMatch(/bent|straighter|good job|fault|safe technique/i);
+test('goals alter the next step without inventing loads or a safety judgment',()=>{
+ expect(getCoachingReview(report(),{...DEFAULT_COACHING_CONTEXT,goal:'strength'}).spokenText).toContain('can’t choose your load');
+ expect(getCoachingReview(report(),{...DEFAULT_COACHING_CONTEXT,goal:'comfortable'}).spokenText).toContain('tell me how this felt');
 });
-
-test('a return requires a genuinely straighter measured source position', () => {
-  const input = report(); input.frames[1].metrics!.elbow = 70;
-  expect(getCoachingMoment(input, input.findings[1])).toBeNull();
-  expect(getCoachingMoment(input, finding('return', 99))).toBeNull();
-});
-
-test('an observable elbow does not turn hidden hips or torso into a body-motion cue', () => {
-  const input = report(); input.frames.forEach(f => { f.metrics!.hip = null; });
-  const review = getCoachingReview(input);
-  expect(review.spokenText).toContain('elbow bends and straightens');
-  expect(review.spokenText).not.toMatch(/hips.*up together/);
-  expect(review.spokenText).not.toMatch(/, i could/);
-});
-
-test('actual cached public-video report produces succinct plain-language coaching', () => {
-  const path = 'artifacts/analysis/real-pushup-report.json';
-  test.skip(!existsSync(path), 'Optional previously inferred public fixture; synthetic tests are not model validation.');
-  const input = JSON.parse(readFileSync(path, 'utf8')) as AnalysisReport;
-  const review = getCoachingReview(input);
-  expect(review.spokenText.length).toBeLessThanOrEqual(700);
-  expect(review.spokenText).not.toMatch(/°|projected|percentile|your form is correct/i);
-  expect(review.moments.length).toBeGreaterThan(0);
-  for (const m of review.moments) expect(input.findings.some(f => f.id === m.id && f.timestamp === m.timestamp)).toBe(true);
+test('cached public video stays plain and every correction is tied to a measured sample',()=>{
+ const path='artifacts/analysis/real-pushup-report.json';test.skip(!existsSync(path),'Optional previously inferred public fixture.');
+ const input=JSON.parse(readFileSync(path,'utf8')) as AnalysisReport,review=getCoachingReview(input);
+ expect(review.spokenText).not.toMatch(/°|projected|percentile|your form is correct/i);
+ for(const moment of review.moments)expect(input.frames.some(frame=>frame.timestamp===moment.timestamp)).toBe(true);
+ if(!review.moments.length)expect(review.focus.detected).toBe(false);
 });
