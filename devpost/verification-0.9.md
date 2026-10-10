@@ -41,4 +41,8 @@ The qualified-reviewer annotation protocol requires fresh source-group splits, i
 
 ## Hosted check
 
-Hosted verification follows the push. Its aggregate record stays in ignored frontend/artifacts; disposable accounts are removed after the check. A passed hosted request verifies deployment plumbing, not exercise-correction accuracy.
+The pushed application was verified on https://aster.kcmira.me at 04:58 UTC. The first hosted check caught a missing NEBIUS_COACH_MODEL setting: the key was saved, but the model name was absent. The tested model name was added to Aster Production without revealing or changing the key, and the current coaching commit was redeployed.
+
+Fourteen hosted checks then passed: a disposable returning-user account signed in through the ordinary interface, reached the exercise station with game controls, opened the animated recording guide, analyzed the real public Navy clip locally, received actual Deepgram audio and started non-silent playback, obtained an opted-in provider-selected explanation, and saved an actionable cue plus purpose to the private journal. The saved report contained no raw body frames; no browser runtime errors occurred. The disposable account was removed successfully.
+
+The aggregate record and screenshots stay in ignored frontend/artifacts. These checks establish the live browser/API/storage/voice flow. They do not establish exercise-correction accuracy or a clinician-equivalent coach.
