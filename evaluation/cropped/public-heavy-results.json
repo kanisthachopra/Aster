@@ -1,0 +1,232 @@
+{
+  "evaluatedAt": "2026-10-10T05:44:48.720Z",
+  "experimentalOnly": true,
+  "productionIntegrated": false,
+  "privateDataIncluded": false,
+  "independentFormLabels": 0,
+  "modelSource": "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_heavy/float16/1/pose_landmarker_heavy.task",
+  "cases": [
+    {
+      "id": "navy-original",
+      "sourceGroup": "navy-buds-pushup-81-88",
+      "transformation": "unmodified development control",
+      "samples": 28,
+      "full": {
+        "status": "usable",
+        "visibleChainFrames": {
+          "left": 19,
+          "right": 28
+        },
+        "observationIds": [
+          "pushup-hip-position"
+        ],
+        "strengthIds": [
+          "pushup-together"
+        ],
+        "evidenceWindows": [
+          {
+            "id": "pushup-hip-position",
+            "start": 1.0462232592592593,
+            "end": 2.585558148148148,
+            "supportFrames": 7
+          },
+          {
+            "id": "pushup-together",
+            "start": 0.02,
+            "end": 6.947006999999999,
+            "supportFrames": 28
+          }
+        ],
+        "seconds": 5.043
+      },
+      "heavy": {
+        "status": "usable",
+        "visibleChainFrames": {
+          "left": 26,
+          "right": 28
+        },
+        "observationIds": [
+          "pushup-hip-position"
+        ],
+        "strengthIds": [
+          "pushup-together"
+        ],
+        "evidenceWindows": [
+          {
+            "id": "pushup-hip-position",
+            "start": 0.02,
+            "end": 2.585558148148148,
+            "supportFrames": 11
+          },
+          {
+            "id": "pushup-together",
+            "start": 0.02,
+            "end": 6.947006999999999,
+            "supportFrames": 28
+          }
+        ],
+        "seconds": 24.498
+      },
+      "fingerprints": {
+        "public/models/pose_landmarker_full.task": "5134a3aad27a58b93da0088d431f366da362b44e3ccfbe3462b3827a839011b1",
+        "public/mediapipe/pose-worker.js": "f04cc8c6b2d6bae4295433f057fa6525825cbf686aed5fa6aac0c52388d90792",
+        "src/analysis/analyzeVideo.ts": "b44fcc374f8931a4955b72a90e5bff7badc2c03d752729e5dddfcb2781f16443",
+        "src/analysis/measurements.ts": "32201bc1044b0c32e1dce0f25a3865c216db748fd38dd236d6848bb15d17af49",
+        "src/analysis/movementReview.ts": "d684f332e2cce9a0f712828b3b666f96d2de978a2751ae1fbdb8d3085c6be53b",
+        "src/analysis/partialMovementReview.ts": "74287b9b57a6d20492a2ce63be7ce4f642170f4d66a0f5d46b3859bba942b453",
+        "src/analysis/twoPointMovementReview.ts": "f366edeed14c12c9f0eb9e7df0ec18e76a9372271ef2e43e71c7cd821b4cee10",
+        "src/analysis/coaching.ts": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46",
+        "artifacts/recovery-models/pose_landmarker_heavy.task": "64437af838a65d18e5ba7a0d39b465540069bc8aae8308de3e318aad31fcbc7b"
+      },
+      "latestRuleReplay": {
+        "freshInference": false,
+        "observationIds": [
+          "pushup-hip-position"
+        ],
+        "strengthIds": [
+          "pushup-together"
+        ],
+        "focus": "correction",
+        "fingerprints": {
+          "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+          "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+          "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+          "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+        },
+        "evidenceWindows": [
+          {
+            "id": "pushup-hip-position",
+            "start": 0.02,
+            "end": 2.585558148148148
+          },
+          {
+            "id": "pushup-together",
+            "start": 0.02,
+            "end": 6.947006999999999
+          }
+        ]
+      }
+    },
+    {
+      "id": "navy-interrupted-arms",
+      "sourceGroup": "navy-buds-pushup-81-88",
+      "transformation": "synthetic pixel crop/occlusion of a real original recording",
+      "samples": 28,
+      "full": {
+        "status": "partial",
+        "visibleChainFrames": {
+          "left": 14,
+          "right": 19
+        },
+        "observationIds": [],
+        "strengthIds": [],
+        "evidenceWindows": [],
+        "seconds": 6.87
+      },
+      "heavy": {
+        "status": "partial",
+        "visibleChainFrames": {
+          "left": 16,
+          "right": 19
+        },
+        "observationIds": [],
+        "strengthIds": [
+          "pushup-together"
+        ],
+        "evidenceWindows": [
+          {
+            "id": "pushup-together",
+            "start": 4.638004666666666,
+            "end": 6.947006999999999,
+            "supportFrames": 10
+          }
+        ],
+        "seconds": 19.398
+      },
+      "fingerprints": {
+        "public/models/pose_landmarker_full.task": "5134a3aad27a58b93da0088d431f366da362b44e3ccfbe3462b3827a839011b1",
+        "public/mediapipe/pose-worker.js": "f04cc8c6b2d6bae4295433f057fa6525825cbf686aed5fa6aac0c52388d90792",
+        "src/analysis/analyzeVideo.ts": "b44fcc374f8931a4955b72a90e5bff7badc2c03d752729e5dddfcb2781f16443",
+        "src/analysis/measurements.ts": "32201bc1044b0c32e1dce0f25a3865c216db748fd38dd236d6848bb15d17af49",
+        "src/analysis/movementReview.ts": "d684f332e2cce9a0f712828b3b666f96d2de978a2751ae1fbdb8d3085c6be53b",
+        "src/analysis/partialMovementReview.ts": "74287b9b57a6d20492a2ce63be7ce4f642170f4d66a0f5d46b3859bba942b453",
+        "src/analysis/twoPointMovementReview.ts": "f366edeed14c12c9f0eb9e7df0ec18e76a9372271ef2e43e71c7cd821b4cee10",
+        "src/analysis/coaching.ts": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46",
+        "artifacts/recovery-models/pose_landmarker_heavy.task": "64437af838a65d18e5ba7a0d39b465540069bc8aae8308de3e318aad31fcbc7b"
+      },
+      "latestRuleReplay": {
+        "freshInference": false,
+        "observationIds": [],
+        "strengthIds": [
+          "pushup-together"
+        ],
+        "focus": "strength",
+        "fingerprints": {
+          "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+          "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+          "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+          "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+        },
+        "evidenceWindows": [
+          {
+            "id": "pushup-together",
+            "start": 4.638004666666666,
+            "end": 6.947006999999999
+          }
+        ]
+      }
+    },
+    {
+      "id": "empty-scene",
+      "sourceGroup": null,
+      "transformation": "generated flat-color no-person negative; not a real exercise video",
+      "samples": 20,
+      "full": {
+        "status": "insufficient",
+        "visibleChainFrames": {
+          "left": 0,
+          "right": 0
+        },
+        "observationIds": [],
+        "strengthIds": [],
+        "evidenceWindows": [],
+        "seconds": 3.363
+      },
+      "heavy": {
+        "status": "insufficient",
+        "visibleChainFrames": {
+          "left": 0,
+          "right": 0
+        },
+        "observationIds": [],
+        "strengthIds": [],
+        "evidenceWindows": [],
+        "seconds": 5.599
+      },
+      "fingerprints": {
+        "public/models/pose_landmarker_full.task": "5134a3aad27a58b93da0088d431f366da362b44e3ccfbe3462b3827a839011b1",
+        "public/mediapipe/pose-worker.js": "f04cc8c6b2d6bae4295433f057fa6525825cbf686aed5fa6aac0c52388d90792",
+        "src/analysis/analyzeVideo.ts": "b44fcc374f8931a4955b72a90e5bff7badc2c03d752729e5dddfcb2781f16443",
+        "src/analysis/measurements.ts": "32201bc1044b0c32e1dce0f25a3865c216db748fd38dd236d6848bb15d17af49",
+        "src/analysis/movementReview.ts": "d684f332e2cce9a0f712828b3b666f96d2de978a2751ae1fbdb8d3085c6be53b",
+        "src/analysis/partialMovementReview.ts": "74287b9b57a6d20492a2ce63be7ce4f642170f4d66a0f5d46b3859bba942b453",
+        "src/analysis/twoPointMovementReview.ts": "f366edeed14c12c9f0eb9e7df0ec18e76a9372271ef2e43e71c7cd821b4cee10",
+        "src/analysis/coaching.ts": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46",
+        "artifacts/recovery-models/pose_landmarker_heavy.task": "64437af838a65d18e5ba7a0d39b465540069bc8aae8308de3e318aad31fcbc7b"
+      },
+      "latestRuleReplay": {
+        "freshInference": false,
+        "observationIds": [],
+        "strengthIds": [],
+        "focus": "capture",
+        "fingerprints": {
+          "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+          "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+          "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+          "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+        },
+        "evidenceWindows": []
+      }
+    }
+  ]
+}

@@ -19,7 +19,10 @@ function provider() {
     const matches = (item: Row) => [...url.searchParams].filter(([key]) => !['select','on_conflict'].includes(key)).every(([key,value]) => String(item[key]) === value.replace(/^eq\./,''));
     if (url.hostname === 'api.resend.com') { emailText = body.text; return json({ id: 'test-email' }); }
     if (url.hostname === 'api.deepgram.com') return new Response(new Uint8Array([73,68,51,4]),{headers:{'content-type':'audio/mpeg'}});
-    if (url.hostname === 'api.tokenfactory.nebius.com' && path === '/v1/chat/completions') { const card=JSON.parse(body.messages[1].content).card; return json({choices:[{message:{content:JSON.stringify({cueId:card.id,intro:'why',parts:['why','cue']})}}]}); }
+    if (url.hostname === 'api.tokenfactory.nebius.com' && path === '/v1/chat/completions') {
+      if(Array.isArray(body.messages[1].content))return json({choices:[{finish_reason:'stop',message:{content:JSON.stringify({exerciseObserved:'pushup',view:'angled',visibleRegions:['elbows','hands'],frameIndices:[0,1]})}}]});
+      const card=JSON.parse(body.messages[1].content).card; return json({choices:[{message:{content:JSON.stringify({cueId:card.id,intro:'why',parts:['why','cue']})}}]});
+    }
     if (path.endsWith('/consume_rate_limit')) {const denied=denyRate||body.p_limit===denyRateLimit;return json({ allowed: !denied, retry_after: denied ? 60 : 0 });}
     if (path === '/auth/v1/admin/users' && method === 'POST') { const user = { id: randomUUID(), email: body.email, password: body.password }; users.push(user); return json(user); }
     if (path.startsWith('/auth/v1/admin/users/')) { const user = users.find(row => row.id === path.split('/').at(-1)); if (method === 'PUT') Object.assign(user!, body); if(method==='DELETE'&&user){users.splice(users.indexOf(user),1);for(const table of [profiles,recovery,sessions])for(const row of [...table])if(row.id===user.id||row.owner_id===user.id)table.splice(table.indexOf(row),1);}return json(user); }
@@ -125,7 +128,8 @@ test('signed uploads require ownership and verified object metadata before saved
 
 test('report storage drops raw landmarks and rejects fabricated invalid shapes',()=>{
   const report={id:randomUUID(),exercise:'squat',status:'partial',duration:10,width:300,height:200,sampledFrames:4,usableFrames:2,coverage:.5,summary:'Partial view',findings:[],frames:[{landmarks:[]}],rawLandmarks:['private'],limitations:[],sources:[]};
-  const clean=cleanReport(report);expect(clean.frames).toEqual([]);expect(clean).not.toHaveProperty('rawLandmarks');
+  const clean=cleanReport({...report,analysisVersion:'partial-review-0.10',knowledgeVersion:'1.0.0'});expect(clean.frames).toEqual([]);expect(clean).not.toHaveProperty('rawLandmarks');
+  expect(clean).toMatchObject({analysisVersion:'partial-review-0.10',knowledgeVersion:'1.0.0'});
   expect(()=>cleanReport({...report,status:'insufficient'})).toThrow();expect(()=>cleanReport({...report,duration:999})).toThrow();
 });
 
@@ -209,4 +213,36 @@ test('health questions and missing provider keep useful local responses without 
   expect(app.fake.requests.filter(row=>row.path==='/v1/chat/completions')).toHaveLength(0);
   const local=await setup();await local.register();const response=await(await local.call('coach-question',coachBody)).json();
   expect(response.reason).toBe('unconfigured');expect(response.message).toContain('move your hips and chest together');
+});
+
+function structuralJpeg(){return 'data:image/jpeg;base64,'+Buffer.from([255,216,255,192,0,17,8,1,128,2,0,3,1,17,0,2,17,0,3,17,0,255,218,0,12,3,1,0,2,0,3,0,0,63,0,1,255,217]).toString('base64');}
+const visionBody={consent:true,discomfort:'none',exercise:'pushup',variant:'standard',goal:'control',frames:[{timestamp:0,dataUrl:structuralJpeg()},{timestamp:1.2,dataUrl:structuralJpeg()}]};
+const visionEnv={NEBIUS_API_KEY:'nebius-test-only',NEBIUS_VISION_MODEL:'google/gemma-3-27b-it'};
+test('visual context needs a verified session, origin, explicit consent and no injury disclosure',async()=>{
+ const app=await setup(visionEnv);
+ expect((await app.call('vision-config')).status).toBe(401);expect((await app.call('vision-context',visionBody)).status).toBe(401);
+ await app.register();expect(await(await app.call('vision-config')).json()).toEqual({available:true,model:visionEnv.NEBIUS_VISION_MODEL});
+ expect((await app.call('vision-context',visionBody,{origin:'https://attacker.example'})).status).toBe(403);
+ expect((await app.call('vision-context',{...visionBody,consent:false})).status).toBe(400);
+ expect((await app.call('vision-context',{...visionBody,discomfort:'private free text'})).status).toBe(400);
+ for(const discomfort of ['pain','instability'])expect(await(await app.call('vision-context',{...visionBody,discomfort})).json()).toEqual({mode:'local',reason:'health-context'});
+ expect(app.fake.requests.filter(row=>row.path==='/v1/chat/completions')).toHaveLength(0);
+});
+test('visual context reconstructs bounded input and enforces separate persistent budgets',async()=>{
+ const app=await setup(visionEnv);await app.register();
+ const result=await app.call('vision-context',{...visionBody,account:'private-account',injury:'private-injury',video:'private-full-video',landmarks:['private-landmarks']});
+ expect(result.status).toBe(200);expect(await result.json()).toMatchObject({mode:'visual-context',context:{visibleRegions:['elbows','hands']}});
+ const inference=app.fake.requests.filter(row=>row.path==='/v1/chat/completions');expect(inference).toHaveLength(1);
+ expect(JSON.stringify(inference[0].body)).not.toMatch(/private-account|private-injury|private-full-video|private-landmarks/);
+ const budgets=app.fake.requests.filter(row=>row.path.endsWith('/consume_rate_limit')&&[4,20,200].includes(row.body.p_limit));
+ expect(budgets.map(row=>[row.body.p_limit,row.body.p_window_seconds])).toEqual([[4,600],[20,86400],[200,86400]]);
+ for(const limit of [4,20,200]){app.fake.denyRateLimit=limit;expect((await app.call('vision-context',visionBody)).status).toBe(429);}
+ expect(app.fake.requests.filter(row=>row.path==='/v1/chat/completions')).toHaveLength(1);
+});
+test('invalid visual input and oversized payload never reach inference',async()=>{
+ const app=await setup(visionEnv);await app.register();
+ const invalid=await app.call('vision-context',{...visionBody,frames:[{timestamp:0,dataUrl:'https://private.example/video'},{timestamp:1,dataUrl:structuralJpeg()}]});
+ expect(await invalid.json()).toEqual({mode:'local',reason:'invalid-input'});
+ expect((await app.call('vision-context',{...visionBody,oversize:'x'.repeat(1024*1024)})).status).toBe(413);
+ expect(app.fake.requests.filter(row=>row.path==='/v1/chat/completions')).toHaveLength(0);
 });

@@ -146,3 +146,15 @@ The learner reported failed voice playback, flat cutscene delivery and an overlo
 - [x] Audit all 600 cached clips for new cue coverage without inventing correction accuracy.
 - [ ] Independently label fresh form recordings with qualified reviewers and evaluate useful-correction precision/coverage.
 - [ ] Expand well-supported pull-up/squat coaching beyond the current narrow checks.
+
+## Cropped-recording revision 0.10
+
+- [x] Separate local limb evidence from whole-body capture status.
+- [x] Test two-endpoint fallback and repeated projected paths without inferring hidden anatomy.
+- [x] Prevent static holds from producing misleading tempo corrections.
+- [x] Make supported strengths primary feedback with timestamped replay.
+- [x] Create versioned movement understanding and source/update ledger.
+- [x] Verify actual public/provider context and protect it with explicit preview/consent, authentication, injury bypass and budgets.
+- [x] Compare fresh Full, IMAGE/padding and Heavy inference; retain unsuccessful cases and keep unsupported recovery out of production.
+- [ ] Solve unreliable tracking in the severe private push-up crop and produce broader genuinely useful corrections on independently reviewed partial footage.
+- [ ] Validate form observations with qualified labels before declaring an accuracy percentage or automatic shared learning.

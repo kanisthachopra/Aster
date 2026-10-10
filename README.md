@@ -1,6 +1,6 @@
 # Aster — Outpost 07
 
-A desktop-browser exercise park on a distant moon. Version **0.9** adds an animated recording guide, a short goal/comfort check-in, and conversational spoken coaching with a practical cue and its purpose. Persistent private accounts and journals are live. Exercise corrections remain exploratory and need independent expert validation.
+A desktop-browser exercise park on a distant moon. Version **0.10** adds independent checks for visible limbs, pauses that invalidate tempo comparisons, primary feedback for supported strengths, and an optional previewed Nebius image-context check. Persistent private accounts and journals are live. Exercise corrections remain exploratory and need independent expert validation.
 
 ## Try it
 
@@ -33,7 +33,7 @@ The [evaluation repository](evaluation/README.md) keeps acquisition, source-grou
 - Continuous opening/entry cameras; human facial features and articulated limbs; staged robot lift and approach. Characters are procedural and stylized, not photoreal assets.
 - Direct relative mouse look with raw-input preference and a plain-pointer-lock compatibility retry. Drag-only fallback in capture-blocking windows.
 - North-up terrain relief from actual world elevations; floor plan with numbered stations, entrance, scale and locked sectors.
-- Real MediaPipe pose measurements in a background worker; pinned model/runtime served locally. No video leaves the computer and no API key is needed.
+- Real MediaPipe pose measurements in a background worker; pinned model/runtime served locally. Local tracking needs no API key. Optional snapshot sharing and private-journal video storage each require a separate explicit choice.
 - Timestamped observed motion, visible-joint overlays and source links. No invented safe-form score, reference-video match or clinical diagnosis.
 - Guest review completion, daily rewards, weekly resets, reserve cap and missed-day protection. The first five activity days award 5, 5, 5, 2.5 and 2.5 credits. All seven actual days without protection earn 2.5 reserve at rollover, capped at 100. Protection costs 10; at most three per week.
 - Five-step robot orientation, journal with selective media/review removal, first-mission cue and sound/mouse/motion preferences.
@@ -48,7 +48,7 @@ The [evaluation repository](evaluation/README.md) keeps acquisition, source-grou
 
 The new coaching checks use continuous, visible movement across frames rather than narrating elbow angles. They cover push-up coordination/hip position, squat coordination, and conditional strict-pull-up swing/lowering timing. Pull-up lowering examines complete individual reps within a longer set. They do not infer muscle activation, injury, safe loads or a prescribed rep count. An optional pain/instability disclosure overrides the usual cue; assisted and momentum-based variations change which observations are applicable.
 
-Replaying the existing **600 cached recordings** through these checks yielded specific observations on **128/600**, including corrections on **7/600** (all push-up hip-position checks). No pull-up or squat corrections fired in this corpus. These are coverage counts, not evidence of correct technique or correction accuracy. The archive lacks independent form labels. See [the reproducible coaching audit](evaluation/coaching-validation/protocol.md) and [research findings](devpost/coaching-research-0.9.md). No reinforcement learning or 80% form-accuracy claim is made.
+The **0.9** replay of **600 cached recordings** yielded specific observations on **128/600**, including corrections on **7/600** (all push-up hip-position checks). These historical coverage counts do not evaluate the new 0.10 rules or correction accuracy. The archive lacks independent form labels. See [the reproducible coaching audit](evaluation/coaching-validation/protocol.md) and [research findings](devpost/coaching-research-0.9.md). No reinforcement learning or 80% form-accuracy claim is made.
 
 Optional Nebius explanations require server-only `NEBIUS_API_KEY` and `NEBIUS_COACH_MODEL` settings; the tested model is `Qwen/Qwen3-30B-A3B-Instruct-2507`. Signed-in users explicitly opt in to sharing a question and a reviewed cue. The provider selects existing explanation sections under a strict schema; it cannot invent new video findings. Video, body points and the injury check-in are excluded. Health-related questions stay local, and provider failures retain a local answer. Never prefix the key with `VITE_`. [Server setup](frontend/server/README.md) describes this boundary.
 
@@ -56,7 +56,11 @@ All **600 distinct public clips** completed actual local inference: 200 pull-ups
 
 The trained activity classifier remains **research-only**: its 94.1% accepted-prediction precision came with 84.2% coverage, and the squat precision interval missed the predeclared confidence gate. Repetition counts remain exploratory. **80% form-correction accuracy has not been established**; action labels cannot provide that evidence. A separate [form-validation audit and annotation protocol](evaluation/form-validation/README.md) records available sources and the missing ground truth. This work uses supervised evaluation, not reinforcement learning.
 
-The Full model processed an independent public-domain seven-second Navy push-up clip: 28/28 measurable samples and one estimated visible cycle. The same clip cannot earn completion at incompatible stations. Additional private, locally inspected examples produced useful squat and pull-up reviews; a severely cropped push-up recording produced partial observations and specific tracking-gap guidance. No private media are shipped or uploaded, and no filename-specific behavior was added. Tests cover no-person footage, cancellation, projected-angle math, incomplete cycles, cropped joints and tracking gaps. These checks do not establish representative accuracy. Measurements are two-dimensional projections; they cannot establish safe range, pain, load suitability or hidden joint positions.
+The [cropped-recording audit](evaluation/cropped/README.md) includes eight fresh public cases and three private clips tested entirely locally. The new local limb checks did not produce additional cues in this small actual-video set. The private squat retains a supported coordination strength; the private push-up still loses tracking too often, and the pull-up lacks a supported correction. IMAGE/padding and Heavy-model candidates did not solve those failures and remain experimental. No private media are shipped or sent to Nebius. These results do not establish representative accuracy.
+
+The evolving [movement understanding](research/movement-understanding.md) and [source ledger](research/movement-sources.md) describe each cue's required evidence, variations, counterexamples and update process. Editing Markdown does not automatically train a model. Runtime rules/cards and saved reviews carry separate analysis and knowledge versions.
+
+Optional visual context needs the existing server-only Nebius key plus `NEBIUS_VISION_MODEL=google/gemma-3-27b-it`. In a signed-in review, open **Optional: let ORBIT check the visible context**, preview six locally re-encoded snapshots, then choose whether to send them. The model recognizes the exercise/view/visible regions only; it cannot introduce form faults, supply hidden joints, or confirm safe technique. Context disagreement is disclosed. Pain/instability blocks this route. [Server setup](frontend/server/README.md) documents privacy, limits and cancellation.
 
 See [model provenance and fixture instructions](frontend/public/models/README.md). Test exercise media are ignored local artifacts, not shipped assets.
 

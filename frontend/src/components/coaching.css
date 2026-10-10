@@ -29,3 +29,8 @@
 .voice-review .review-stage.with-checkin { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); max-width: none; align-items: start; }
 .with-checkin .coach-checkin { margin-top: 0; }
 @media(max-width:760px) { .voice-review .review-stage.with-checkin { grid-template-columns: 1fr; } }
+.visual-context-review { border-top:1px solid #b5d4cd30; margin:16px 0; padding-top:14px; }
+.visual-context-review summary { font-size:12px; color:#b9d7d3; cursor:pointer; }
+.context-snapshots { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; margin:12px 0; }
+.context-snapshots figure { margin:0; min-width:0; }.context-snapshots img { width:100%; height:75px; object-fit:contain; border-radius:5px; background:#030b10; }.context-snapshots figcaption { color:#a5bec0; font-size:10px; text-align:center; }
+.context-consent { display:flex; gap:8px; align-items:start; font-size:11px; line-height:1.6; color:#bdd0cd; margin-bottom:12px; }.context-consent input { margin-top:4px; flex-shrink:0; }

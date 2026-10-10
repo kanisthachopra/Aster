@@ -15,12 +15,12 @@ export class AccountError extends Error {
 }
 
 /** Credentials travel only to this app's same-origin server, never voice or localStorage. */
-export async function apiRequest<T>(action: string, body?: unknown): Promise<T> {
+export async function apiRequest<T>(action: string, body?: unknown, signal?:AbortSignal): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`/api/outpost?action=${encodeURIComponent(action)}`, {
       method: body === undefined ? 'GET' : 'POST', credentials: 'same-origin',
-      cache: 'no-store', signal: AbortSignal.timeout(30000),
+      cache: 'no-store', signal: signal?AbortSignal.any([signal,AbortSignal.timeout(30000)]):AbortSignal.timeout(30000),
       ...(body === undefined ? {} : { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }),
     });
   } catch { throw new AccountError('The outpost connection dropped. Please try again.'); }

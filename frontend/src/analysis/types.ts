@@ -16,6 +16,7 @@ export interface AnalysisReport {
   findings: Finding[]; frames: EvidenceFrame[]; summary: string; limitations: string[];
   sources: { title: string; url: string }[]; estimatedRepetitions: number;
   poseFrames?: number; measurementCoverage?: { elbow: number; knee: number; hip: number }; captureNotes?: string[];
+  analysisVersion?: string; knowledgeVersion?: string;
 }
 export interface AnalysisProgress {
   stage: 'loading' | 'sampling' | 'summarizing'; completed: number; total: number; message: string; frame?: EvidenceFrame;

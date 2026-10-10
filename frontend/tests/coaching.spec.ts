@@ -23,11 +23,17 @@ test('a sustained observed pattern becomes an action and purpose linked to its a
  const saved=coachingReport(input,review);expect(saved.findings[0].id).toBe('pushup-timing');expect(saved.findings[0].suggestion).toContain(review.focus.why);
 });
 test('general practice guidance is explicitly separate from a detected fault',()=>{
- const input=report(),review=getCoachingReview(input);
+ const input=report();input.frames.forEach(frame=>frame.landmarks.forEach(point=>{if(point.visibility)point.y=.5;}));const review=getCoachingReview(input);
  expect(review.moments).toHaveLength(0);expect(review.focus.detected).toBe(false);
  expect(review.focus.observation).toMatch(/not a fault/);expect(review.summary).toContain('don’t have a specific correction');
  expect(getCoachingMoment(input,input.findings[0])).toBeNull();
  expect(localCoachingReply(review,DEFAULT_COACHING_CONTEXT,'Why does that help?')).toContain('not claiming I saw that fault');
+});
+test('a supported coordination strength is specific feedback rather than a generic fallback',()=>{
+ const review=getCoachingReview(report());
+ expect(review.focus.kind).toBe('strength');expect(review.focus.detected).toBe(true);expect(review.moments.length).toBeGreaterThan(0);
+ expect(review.spokenText).toContain('visible section');expect(review.spokenText).not.toContain('I don’t have a specific correction');
+ expect(coachingReport(report(),review).knowledgeVersion).toBe('1.1.0');
 });
 test('missing shoulders or an interrupted track gives concrete capture help, not an invented correction',()=>{
  const input=report(true);input.status='partial';input.captureNotes=['Your shoulders are missing or obscured in much of this view.'];input.frames.forEach(frame=>frame.landmarks=[]);

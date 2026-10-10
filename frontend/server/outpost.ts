@@ -5,6 +5,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { Plugin } from 'vite';
 import {coachingConfiguration,explainCoachQuestion} from './coachingService.ts';
 import {trustedCoachingCard} from '../src/analysis/coachingCards.ts';
+import {analyzeVisionContext,visionConfiguration} from './visionContextService.ts';
 
 type Env = Record<string, string | undefined>;
 type Row = Record<string, any>;
@@ -142,7 +143,7 @@ export function createOutpostHandler(env: Env, dependencies: { fetch?: typeof fe
     res.setHeader('Cache-Control', 'no-store'); res.setHeader('X-Content-Type-Options', 'nosniff');
     try {
       const action = new URL(req.url || '/', 'http://localhost').searchParams.get('action') || 'session';
-      const readOnly = ['session', 'journey', 'speech-config', 'coach-config'].includes(action);
+      const readOnly = ['session', 'journey', 'speech-config', 'coach-config', 'vision-config'].includes(action);
       if (req.method !== (readOnly ? 'GET' : 'POST')) fail(405, 'This action uses a different request method.');
       const localOrigin = localRequest(req) && req.headers.origin === `http://${req.headers.host}`;
       if (!readOnly && ((!origins.has(req.headers.origin) && !localOrigin) || (req.headers['sec-fetch-site'] && req.headers['sec-fetch-site'] !== 'same-origin'))) fail(403, 'Open this action from the outpost itself.');
@@ -150,9 +151,10 @@ export function createOutpostHandler(env: Env, dependencies: { fetch?: typeof fe
       let body: Row = {};
       if (!readOnly) {
         if (req.headers['content-type']?.split(';')[0] !== 'application/json') fail(415, 'Send this action as JSON.');
-        if (Number(req.headers['content-length'] || 0) > 128 * 1024) fail(413, 'This request is too large.');
-        if (req.body !== undefined) { if (Buffer.byteLength(JSON.stringify(req.body)) > 128 * 1024) fail(413, 'This request is too large.'); body = req.body as Row; }
-        else { let raw = ''; for await (const part of req) { raw += part.toString(); if (Buffer.byteLength(raw) > 128 * 1024) fail(413, 'This request is too large.'); } try { body = JSON.parse(raw || '{}'); } catch { fail(400, 'Send valid JSON.'); } }
+        const bodyLimit=action==='vision-context'?1024*1024:128*1024;
+        if (Number(req.headers['content-length'] || 0) > bodyLimit) fail(413, 'This request is too large.');
+        if (req.body !== undefined) { if (Buffer.byteLength(JSON.stringify(req.body)) > bodyLimit) fail(413, 'This request is too large.'); body = req.body as Row; }
+        else { let raw = ''; for await (const part of req) { raw += part.toString(); if (Buffer.byteLength(raw) > bodyLimit) fail(413, 'This request is too large.'); } try { body = JSON.parse(raw || '{}'); } catch { fail(400, 'Send valid JSON.'); } }
         if (!body || typeof body !== 'object' || Array.isArray(body)) fail(400, 'Send an object for this action.');
       }
       const ip = env.VERCEL ? String(req.headers['x-vercel-forwarded-for'] || req.socket.remoteAddress || 'unknown') : req.socket.remoteAddress || 'unknown';
@@ -215,6 +217,20 @@ export function createOutpostHandler(env: Env, dependencies: { fetch?: typeof fe
       }
       const current = await user(req, res), row = await profile(current.id); if (!row) fail(401, 'Your profile could not be found.');
       await rate(`request:${current.id}`, 120, 60);
+      if(action==='vision-config'){send(res,200,visionConfiguration(env));return;}
+      if(action==='vision-context'){
+        if(body.consent!==true)fail(400,'Choose whether to send these snapshots to Nebius.');
+        if(['pain','instability'].includes(body.discomfort)){send(res,200,{mode:'local',reason:'health-context'});return;}
+        if(!['not-said','none'].includes(body.discomfort))fail(400,'Complete the optional comfort check-in first.');
+        await rate(`vision:${current.id}`,4,600);
+        await rate(`vision-daily:${current.id}`,20,86400);
+        await rate('vision-global',200,86400);
+        const task=new AbortController();const abort=()=>task.abort();res.once('close',abort);
+        try{
+          const result=await analyzeVisionContext(env,{exercise:body.exercise,variant:body.variant,goal:body.goal,frames:body.frames},{fetch:request,signal:task.signal});
+          send(res,200,result);
+        }finally{res.removeListener('close',abort);}return;
+      }
       if(action==='coach-config'){send(res,200,coachingConfiguration(env));return;}
       if(action==='coach-question'){
         if(body.consent!==true)fail(400,'Choose whether to share this question with the conversation provider.');
@@ -312,6 +328,7 @@ export function cleanReport(value: unknown): Row {
   const source = value as Row, id = string(source.id, 36);
   if (!UUID.test(id) || !['pullup', 'pushup', 'squat'].includes(source.exercise) || !['usable', 'partial'].includes(source.status)) fail(400, 'Only completed supported exercise reviews can be saved.');
   const report: Row = { id, exercise: source.exercise, status: source.status, frames: [], summary: string(source.summary, 3000) };
+  for(const key of ['analysisVersion','knowledgeVersion'])if(source[key]!==undefined){const version=string(source[key],80);if(!/^[a-zA-Z0-9._-]+$/.test(version))fail(400,'The review version is invalid.');report[key]=version;}
   for (const key of ['duration', 'width', 'height', 'sampledFrames', 'usableFrames', 'coverage', 'estimatedRepetitions', 'poseFrames']) { const number = Number(source[key] ?? 0); if (!Number.isFinite(number) || number < 0 || number > (key === 'duration' ? 120 : key === 'coverage' ? 1 : 100000)) fail(400, 'The review contains invalid measurements.'); report[key] = number; }
   if (report.duration < 2 || report.usableFrames > report.sampledFrames) fail(400, 'The review contains invalid measurements.');
   report.findings = (Array.isArray(source.findings) ? source.findings : []).slice(0, 20).map((item: Row) => { const timestamp = Number(item.timestamp); if (!Number.isFinite(timestamp) || timestamp < 0 || timestamp > report.duration) fail(400, 'A review timestamp is invalid.'); return { id: string(item.id, 100), title: string(item.title, 200), observation: string(item.observation, 2000), suggestion: string(item.suggestion, 2000), timestamp }; });

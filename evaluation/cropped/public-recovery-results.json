@@ -1,0 +1,524 @@
+{
+  "evaluatedAt": "2026-10-10T05:44:48.649Z",
+  "experimentalOnly": true,
+  "productionIntegrated": false,
+  "privateDataIncluded": false,
+  "independentFormLabels": 0,
+  "conclusion": "No additional measured movement cue was recovered. Coverage changes are mixed; recovery is not integrated.",
+  "cases": [
+    {
+      "id": "navy-arms-crop",
+      "sourceGroup": "navy-buds-pushup-81-88",
+      "transformation": "synthetic pixel crop/occlusion of a real original recording",
+      "samples": 28,
+      "seconds": 19.166,
+      "ambiguousFrames": 0,
+      "modelFingerprints": {
+        "tests/harnesses/pose-recovery-worker.js": "fa4c2679491aefa394d6ac093839ba614a262886346cd77e9934f558e0298a5c",
+        "public/models/pose_landmarker_full.task": "5134a3aad27a58b93da0088d431f366da362b44e3ccfbe3462b3827a839011b1"
+      },
+      "variants": [
+        {
+          "variant": "baseline",
+          "quality": [
+            {
+              "chain": 20,
+              "pair": 20,
+              "longest": 10,
+              "jumps": 0
+            },
+            {
+              "chain": 28,
+              "pair": 28,
+              "longest": 28,
+              "jumps": 0
+            }
+          ],
+          "status": "usable",
+          "focus": "strength",
+          "observationIds": [],
+          "strengthIds": [
+            "pushup-together"
+          ],
+          "evidenceWindows": [
+            {
+              "id": "pushup-together",
+              "start": 3.611781407407407,
+              "end": 6.947006999999999
+            }
+          ],
+          "ruleFingerprints": {
+            "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+            "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+            "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+            "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+          }
+        },
+        {
+          "variant": "image",
+          "quality": [
+            {
+              "chain": 20,
+              "pair": 20,
+              "longest": 10,
+              "jumps": 0
+            },
+            {
+              "chain": 28,
+              "pair": 28,
+              "longest": 28,
+              "jumps": 0
+            }
+          ],
+          "status": "usable",
+          "focus": "strength",
+          "observationIds": [],
+          "strengthIds": [
+            "pushup-together"
+          ],
+          "evidenceWindows": [
+            {
+              "id": "pushup-together",
+              "start": 3.611781407407407,
+              "end": 6.947006999999999
+            }
+          ],
+          "ruleFingerprints": {
+            "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+            "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+            "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+            "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+          }
+        },
+        {
+          "variant": "padded",
+          "quality": [
+            {
+              "chain": 20,
+              "pair": 20,
+              "longest": 10,
+              "jumps": 0
+            },
+            {
+              "chain": 28,
+              "pair": 28,
+              "longest": 28,
+              "jumps": 0
+            }
+          ],
+          "status": "usable",
+          "focus": "strength",
+          "observationIds": [],
+          "strengthIds": [
+            "pushup-together"
+          ],
+          "evidenceWindows": [
+            {
+              "id": "pushup-together",
+              "start": 1.0462232592592593,
+              "end": 6.947006999999999
+            }
+          ],
+          "ruleFingerprints": {
+            "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+            "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+            "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+            "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pullup-arms-crop",
+      "sourceGroup": "_2ynLsdbiOs",
+      "transformation": "synthetic pixel crop/occlusion of a real original recording",
+      "samples": 40,
+      "seconds": 32.453,
+      "ambiguousFrames": 1,
+      "modelFingerprints": {
+        "tests/harnesses/pose-recovery-worker.js": "fa4c2679491aefa394d6ac093839ba614a262886346cd77e9934f558e0298a5c",
+        "public/models/pose_landmarker_full.task": "5134a3aad27a58b93da0088d431f366da362b44e3ccfbe3462b3827a839011b1"
+      },
+      "variants": [
+        {
+          "variant": "baseline",
+          "quality": [
+            {
+              "chain": 17,
+              "pair": 17,
+              "longest": 6,
+              "jumps": 4
+            },
+            {
+              "chain": 9,
+              "pair": 9,
+              "longest": 6,
+              "jumps": 2
+            }
+          ],
+          "status": "partial",
+          "focus": "capture",
+          "observationIds": [],
+          "strengthIds": [],
+          "evidenceWindows": [],
+          "ruleFingerprints": {
+            "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+            "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+            "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+            "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+          }
+        },
+        {
+          "variant": "image",
+          "quality": [
+            {
+              "chain": 11,
+              "pair": 11,
+              "longest": 8,
+              "jumps": 0
+            },
+            {
+              "chain": 11,
+              "pair": 11,
+              "longest": 8,
+              "jumps": 0
+            }
+          ],
+          "status": "partial",
+          "focus": "capture",
+          "observationIds": [],
+          "strengthIds": [],
+          "evidenceWindows": [],
+          "ruleFingerprints": {
+            "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+            "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+            "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+            "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+          }
+        },
+        {
+          "variant": "padded",
+          "quality": [
+            {
+              "chain": 6,
+              "pair": 6,
+              "longest": 2,
+              "jumps": 1
+            },
+            {
+              "chain": 15,
+              "pair": 15,
+              "longest": 4,
+              "jumps": 1
+            }
+          ],
+          "status": "partial",
+          "focus": "capture",
+          "observationIds": [],
+          "strengthIds": [],
+          "evidenceWindows": [],
+          "ruleFingerprints": {
+            "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+            "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+            "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+            "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+          }
+        }
+      ]
+    },
+    {
+      "id": "squat-legs-crop",
+      "sourceGroup": "gV3dgCS0hWU",
+      "transformation": "synthetic pixel crop/occlusion of a real original recording",
+      "samples": 40,
+      "seconds": 19.289,
+      "ambiguousFrames": 0,
+      "modelFingerprints": {
+        "tests/harnesses/pose-recovery-worker.js": "fa4c2679491aefa394d6ac093839ba614a262886346cd77e9934f558e0298a5c",
+        "public/models/pose_landmarker_full.task": "5134a3aad27a58b93da0088d431f366da362b44e3ccfbe3462b3827a839011b1"
+      },
+      "variants": [
+        {
+          "variant": "baseline",
+          "quality": [
+            {
+              "chain": 1,
+              "pair": 1,
+              "longest": 1,
+              "jumps": 0
+            },
+            {
+              "chain": 11,
+              "pair": 11,
+              "longest": 7,
+              "jumps": 0
+            }
+          ],
+          "status": "usable",
+          "focus": "practice",
+          "observationIds": [],
+          "strengthIds": [],
+          "evidenceWindows": [],
+          "ruleFingerprints": {
+            "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+            "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+            "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+            "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+          }
+        },
+        {
+          "variant": "image",
+          "quality": [
+            {
+              "chain": 1,
+              "pair": 1,
+              "longest": 1,
+              "jumps": 0
+            },
+            {
+              "chain": 10,
+              "pair": 10,
+              "longest": 7,
+              "jumps": 0
+            }
+          ],
+          "status": "usable",
+          "focus": "practice",
+          "observationIds": [],
+          "strengthIds": [],
+          "evidenceWindows": [],
+          "ruleFingerprints": {
+            "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+            "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+            "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+            "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+          }
+        },
+        {
+          "variant": "padded",
+          "quality": [
+            {
+              "chain": 1,
+              "pair": 1,
+              "longest": 1,
+              "jumps": 0
+            },
+            {
+              "chain": 16,
+              "pair": 16,
+              "longest": 8,
+              "jumps": 0
+            }
+          ],
+          "status": "partial",
+          "focus": "capture",
+          "observationIds": [],
+          "strengthIds": [],
+          "evidenceWindows": [],
+          "ruleFingerprints": {
+            "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+            "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+            "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+            "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+          }
+        }
+      ]
+    },
+    {
+      "id": "navy-interrupted-arms",
+      "sourceGroup": "navy-buds-pushup-81-88",
+      "transformation": "synthetic pixel crop/occlusion of a real original recording",
+      "samples": 28,
+      "seconds": 27.472,
+      "ambiguousFrames": 0,
+      "modelFingerprints": {
+        "tests/harnesses/pose-recovery-worker.js": "fa4c2679491aefa394d6ac093839ba614a262886346cd77e9934f558e0298a5c",
+        "public/models/pose_landmarker_full.task": "5134a3aad27a58b93da0088d431f366da362b44e3ccfbe3462b3827a839011b1"
+      },
+      "variants": [
+        {
+          "variant": "baseline",
+          "quality": [
+            {
+              "chain": 14,
+              "pair": 14,
+              "longest": 9,
+              "jumps": 0
+            },
+            {
+              "chain": 19,
+              "pair": 19,
+              "longest": 10,
+              "jumps": 0
+            }
+          ],
+          "status": "partial",
+          "focus": "capture",
+          "observationIds": [],
+          "strengthIds": [],
+          "evidenceWindows": [],
+          "ruleFingerprints": {
+            "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+            "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+            "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+            "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+          }
+        },
+        {
+          "variant": "image",
+          "quality": [
+            {
+              "chain": 14,
+              "pair": 14,
+              "longest": 9,
+              "jumps": 0
+            },
+            {
+              "chain": 19,
+              "pair": 19,
+              "longest": 10,
+              "jumps": 0
+            }
+          ],
+          "status": "partial",
+          "focus": "capture",
+          "observationIds": [],
+          "strengthIds": [],
+          "evidenceWindows": [],
+          "ruleFingerprints": {
+            "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+            "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+            "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+            "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+          }
+        },
+        {
+          "variant": "padded",
+          "quality": [
+            {
+              "chain": 16,
+              "pair": 16,
+              "longest": 9,
+              "jumps": 0
+            },
+            {
+              "chain": 19,
+              "pair": 19,
+              "longest": 10,
+              "jumps": 0
+            }
+          ],
+          "status": "partial",
+          "focus": "capture",
+          "observationIds": [],
+          "strengthIds": [],
+          "evidenceWindows": [],
+          "ruleFingerprints": {
+            "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+            "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+            "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+            "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+          }
+        }
+      ]
+    },
+    {
+      "id": "empty-scene",
+      "sourceGroup": null,
+      "transformation": "generated flat-color no-person negative; not a real exercise video",
+      "samples": 20,
+      "seconds": 6.582,
+      "ambiguousFrames": 0,
+      "modelFingerprints": {
+        "tests/harnesses/pose-recovery-worker.js": "fa4c2679491aefa394d6ac093839ba614a262886346cd77e9934f558e0298a5c",
+        "public/models/pose_landmarker_full.task": "5134a3aad27a58b93da0088d431f366da362b44e3ccfbe3462b3827a839011b1"
+      },
+      "variants": [
+        {
+          "variant": "baseline",
+          "quality": [
+            {
+              "chain": 0,
+              "pair": 0,
+              "longest": 0,
+              "jumps": 0
+            },
+            {
+              "chain": 0,
+              "pair": 0,
+              "longest": 0,
+              "jumps": 0
+            }
+          ],
+          "status": "insufficient",
+          "focus": "capture",
+          "observationIds": [],
+          "strengthIds": [],
+          "evidenceWindows": [],
+          "ruleFingerprints": {
+            "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+            "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+            "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+            "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+          }
+        },
+        {
+          "variant": "image",
+          "quality": [
+            {
+              "chain": 0,
+              "pair": 0,
+              "longest": 0,
+              "jumps": 0
+            },
+            {
+              "chain": 0,
+              "pair": 0,
+              "longest": 0,
+              "jumps": 0
+            }
+          ],
+          "status": "insufficient",
+          "focus": "capture",
+          "observationIds": [],
+          "strengthIds": [],
+          "evidenceWindows": [],
+          "ruleFingerprints": {
+            "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+            "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+            "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+            "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+          }
+        },
+        {
+          "variant": "padded",
+          "quality": [
+            {
+              "chain": 0,
+              "pair": 0,
+              "longest": 0,
+              "jumps": 0
+            },
+            {
+              "chain": 0,
+              "pair": 0,
+              "longest": 0,
+              "jumps": 0
+            }
+          ],
+          "status": "insufficient",
+          "focus": "capture",
+          "observationIds": [],
+          "strengthIds": [],
+          "evidenceWindows": [],
+          "ruleFingerprints": {
+            "movementReview": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+            "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+            "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+            "coaching": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46"
+          }
+        }
+      ]
+    }
+  ]
+}

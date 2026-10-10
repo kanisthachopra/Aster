@@ -130,3 +130,19 @@ test('partial status can retain a sustained visible section, while frontal geome
   const result=getMovementReview(frontal);expect(result.observations).toHaveLength(0);expect(result.strengths).toHaveLength(0);
   expect(result.limits.join(' ')).toMatch(/front-facing/);
 });
+
+test('chest-hip timing does not require an unseen elbow or feet when the hand anchors the view',()=>{
+  const r=fixture('pushup','wave');r.status='partial';r.estimatedRepetitions=0;
+  r.frames.forEach(f=>{[13,25,27].forEach(i=>{f.landmarks[i].visibility=0;});});
+  expect(ids(r)).toContain('pushup-timing');expect(ids(r)).not.toContain('pushup-hip-position');
+  expect(r.status).toBe('partial');expect(r.estimatedRepetitions).toBe(0);
+});
+
+test('whole-body pull-up timing also abstains when a hold contaminates equal-speed phases',()=>{
+  for(const position of [0,8,16,24]) {
+    const r=fixture('pullup'),hold=Array.from({length:20},()=>structuredClone(r.frames[position]));
+    r.frames.splice(position+1,0,...hold);r.frames.forEach((f,i)=>{f.timestamp=i*.25;});
+    expect(ids(r)).not.toContain('pullup-descent');
+  }
+  expect(ids(fixture('pullup','fast-down'))).toContain('pullup-descent');
+});

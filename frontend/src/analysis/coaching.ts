@@ -1,9 +1,10 @@
 import type {AnalysisReport,Finding} from './types';
 import {getMovementReview, type MovementEvidence} from './movementReview';
 import {DEFAULT_COACHING_CONTEXT,SHOULDER_SOURCE,injuryResponse,type CoachingContext} from './coachingContext';
+import {evidenceScope,MOVEMENT_ANALYSIS_VERSION,MOVEMENT_KNOWLEDGE_VERSION,type VisualContext} from './movementKnowledge';
 
 export interface CoachingMoment {id:string;title:string;timestamp:number;endTimestamp?:number;observation:string;cue:string;why:string;spokenText:string;sourceKey:string;}
-export interface CoachingFocus {id:string;title:string;observation:string;cue:string;why:string;sourceKey:string;detected:boolean;timestamp?:number;}
+export interface CoachingFocus {id:string;title:string;observation:string;cue:string;why:string;sourceKey:string;detected:boolean;timestamp?:number;kind?:'correction'|'strength'|'practice'|'capture'|'health';}
 export interface CoachingReview {title:string;summary:string;moments:CoachingMoment[];uncertainty:string;spokenText:string;focus:CoachingFocus;strength:string;sources:{title:string;url:string}[];safetyFirst:boolean;}
 const SOURCE = {
  pushup:{title:'Push-up guidance · ACE',url:'https://www.acefitness.org/resources/everyone/exercise-library/41/push-up/'},
@@ -29,21 +30,24 @@ export function getCoachingMoment(report:AnalysisReport,finding:Finding):Coachin
  const candidate=getMovementReview(report).observations.find(item=>item.id===finding.id&&Math.abs(item.timestamp-finding.timestamp)<.001);
  return candidate?toMoment(candidate):null;
 }
-export function getCoachingReview(report:AnalysisReport,context:CoachingContext=DEFAULT_COACHING_CONTEXT):CoachingReview{
+export function getCoachingReview(report:AnalysisReport,context:CoachingContext=DEFAULT_COACHING_CONTEXT,visual?:VisualContext):CoachingReview{
  const movement=getMovementReview(report),capture=captureAdvice(report),safety=injuryResponse(context);
- const allowed=movement.observations.filter(item=> !(report.exercise==='pullup'&&context.variant==='dynamic'&&item.id==='pullup-swing') && !(report.exercise==='pushup'&&context.variant==='assisted'&&item.id==='pushup-hip-position'));
+ const allowed=movement.observations.filter(item=> !(report.exercise==='pullup'&&context.variant==='dynamic'&&['pullup-swing','pullup-arm-tempo','pullup-forearm-tempo','pullup-descent'].includes(item.id)) && !(report.exercise==='pushup'&&context.variant==='assisted'&&item.id==='pushup-hip-position'));
  if(context.goal==='control')allowed.sort((a,b)=>Number(/timing|descent/.test(b.id))-Number(/timing|descent/.test(a.id)));
- const moments=safety?[]:allowed.slice(0,2).map(toMoment),first=moments[0];
- const unclear=report.status==='insufficient'||(report.status==='partial'&&!first&&!movement.strengths.length)||/shifts abruptly|do not consistently establish the selected exercise/i.test((report.captureNotes??[]).join(' '));
- let focus:CoachingFocus=first?{...first,detected:true}: {id:'practice-'+report.exercise,title:movement.practiceTip.title,observation:'A general practice cue, not a fault I detected in your clip.',cue:movement.practiceTip.cue,why:movement.practiceTip.why,sourceKey:movement.practiceTip.sourceKey,detected:false};
+ const selectedStrength=movement.strengths[0];
+ const moments=safety?[]:(allowed.length?allowed.slice(0,2):selectedStrength?[selectedStrength]:[]).map(toMoment),first=moments[0];
+ const isStrength=!!first&&!allowed.length;
+ const unclear=(!first&&(report.status==='insufficient'||report.status==='partial'))||/shifts abruptly|change of tracked person/i.test((report.captureNotes??[]).join(' '));
+ let focus:CoachingFocus=first?{...first,detected:true,kind:isStrength?'strength':'correction'}: {id:'practice-'+report.exercise,title:movement.practiceTip.title,observation:'A general practice cue, not a fault I detected in your clip.',cue:movement.practiceTip.cue,why:movement.practiceTip.why,sourceKey:movement.practiceTip.sourceKey,detected:false,kind:'practice'};
  if(report.exercise==='pullup'&&context.variant==='dynamic'&&!first)focus={...focus,title:'Keep the version you’re practicing clear',cue:'You said the momentum is intentional. I won’t treat swinging by itself as a mistake. A coach familiar with that variation can help assess it.',why:'Strict and momentum-based pull-ups have different goals. I can’t compare them as if they were the same exercise.'};
  if(report.exercise==='pushup'&&context.variant==='assisted'&&!first)focus={...focus,title:'Move together in your chosen version',cue:'In your kneeling or raised-hand version, practice bringing your hips and chest down and back up together, within a comfortable range.',why:'The aim is coordinated movement, not forcing your body into a full push-up before you’re ready.'};
- if(unclear)focus={id:'capture',title:'Help me see the whole movement',observation:capture.why,cue:capture.cue,why:'A continuous view helps me distinguish a movement pattern from a missing frame.',sourceKey:'capture',detected:false};
+ if(unclear)focus={id:'capture',title:'Let’s use the part I can see',observation:capture.why,cue:capture.cue,why:'A continuous view of the relevant body parts helps me follow the movement. The whole body does not need to fit for every check.',sourceKey:'capture',detected:false,kind:'capture'};
  if(safety)focus={id:'comfort-first',title:'Let’s put your comfort first',observation:'You mentioned discomfort or instability in your check-in.',cue:safety,why:'A video cannot choose an injury-specific exercise plan.',sourceKey:'shoulder',detected:false};
- const strength=!safety&&movement.strengths[0]?movement.strengths[0].observation:'';
+ const strength=!safety&&!isStrength&&movement.strengths[0]?movement.strengths[0].observation:'';
  const summary=safety?'Thanks for telling me. Let’s pause the exercise advice and look after that first.':first?first.observation:unclear?'Let’s make your next recording useful.':'I don’t have a specific correction from this view. Let’s work on one practice cue.';
  const relevantLimit=movement.limits.find(line=>/front-facing|continuous view|camera angle|only the linked moments|does not prove/.test(line));
- const uncertainty=safety?'Your injury check-in is excluded from Nebius requests. Spoken feedback uses the voice service, and saved notes stay in your private journal.':[capture.why,relevantLimit].filter(Boolean).join(' ');
+ const contextNote=visual?visual.exerciseObserved===report.exercise?`The optional visual check recognized ${report.exercise==='pullup'?'pull-ups':report.exercise==='pushup'?'push-ups':'squats'} in these selected frames. It supports context, not a technique verdict.`:visual.exerciseObserved==='uncertain'?'The optional visual check could not confidently identify the exercise in the selected frames.':'The visual check and your chosen station disagree. Please check the station; I have kept the local evidence separate.':'';
+ const uncertainty=safety?'Your injury check-in is excluded from Nebius requests. Spoken feedback uses the voice service, and saved notes stay in your private journal.':[first?`This checks ${evidenceScope(first.id)}.`:capture.why,relevantLimit,contextNote].filter(Boolean).join(' ');
  const opening=safety?'':first?'Thanks for showing me your set. I’ve got one place to start.':unclear?'I want to give you something you can use, but this clip leaves a gap.':'Thanks for showing me. Let’s keep the next step simple.';
  const closing=context.goal==='strength'?'For your strength goal, start with a rep you can repeat with control; this clip can’t choose your load or rep count.':context.goal==='comfortable'?'For your comfort goal, tell me how this felt. If it hurt or felt unstable, let’s change the advice before you try again.':'Try that cue in your next comfortable set, then tell me how it felt.';
  const spokenText=[opening,strength,first?`Around ${first.timestamp.toFixed(1)} seconds, ${first.observation}`:'',focus.cue,focus.why,!safety&&!unclear?closing:''].filter(Boolean).join(' ');
@@ -64,5 +68,5 @@ export function localCoachingReply(review:CoachingReview,context:CoachingContext
 export function coachingReport(report:AnalysisReport,review:CoachingReview):AnalysisReport{
  const findings=review.moments.map(item=>({id:item.id,title:item.title,timestamp:item.timestamp,observation:item.observation,suggestion:`${item.cue} ${item.why}`}));
  if(!findings.length)findings.push({id:review.focus.id,title:review.focus.title,timestamp:0,observation:review.focus.detected?review.focus.observation:'General guidance, not a detected form fault.',suggestion:review.focus.cue+' '+review.focus.why});
- return {...report,summary:review.summary,findings,sources:review.sources};
+ return {...report,summary:review.summary,findings,sources:review.sources,analysisVersion:MOVEMENT_ANALYSIS_VERSION,knowledgeVersion:MOVEMENT_KNOWLEDGE_VERSION};
 }

@@ -1,4 +1,6 @@
 import type { AnalysisReport, EvidenceFrame, Landmark } from './types';
+import { getPartialMovementReview } from './partialMovementReview';
+import { phaseHasDwell } from './twoPointMovementReview';
 
 export const MOVEMENT_SOURCES = {
   'ace-pushup': { title: 'ACE push-up guide', url: 'https://www.acefitness.org/resources/everyone/exercise-library/41/push-up/' },
@@ -33,9 +35,10 @@ const source = (r: AnalysisReport): MovementSourceKey => `ace-${r.exercise}`;
  * A single-person pose track cannot prove identity: known jumps abstain and
  * local discontinuities split sequences. Camera rotation/depth remain limits.
  */
-function segments(r: AnalysisReport): Sample[][] {
+function segments(r: AnalysisReport, coordination = false): Sample[][] {
   if (!(r.width > 0 && r.height > 0)) return [];
-  const ids = r.exercise === 'pullup' ? [11, 13, 15, 23] : r.exercise === 'pushup' ? [11, 13, 15, 23, 27] : [11, 23, 25, 27];
+  const ids = coordination ? (r.exercise === 'pushup' ? [11, 15, 23] : [11, 23, 27])
+    : r.exercise === 'pullup' ? [11, 13, 15, 23] : r.exercise === 'pushup' ? [11, 13, 15, 23, 27] : [11, 23, 25, 27];
   const eligible = (f: EvidenceFrame, side: number) => f.metrics?.orientationMatches && ids.every(i => visible(f.landmarks[i + side]));
   const side = r.frames.filter(f => eligible(f, 0)).length >= r.frames.filter(f => eligible(f, 1)).length ? 0 : 1;
   const aspect = r.width / r.height, result: Sample[][] = []; let run: Sample[] = [];
@@ -43,7 +46,7 @@ function segments(r: AnalysisReport): Sample[][] {
   for (const f of r.frames) {
     if (!Number.isFinite(f.timestamp) || !eligible(f, side)) { flush(); continue; }
     const point = (i: number): Point => ({ x: f.landmarks[i + side].x * aspect, y: f.landmarks[i + side].y });
-    const s = point(11), h = point(23), a = r.exercise === 'pullup' ? point(15) : point(27), w = r.exercise === 'squat' ? a : point(15);
+    const s = point(11), h = point(23), a = r.exercise === 'pullup' || (coordination && r.exercise === 'pushup') ? point(15) : point(27), w = r.exercise === 'squat' ? a : point(15);
     const sample: Sample = { t: f.timestamp, s, h, a, w, scale: distance(s, h) };
     if (sample.scale < .04) { flush(); continue; }
     const prev = run.at(-1);
@@ -116,19 +119,24 @@ function broadFrontView(r: AnalysisReport): boolean {
 }
 
 export function getMovementReview(r: AnalysisReport): MovementReview {
-  const out: MovementReview = { observations: [], strengths: [], practiceTip: practiceTip(r), limits: [] };
+  const out: MovementReview = { ...getPartialMovementReview(r), practiceTip: practiceTip(r) };
   const notes = (r.captureNotes ?? []).join(' ');
-  if (r.status === 'insufficient' || /shifts abruptly|change of tracked person|do not consistently establish the selected exercise|does not consistently match this station/i.test(notes + ' ' + r.summary)) {
+  if (/shifts abruptly|change of tracked person|does not consistently match this station/i.test(notes + ' ' + r.summary)) {
     out.limits.push('I cannot follow one consistent exercise clearly enough to give a movement-specific cue.'); return out;
   }
+  if (r.status === 'insufficient') {
+    out.limits.push('The whole exercise is not clear enough for a full review; any linked observation covers only its visible movement.'); return out;
+  }
   if (r.exercise !== 'pullup' && broadFrontView(r)) {
-    out.limits.push('This looks like a front-facing view, which hides the body-line and timing comparison I need. A side or angled view may show more.');
+    out.limits.push('This looks like a front-facing view, which hides the body-line and whole-body timing comparison. A side or angled view may show more.');
     return out;
   }
-  const runs = segments(r);
-  if (!runs.length) { out.limits.push('I need a continuous view of the working arm or leg and your hips to compare how they move.'); return out; }
+  const fullRuns = segments(r);
+  const coordinationRuns = r.exercise === 'pullup' ? [] : segments(r, true);
+  const runs = r.exercise === 'pullup' ? fullRuns : [...coordinationRuns, ...fullRuns];
+  if (!runs.length) { out.limits.push('I cannot compare your whole body moving together from this view. Any local arm or leg observation covers only its linked section.'); return out; }
   out.limits.push('These are patterns in this camera view. They do not establish muscle activation, grip pressure, pain, or safe technique.');
-  if (runs.reduce((n, run) => n + run.length, 0) < r.frames.length * .7) out.limits.push('Some of the clip is hidden or interrupted; these cues cover only the linked moments.');
+  if (new Set(runs.flatMap(run => run.map(p => p.t))).size < r.frames.length * .7) out.limits.push('Some of the clip is hidden or interrupted; these cues cover only the linked moments.');
   for (const run of runs) {
     const scale = median(run.map(p => p.scale));
     const sy = run.map(p => (p.s.y - p.a.y) / scale), hy = run.map(p => (p.h.y - p.a.y) / scale);
@@ -137,21 +145,22 @@ export function getMovementReview(r: AnalysisReport): MovementReview {
       const opposite = run.map((_, i) => i >= 2 && (sy[i] - sy[i - 2]) * (hy[i] - hy[i - 2]) < 0
         && Math.abs(sy[i] - sy[i - 2]) > .05 && Math.abs(hy[i] - hy[i - 2]) > .05
         && Math.abs((sy[i] - sy[i - 2]) - (hy[i] - hy[i - 2])) > .18);
-      const wave = sustained(run, opposite);
+      const isCoordination = coordinationRuns.includes(run);
+      const wave = isCoordination ? sustained(run, opposite) : null;
       if (wave) out.observations.push(evidence(r, wave, `${r.exercise}-timing`, 'Move together',
         'Your hips and shoulders appear to move in opposite directions for several moments here.',
         r.exercise === 'pushup' ? 'Try a slower rep with your hips and shoulders moving together. If needed, use a suitable easier push-up variation.'
           : 'Try a slower squat and bring your hips and chest back up together.',
         r.exercise === 'pushup' ? 'Moving as one unit helps keep the rep steady instead of bending in the middle of the press.'
           : 'Rising together makes the ascent one coordinated movement, rather than starting with your hips and then catching up with your chest.'));
-      if (!wave && span(sy) > .2 && span(hy) > .12) {
+      if (isCoordination && !wave && span(sy) > .2 && span(hy) > .12) {
         const moving = run.slice(2).map((_, k) => ({ s: sy[k + 2] - sy[k], h: hy[k + 2] - hy[k] })).filter(p => Math.abs(p.s) > .025 && Math.abs(p.h) > .025);
         if (moving.length >= 8 && moving.filter(p => p.s * p.h > 0).length / moving.length >= .9)
           out.strengths.push(evidence(r, run, `${r.exercise}-together`, 'Moving together',
             'Your hips and shoulders mostly travel in the same direction through this visible section.',
             'Keep that togetherness as you repeat the movement.', 'Moving together makes the next rep easier to coordinate and repeat.'));
       }
-      if (r.exercise === 'pushup') {
+      if (r.exercise === 'pushup' && !isCoordination) {
         const lower = run.map(p => {
           const dx = p.a.x - p.s.x, dy = p.a.y - p.s.y;
           if (Math.abs(dx) < Math.abs(dy) * 1.2) return false;
@@ -181,6 +190,8 @@ export function getMovementReview(r: AnalysisReport): MovementReview {
         const excursion = bottom - sy[top], up = run[top].t - run[start].t, down = run[end].t - run[top].t;
         const rising = sy.slice(start + 1, top + 1).filter((y, i) => y <= sy[start + i] + .03).length / (top - start);
         const lowering = sy.slice(top + 1, end + 1).filter((y, i) => y >= sy[top + i] - .03).length / (end - top);
+        const times=run.map(p=>p.t);
+        if(phaseHasDwell(times,sy,start,top,.03)||phaseHasDwell(times,sy,top,end,.03))continue;
         if (excursion > .35 && Math.abs(sy[start] - sy[end]) < .15 && rising >= .8 && lowering >= .8 && down >= .75 && up / down > 1.8)
           out.observations.push(evidence(r, run.slice(top, end + 1), 'pullup-descent', 'Give the lowering part time',
             'In this visible movement, you come down in noticeably less time than you take to pull up.',
@@ -191,12 +202,13 @@ export function getMovementReview(r: AnalysisReport): MovementReview {
   }
   // Prefer a short set of distinct, sustained observations over a long list.
   out.observations = [...new Map(out.observations.map(e => [e.id, e])).values()].slice(0, 2);
-  out.strengths = [...new Map(out.strengths.map(e => [e.id, e])).values()].slice(0, 1);
+  out.strengths = [...new Map(out.strengths.map(e => [e.id, e])).values()]
+    .sort((a,b)=>Number(a.id.endsWith('-support'))-Number(b.id.endsWith('-support'))).slice(0, 1);
   if (out.observations.some(e => e.id.endsWith('-timing'))) out.limits.push('Replay the timing comparison and check that the dots stay on your body. Tracking errors can look like a timing mismatch.');
   if (out.observations.some(e => e.id === 'pushup-hip-position')) out.limits.push('A camera angle can exaggerate the hip position. This is a position to check, not a diagnosis of a weak muscle or back problem.');
   if (out.observations.some(e => e.id === 'pullup-swing')) out.limits.push('This view cannot tell whether you intended a strict pull-up or a different style.');
   if (out.observations.some(e => e.id === 'pullup-descent')) out.limits.push('Speed alone does not prove that you lost control; this only compares the timing of the linked movement.');
-  if (out.strengths.length) out.limits.push('Moving together is one visible strength, not an all-clear on your whole form.');
+  if (out.strengths.length) out.limits.push('A visible strength is not an all-clear on your whole form.');
   if (!out.observations.length) out.limits.push('I did not find a sustained pattern to correct in the parts I could track. That does not certify the whole set.');
   return out;
 }

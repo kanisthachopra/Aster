@@ -10,6 +10,8 @@ import ReportVoice, { type ReviewSpeech } from './ReportVoice';
 import RecordingGuide from './RecordingGuide';
 import CoachCheckIn from './CoachCheckIn';
 import CoachingConversation from './CoachingConversation';
+import VisualContextReview from './VisualContextReview';
+import type {VisualContext} from '../analysis/movementKnowledge';
 
 function PoseOverlay({ frame }: { frame?: EvidenceFrame }) {
   if (!frame) return null;
@@ -21,6 +23,7 @@ function PoseOverlay({ frame }: { frame?: EvidenceFrame }) {
 }
 export default function ClipPreview({ exercise, onFinish, onSpeak, speech, persistent = false, reducedMotion = false }: { exercise: Exercise; onFinish: (report: AnalysisReport, file: File, saveMedia?: boolean) => void | Promise<void>; onSpeak: (key: string) => void; speech?: ReviewSpeech; persistent?: boolean; reducedMotion?: boolean }) {
   const [context, setContext] = useState<CoachingContext>({...DEFAULT_COACHING_CONTEXT});
+  const [visualContext,setVisualContext]=useState<VisualContext>();
   const segmentEnd = useRef<number | null>(null);
   const [file, setFile] = useState<File | null>(null), [url, setUrl] = useState(''), [error, setError] = useState('');
   const [duration, setDuration] = useState<number | null>(null), [report, setReport] = useState<AnalysisReport | null>(null);
@@ -35,11 +38,11 @@ export default function ClipPreview({ exercise, onFinish, onSpeak, speech, persi
   async function finish() {
     if (!report || !file || finishing) return;
     setFinishing(true); setFinishError('');
-    try { await onFinish(coachingReport(report, getCoachingReview(report, context)), file, saveMedia); }
+    try { await onFinish(coachingReport(report, getCoachingReview(report, context,visualContext)), file, saveMedia); }
     catch (reason) { setFinishError(reason instanceof Error ? reason.message : 'Your review did not save. Please try again.'); }
     finally { setFinishing(false); }
   }
-  const coaching = useMemo(() => report ? getCoachingReview(report, context) : null, [report, context]);
+  const coaching = useMemo(() => report ? getCoachingReview(report, context,visualContext) : null, [report, context,visualContext]);
   const trackedJoints = progress?.frame?.landmarks.filter((point, i) => i >= 11 && visible(point)).length ?? 0;
   const scrollBehavior = (): ScrollBehavior => document.querySelector('.app.reduce-motion') || matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
   useEffect(() => { if (report) results.current?.scrollIntoView({ block: 'nearest', behavior: scrollBehavior() }); }, [report]);
@@ -47,6 +50,7 @@ export default function ClipPreview({ exercise, onFinish, onSpeak, speech, persi
   useEffect(() => { if (!file) { setUrl(''); return; } const objectUrl = URL.createObjectURL(file); setUrl(objectUrl); return () => URL.revokeObjectURL(objectUrl); }, [file]);
   function select(next?: File) {
     if (!next || finishing) return;
+    setVisualContext(undefined);
     controller.current?.abort(); speech?.stop(); setBusy(false); setProgress(null); setReport(null); setDetailsOpen(false); setAcknowledged(false); setFrame(undefined); setShowPose(false); setError(''); setDuration(null);
     if (!['video/mp4', 'video/webm', 'video/quicktime'].includes(next.type)) { setFile(null); setError('Choose an MP4, WebM or MOV video. Your browser must support its video codec.'); return; }
     if (next.size > 150 * 1024 * 1024 || next.size === 0) { setFile(null); setError('Choose a non-empty video under 150 MB.'); return; }
@@ -67,6 +71,7 @@ export default function ClipPreview({ exercise, onFinish, onSpeak, speech, persi
   }
   async function analyze() {
     if (!file || busy || finishing) return;
+    setVisualContext(undefined);
     // Activate audio while this click still counts as a browser user gesture.
     void speech?.prepare?.();
     const task = new AbortController(); controller.current?.abort(); controller.current = task;
@@ -85,7 +90,7 @@ export default function ClipPreview({ exercise, onFinish, onSpeak, speech, persi
     <div className="review-steps" aria-label="Review steps"><span className={file ? 'done' : 'active'}>01 · Record</span><span className={busy ? 'active' : report ? 'done' : ''}>02 · Analyze</span><span className={report ? 'active' : ''}>03 · Review</span><span>04 · Return</span></div>
     {!report && <><details className="recording-tips"><summary>Show me how to record</summary><RecordingGuide exercise={exercise} reducedMotion={reducedMotion} onSpeak={speech ? text => { speech.stop(); void speech.speak(text).catch(() => setError('Voice tips could not play. The instructions are shown above.')); } : undefined} /></details></>}
     <div className={`review-grid review-stage ${!report ? "with-checkin" : ""}`}>
-      <section className="clip-section"><p className="eyebrow">YOUR RECORDING / STAYS ON THIS COMPUTER</p>
+      <section className="clip-section"><p className="eyebrow">YOUR RECORDING / LOCAL MOVEMENT TRACKING</p>
         {url ? <div className="video-wrap"><div className="evidence-player" style={{ aspectRatio: `${dimensions[0]} / ${dimensions[1]}`, width: `min(100%, ${320 * dimensions[0] / dimensions[1]}px, ${38 * dimensions[0] / dimensions[1]}vh)`, marginInline: 'auto' }}>
           <video ref={video} key={url} src={url} controls={!busy} tabIndex={busy ? -1 : 0} preload="metadata" aria-label={`${exercise.name} recording preview`} onPlay={() => setShowPose(false)}
             onTimeUpdate={event => { if (segmentEnd.current !== null && event.currentTarget.currentTime >= segmentEnd.current) { event.currentTarget.pause(); segmentEnd.current = null; } }}
@@ -115,9 +120,10 @@ export default function ClipPreview({ exercise, onFinish, onSpeak, speech, persi
       <h3>{coaching.title}</h3><p className="result-summary">{coaching.summary}</p>
       <ReportVoice key={`${report.id}-${context.discomfort}`} report={report} review={coaching} speech={speech} showDetails={detailsOpen} onMoment={timestamp => focus(timestamp, report.frames, false)} />
       {coaching.moments.length > 0 && <div className="review-moments" aria-label="Moments to look at">{coaching.moments.slice(0, 2).map(moment => <button key={moment.id} className="review-moment" onClick={() => replay(moment.timestamp, moment.endTimestamp)}><span>▶ {moment.timestamp.toFixed(1)}s</span><strong>{moment.title}</strong></button>)}</div>}
-      <div className="coach-focus"><span className="coach-focus-label">{coaching.safetyFirst ? 'YOUR CHECK-IN MATTERS' : coaching.focus.detected ? 'ONE CHANGE TO TRY' : coaching.focus.id === 'capture' ? 'A CLEARER VIEW' : 'A PRACTICE CUE, NOT A DETECTED FAULT'}</span><p>{coaching.focus.cue}</p></div>
+      <div className="coach-focus"><span className="coach-focus-label">{coaching.safetyFirst ? 'YOUR CHECK-IN MATTERS' : coaching.focus.kind==='strength' ? 'ONE PART I COULD FOLLOW' : coaching.focus.detected ? 'ONE CHANGE TO TRY' : coaching.focus.id === 'capture' ? 'A CLEARER VIEW' : 'A PRACTICE CUE, NOT A DETECTED FAULT'}</span><p>{coaching.focus.cue}</p></div>
       <p className="review-uncertainty">{coaching.uncertainty}</p>
-      <CoachingConversation key={report.id} report={report} review={coaching} context={context} speech={speech} persistent={persistent} onDiscomfort={discomfort => { speech?.stop(); setContext(value => ({...value, discomfort})); }} />
+      {file&&<VisualContextReview key={`visual-${report.id}`} file={file} report={report} context={context} persistent={persistent} onContext={setVisualContext}/>}
+      <CoachingConversation key={`conversation-${report.id}`} report={report} review={coaching} context={context} speech={speech} persistent={persistent} onDiscomfort={discomfort => { speech?.stop(); setContext(value => ({...value, discomfort})); }} />
       <button className="feedback-details-toggle" aria-expanded={detailsOpen} aria-controls="written-feedback" onClick={() => setDetailsOpen(value => !value)}>{detailsOpen ? 'Hide written feedback' : 'View written feedback'} <span aria-hidden="true">{detailsOpen ? '−' : '+'}</span></button>
     </section>}
     </div>
