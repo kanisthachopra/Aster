@@ -32,4 +32,8 @@ The new setting uses the existing server-only Nebius key and a separate model na
 
 The previous 600-video 0.9 result is historical cue coverage, not current form accuracy. There are no independent fault labels supporting 80% correctness or reinforcement-learning claims. A qualified, independently labeled evaluation is still required; private uploads do not become a training corpus by default.
 
-Hosted verification is recorded after the pushed production build is checked.
+## Hosted verification
+
+Commit `d09d075` was pushed and served by the public `aster.kcmira.me` build. Twenty hosted checks passed at 05:54 UTC on 10 October 2026: real sign-in and station navigation, local tracking of the public Navy clip, actual non-silent Deepgram review audio, six locally previewed originals, disabled sharing before consent, an actual structured Nebius image response, a trusted text explanation, and saving useful private notes with both version fields and no raw landmarks. No browser runtime errors occurred. The disposable account was removed successfully.
+
+This adds one hosted image request and one hosted text explanation to the earlier six vision diagnostics. The hosted call verifies the application boundary, not coaching accuracy or private-crop recovery. The [source ledger](../research/movement-sources.md) preserves that distinction. Ignored proof is `frontend/artifacts/coaching-production-verification.json`; screenshots include `partial-context-production.png`. Private videos were not used in this hosted test.
