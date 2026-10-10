@@ -21,7 +21,7 @@ function PoseOverlay({ frame }: { frame?: EvidenceFrame }) {
     {points.map((point, i) => i >= 11 && visible(point) && <circle key={i} cx={point.x} cy={point.y} r=".005" />)}
   </svg>;
 }
-export default function ClipPreview({ exercise, onFinish, onSpeak, speech, persistent = false, reducedMotion = false }: { exercise: Exercise; onFinish: (report: AnalysisReport, file: File, saveMedia?: boolean) => void | Promise<void>; onSpeak: (key: string) => void; speech?: ReviewSpeech; persistent?: boolean; reducedMotion?: boolean }) {
+export default function ClipPreview({ exercise, onFinish, onSpeak, speech, persistent = false, reducedMotion = false, onSignIn }: { exercise: Exercise; onFinish: (report: AnalysisReport, file: File, saveMedia?: boolean) => void | Promise<void>; onSpeak: (key: string) => void; speech?: ReviewSpeech; persistent?: boolean; reducedMotion?: boolean; onSignIn?: () => void }) {
   const [context, setContext] = useState<CoachingContext>({...DEFAULT_COACHING_CONTEXT});
   const [visualContext,setVisualContext]=useState<VisualContext>();
   const segmentEnd = useRef<number | null>(null);
@@ -114,11 +114,12 @@ export default function ClipPreview({ exercise, onFinish, onSpeak, speech, persi
         {busy && <div className="tracking-explanation"><label><input type="checkbox" checked={showTracking} onChange={event => setShowTracking(event.target.checked)} /> Show movement tracking</label></div>}
         {error && <p role="alert" className="error-message">{error}</p>}
         {!report && <p className="clip-privacy">{persistent ? 'Movement analysis runs on this computer. Saving a recording to your private journal is optional.' : 'Your video stays on this computer.'}</p>}
+        {!report && onSignIn && <p className="clip-privacy">Guest analysis includes written feedback. <button type="button" className="text-button" onClick={onSignIn}>Sign in for spoken feedback</button></p>}
       </section>
     {!report && <CoachCheckIn exercise={exercise} value={context} onChange={setContext} disabled={busy || finishing} />}
     {report && coaching && <section ref={results} className="analysis-results" aria-label="Movement analysis results"><p className="eyebrow">ORBIT / LET’S TAKE A LOOK</p>
       <h3>{coaching.title}</h3><p className="result-summary">{coaching.summary}</p>
-      <ReportVoice key={`${report.id}-${context.discomfort}`} report={report} review={coaching} speech={speech} showDetails={detailsOpen} onMoment={timestamp => focus(timestamp, report.frames, false)} />
+      <ReportVoice key={`${report.id}-${context.discomfort}-${persistent}`} report={report} review={coaching} speech={speech} showDetails={detailsOpen} onMoment={timestamp => focus(timestamp, report.frames, false)} onSignIn={onSignIn} />
       {coaching.moments.length > 0 && <div className="review-moments" aria-label="Moments to look at">{coaching.moments.slice(0, 2).map(moment => <button key={moment.id} className="review-moment" onClick={() => replay(moment.timestamp, moment.endTimestamp)}><span>▶ {moment.timestamp.toFixed(1)}s</span><strong>{moment.title}</strong></button>)}</div>}
       <div className="coach-focus"><span className="coach-focus-label">{coaching.safetyFirst ? 'YOUR CHECK-IN MATTERS' : coaching.focus.kind==='strength' ? 'ONE PART I COULD FOLLOW' : coaching.focus.detected ? 'ONE CHANGE TO TRY' : coaching.focus.id === 'capture' ? 'A CLEARER VIEW' : 'A PRACTICE CUE, NOT A DETECTED FAULT'}</span><p>{coaching.focus.cue}</p></div>
       <p className="review-uncertainty">{coaching.uncertainty}</p>

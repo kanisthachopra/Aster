@@ -158,3 +158,14 @@ The learner reported failed voice playback, flat cutscene delivery and an overlo
 - [x] Compare fresh Full, IMAGE/padding and Heavy inference; retain unsuccessful cases and keep unsupported recovery out of production.
 - [ ] Solve unreliable tracking in the severe private push-up crop and produce broader genuinely useful corrections on independently reviewed partial footage.
 - [ ] Validate form observations with qualified labels before declaring an accuracy percentage or automatic shared learning.
+
+## Guest spoken-feedback repair, 10 October 2026
+
+The learner identified exercise-feedback voice failure while using the guest expedition. The hosted speech route correctly requires sign-in; the client hid its 401 behind a connection error and offered an ineffective retry. This repair adds a clear account action while preserving the current clip and report.
+
+- [x] Preserve speech access errors and show the reason directly in the review.
+- [x] Explain guest written analysis and account-only spoken feedback before analysis.
+- [x] Keep the selected video and analyzed report mounted while account access opens; return to that review after sign-in or cancellation.
+- [x] Verify guest access, rejected/cancelled sign-in, preserved clip/report and resumed automatic feedback in the real app with stubbed services; check actual hosted Deepgram generation separately.
+- [ ] Verify the published guest-to-account review flow with actual Deepgram playback.
+- [ ] Learner retries spoken feedback through the new account action.

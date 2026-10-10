@@ -214,6 +214,7 @@ export class AudioDirector {
     } catch (error) {
       if (controller.signal.aborted || version !== this.voiceVersion) return { status: 'cancelled' };
       return { status: error instanceof SpeechUnavailable ? 'unavailable' : 'error',
+        requiresSignIn: error instanceof SpeechUnavailable && error.requiresSignIn,
         message: error instanceof Error && error.name === 'TimeoutError' ? 'The voice connection took too long. Choose Try voice again.'
           : error instanceof Error ? error.message : 'Live voice is unavailable. Your written review is still available.' };
     } finally {

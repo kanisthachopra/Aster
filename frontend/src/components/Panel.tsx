@@ -1,14 +1,15 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { pointerInitiated } from './inputModality';
 
-export default function Panel({ title, eyebrow, children, onClose, wide = false, className = '' }: {
-  title: string; eyebrow: string; children: ReactNode; onClose: () => void; wide?: boolean; className?: string;
+export default function Panel({ title, eyebrow, children, onClose, wide = false, className = '', visible = true }: {
+  title: string; eyebrow: string; children: ReactNode; onClose: () => void; wide?: boolean; className?: string; visible?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   // Keyboard-opened interfaces remain immediate; occasional pointer entry gets a brief reveal.
   const pointerEntry = useRef(pointerInitiated());
   useEffect(() => {
+    if (!visible) return;
     const dialog = ref.current!;
     const returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     dialog.showModal();
@@ -20,8 +21,8 @@ export default function Panel({ title, eyebrow, children, onClose, wide = false,
         if (returnFocus?.isConnected && !document.querySelector('dialog[open]')) returnFocus.focus();
       });
     };
-  }, []);
-  return <dialog ref={ref} className={`hologram ${wide ? 'wide' : ''} ${pointerEntry.current ? 'pointer-entry' : ''} ${className}`} aria-labelledby={titleId}
+  }, [visible]);
+  return <dialog ref={ref} hidden={!visible} className={`hologram ${wide ? 'wide' : ''} ${pointerEntry.current ? 'pointer-entry' : ''} ${className}`} aria-labelledby={titleId}
     onCancel={event => { event.preventDefault(); onClose(); }}>
     <header className="panel-header">
       <div><p className="eyebrow">{eyebrow}</p><h2 id={titleId} tabIndex={-1}>{title}</h2></div>

@@ -232,6 +232,12 @@ Analyze activates browser audio during its user gesture. Audio activation, confi
 
 All 17 cinematic/guide files are replaced with original scripted Deepgram Aura 2 recordings: Apollo for the traveller and Thalia for ORBIT. The fixed-script generation tool caches unchanged requests, normalizes audio, and records hashes and durations. Runtime cinematic playback uses local files with a revised cache URL. The arrival lasts 30.1 seconds, leaving room after the lights and greeting dialogue. See verification-0.6.md and voice-setup.md for actual full-app playback evidence.
 
+### Hosted guest voice access, 10 October 2026
+
+The hosted speech service requires a verified outpost account. Guest exercise analysis and written feedback remain local and available. The station explains this before analysis. A 401 from either speech configuration or generation asks for sign-in instead of reporting a generic connection failure. The review offers a direct account action.
+
+Opening account access temporarily closes the station dialog while keeping its component, selected file, object URL and analysis report mounted. Cancelling or a rejected password preserves that review. Successful sign-in returns to the same station, refreshes its speech connection and automatically reads the existing report; it does not rerun video inference. Account creation and recovery retain their existing recovery-kit confirmation. Recorded opening/guide voices remain available to guests. Server authentication, provider keys and usage limits are unchanged.
+
 ## Revision 0.9: temporal coaching and guided follow-ups
 
 movementReview.ts evaluates image-plane temporal chains with aspect correction, stable-side visibility, continuity and known tracking-jump/station gates. It reports sustained push-up/squat direction mismatch, conditional push-up hip-position checks, and conditional strict-pull-up swing or complete-rep lowering timing. Local extrema split a multi-rep pull-up run without changing the original excursion, endpoint or speed thresholds. Missing or front-facing geometry abstains. These thresholds are exploratory, not clinical boundaries.

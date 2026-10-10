@@ -52,6 +52,7 @@ export default function App() {
   const sessionRef = useRef<AccountSession | null>(null);
   const sessionVersion = useRef(0);
   const [accountMode, setAccountMode] = useState<'register' | 'login' | 'manage'>('login');
+  const [reviewAccess, setReviewAccess] = useState(false);
   const [accountError, setAccountError] = useState('');
   const [saving, setSaving] = useState(false);
   const savingRef = useRef(false);
@@ -75,10 +76,12 @@ export default function App() {
     if (next.journey) setJourney(next.journey);
     if (accountMode === 'manage') return;
     void audio.current?.start().catch(() => setAudioFailure(true));
+    if (reviewAccess) { setReviewAccess(false); setPhase('station'); setOverlay('review'); setMessage('You’re signed in. Let’s hear your feedback.'); return; }
     setPhase('park'); setOverlay(next.profile?.onboardingComplete ? 'robot' : 'tour');
     setMessage('You’re back. Your journal and progress are ready.');
   }
   function signedOut() {
+    setReviewAccess(false);
     storeSession({ configured: true, authenticated: false, emailAvailable: session?.emailAvailable ?? false });
     setJourney(createJourney()); setCallsign(''); setOverlay(null); setPhase('title');
     audio.current?.stopDialogue();
@@ -146,6 +149,7 @@ export default function App() {
   }
   function closePanel() {
     if (savingRef.current) { setMessage('Your review is still saving. Please wait a moment.'); return; }
+    if (overlay === 'access' && reviewAccess) { setReviewAccess(false); setOverlay('review'); return; }
     audio.current?.stopDialogue();
     if (overlay === 'review') {
       setPhase('park');
@@ -269,8 +273,8 @@ export default function App() {
       <p className="preview-note">Analysis runs on this computer. {signedIn ? 'Your notes and progress save to your private account. Saving the video is optional.' : 'This guest visit clears on reload.'} At the station, choose a clip and press Analyze movement.</p>
     </Panel>}
 
-    {overlay === 'review' && <Panel title={exercise.name} eyebrow={`TRAINING STATION ${exercise.number} / ${exercise.label}`} onClose={closePanel} wide>
-      <ClipPreview key={selected} exercise={exercise} onFinish={completeReview} onSpeak={speakGuide} speech={reviewSpeech} persistent={signedIn} reducedMotion={settings.reducedMotion} />
+    {(overlay === 'review' || reviewAccess) && <Panel title={exercise.name} eyebrow={`TRAINING STATION ${exercise.number} / ${exercise.label}`} onClose={closePanel} wide visible={overlay === 'review'}>
+      <ClipPreview key={selected} exercise={exercise} onFinish={completeReview} onSpeak={speakGuide} speech={reviewSpeech} persistent={signedIn} reducedMotion={settings.reducedMotion} onSignIn={session?.configured && !signedIn ? () => { audio.current?.stopDialogue(); setReviewAccess(true); openAccount('login'); } : undefined} />
       {saving && <p role="status">{saveProgress !== null ? `Saving your private recording: ${saveProgress}%` : 'Saving your review and progress…'}</p>}
       <div className="panel-footer"><span>Leaving early keeps today’s activity unchanged.</span><button className="secondary" disabled={saving} onClick={closePanel}>Leave station <span>↗</span></button></div>
     </Panel>}

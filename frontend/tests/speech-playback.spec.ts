@@ -29,6 +29,31 @@ test('unavailable and muted speech are explicit and never use generic fallback',
   await page.getByRole('button',{name:'Mute',exact:true}).click(); await page.getByRole('button',{name:'Read review',exact:true}).click(); await expect(page.getByRole('status')).toContainText('muted:'); expect(generated).toBe(0);
 });
 
+test('guest voice explains sign-in without sending text to Deepgram',async({page})=>{
+  let generated=0;
+  await page.route('**/api/speech/config',route=>route.fulfill({status:401,json:{message:'Sign in to restore your journey.'}}));
+  await page.route('**/api/speech/review',route=>{generated++;return route.abort();});
+  await page.goto('/tests/harnesses/speech.html');
+  await page.getByRole('button',{name:'Read review',exact:true}).click();
+  await expect(page.getByRole('status')).toContainText('Sign in for ORBIT’s spoken feedback.');
+  expect(generated).toBe(0);
+});
+
+test('a session ending between configuration and generation asks for sign-in',async({page})=>{
+  await page.route('**/api/speech/config',route=>route.fulfill({json:{available:true,provider:'deepgram',model:'mock',maxCharacters:1800,token:'cookie-session',message:'Test voice'}}));
+  await page.route('**/api/speech/review',route=>route.fulfill({status:401,json:{message:'Your session has ended.'}}));
+  await page.goto('/tests/harnesses/speech.html');
+  await page.getByRole('button',{name:'Read review',exact:true}).click();
+  await expect(page.getByRole('status')).toContainText('Sign in for ORBIT’s spoken feedback.');
+});
+
+test('configuration errors preserve the server explanation instead of a generic network failure',async({page})=>{
+  await page.route('**/api/speech/config',route=>route.fulfill({status:503,json:{message:'Live voice is not connected yet.'}}));
+  await page.goto('/tests/harnesses/speech.html');
+  await page.getByRole('button',{name:'Read review',exact:true}).click();
+  await expect(page.getByRole('status')).toHaveText('unavailable: Live voice is not connected yet.');
+});
+
 test('stopping a pending generation prevents late audio from playing',async({page})=>{
   await page.addInitScript(()=>{
     const create=AudioContext.prototype.createBufferSource;
