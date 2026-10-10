@@ -42,7 +42,7 @@ The [evaluation repository](evaluation/README.md) keeps acquisition, source-grou
 
 **Accounts:** ORBIT supports an authorized ID and password, a saved single-use recovery command, and a private Supabase journal. Finishing a review saves its notes and progress; storing the recording requires a separate unchecked-by-default choice. Optional verified-email recovery requires an email provider. Both successful recovery routes restore the same journey. Guest mode still clears its clips and progress on reload. See [account server setup](frontend/server/README.md) and [database setup](supabase/README.md).
 
-**Deployment:** Vercel uses `frontend` as its root directory, with the Node function and the rewrites in `frontend/vercel.json`. Set the server variables from `.env.example` in Vercel; never commit real keys or prefix secrets with `VITE_`. The chosen address is `aster.kcmira.me`. The account schema was applied and verified against Supabase with disposable accounts on 2026-10-10. Hosted environment configuration and the final public-site check are separate release steps.
+**Deployment:** [Aster is hosted at aster.kcmira.me](https://aster.kcmira.me). Vercel uses `frontend` as its root directory, with the Node function and the rewrites in `frontend/vercel.json`. Production server settings are configured; never commit real keys or prefix secrets with `VITE_`. On 2026-10-10, 20 checks against the public HTTPS deployment passed for accounts, secure cookies, private storage, recovery, saved progress and actual Deepgram audio. All disposable test accounts and recordings were removed. Optional email recovery remains unavailable until an email sender is configured.
 
 ## Analysis evidence and limits
 
