@@ -1,0 +1,16 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Account interface verification</title></head>
+<body style="background:#091a25"><div id="root"></div><script type="module">
+import React from 'react';
+import {createRoot} from 'react-dom/client';
+import AccountPanel from '/src/components/AccountPanel.tsx';
+import '/src/styles.css';
+const params=new URLSearchParams(location.search);
+const mode=params.get('mode')||'register';
+const profile={id:'test-only',authorizedId:'visitor_test',callsign:'Mira',timezone:'Asia/Singapore',onboardingComplete:true,recoveryEmail:null,emailVerified:false};
+window.accountEvents=[];
+createRoot(document.getElementById('root')).render(React.createElement(AccountPanel,{
+  mode,session:{configured:true,authenticated:mode==='manage',emailAvailable:params.get('email')!=='off',profile:mode==='manage'?profile:undefined},
+  onAuthenticated:session=>window.accountEvents.push({event:'authenticated',id:session.profile.authorizedId}),
+  onClose:()=>window.accountEvents.push({event:'closed'}),onLogout:()=>window.accountEvents.push({event:'logout'})
+}));
+</script></body></html>

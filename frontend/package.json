@@ -13,7 +13,8 @@
     "@babylonjs/core": "^9.29.0",
     "@mediapipe/tasks-vision": "0.10.32",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react-dom": "^19.3.0",
+    "tus-js-client": "^4.3.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

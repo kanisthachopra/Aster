@@ -1,0 +1,20 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/api/speech/config", "destination": "/api/outpost?action=speech-config" },
+    { "source": "/api/speech/review", "destination": "/api/outpost?action=speech-review" }
+  ],
+  "headers": [
+    { "source": "/(.*)", "headers": [
+      { "key": "X-Content-Type-Options", "value": "nosniff" },
+      { "key": "Referrer-Policy", "value": "no-referrer" },
+      { "key": "X-Frame-Options", "value": "DENY" }
+    ] },
+    { "source": "/api/(.*)", "headers": [
+      { "key": "Cache-Control", "value": "private, no-store" }
+    ] }
+  ]
+}

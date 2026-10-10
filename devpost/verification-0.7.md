@@ -1,0 +1,9 @@
+# Account and deployment verification, 2026-10-10
+
+The exact account migration was applied to the learner's Aster Supabase project in one transaction. All 10 SQL tests pass in PGlite; these use explicit Supabase schema stand-ins. Eleven simulated API tests cover origins, verified identity, refresh, recovery races and failure compensation, speech limits, upload ownership and report retention. Six browser account-screen tests pass.
+
+Live Supabase integration uses disposable accounts and public test media, without uploading the learner's recordings. It passed account creation, session restoration, private recording upload and signed playback, a 7 MiB signed resumable upload with actual-byte verification, isolation between two owners, duplicate-safe daily awards, logout, case-insensitive single-use command recovery, restored full journey, new-password sign-in, recording-only deletion and full review deletion. Test accounts and objects were removed. Reports in this test are synthetic fixtures; no form-accuracy conclusion follows from account tests.
+
+Production build passes. Vercel's existing Aster project is connected to the repository's `master` branch and `frontend` directory. `aster.kcmira.me` was added. Final server environment configuration, deployment and public-site verification remain release gates. Optional email recovery still needs a configured sender. Expired unused uploads do not yet have scheduled cleanup; signed playback is short-lived, and this prototype does not promise backup erasure.
+
+A broader selected regression run passed 21 tests and skipped the opt-in live test by design. Its older full-world video journey test timed out while the world was still preparing, before the start button appeared. That run does not verify the complete 3D journey. Account-screen, SQL, server and live Supabase checks above passed independently; the final hosted browser walkthrough remains necessary.

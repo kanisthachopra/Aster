@@ -40,7 +40,9 @@ The [evaluation repository](evaluation/README.md) keeps acquisition, source-grou
 - Seventeen rewritten dialogue clips generated with Deepgram Apollo for the traveller and Thalia for ORBIT. The browser plays these local recordings. Live feedback uses the selected Thalia voice, with short practical wording, replay/Stop controls and recoverable connection errors. Scene timing leaves room for the spoken lines; subtitles and quieter background music remain.
 - Three playable recreation games, keyboard controls, reduced-motion alternatives and focus restoration. All 14 official Emil Kowalski skills reviewed, with relevant browser guidance applied.
 
-**Guest limitation:** callsign, video files, feedback and progress live in this tab's memory and clear on reload. Only sound, mouse and motion preferences persist. Account creation is deferred at the user's request. This is not a secure server reward ledger or durable private journal.
+**Accounts:** ORBIT supports an authorized ID and password, a saved single-use recovery command, and a private Supabase journal. Finishing a review saves its notes and progress; storing the recording requires a separate unchecked-by-default choice. Optional verified-email recovery requires an email provider. Both successful recovery routes restore the same journey. Guest mode still clears its clips and progress on reload. See [account server setup](frontend/server/README.md) and [database setup](supabase/README.md).
+
+**Deployment:** Vercel uses `frontend` as its root directory, with the Node function and the rewrites in `frontend/vercel.json`. Set the server variables from `.env.example` in Vercel; never commit real keys or prefix secrets with `VITE_`. The chosen address is `aster.kcmira.me`. The account schema was applied and verified against Supabase with disposable accounts on 2026-10-10. Hosted environment configuration and the final public-site check are separate release steps.
 
 ## Analysis evidence and limits
 

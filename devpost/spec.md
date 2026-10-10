@@ -5,6 +5,14 @@ status: approved
 
 # Exercise Form Feedback — Technical Specification
 
+## Account and hosting revision, 2026-10-10
+
+The learner requested Vercel deployment at `aster.kcmira.me` and their existing Supabase project. This replaces the earlier proposed Django account service for this release. React/Vite/Babylon and local MediaPipe analysis remain. One same-origin Vercel Node function handles Supabase Auth, owner-scoped PostgreSQL records, private Storage, recovery and live speech. The same handler runs locally through Vite.
+
+Passwords and Auth tokens stay off the client JavaScript surface. HttpOnly cookies and a server session proof protect app access; recovery rotates its command and ends prior app sessions. Reports save without raw pose frames. Recording retention is a separate explicit choice. Database transactions handle idempotent completion, server-calendar dates, weekly awards and reserve protection. Browser-derived reports do not independently attest exercise technique or attendance. Email recovery is available only when its provider is configured and the address verified. Exact contracts and deployment variables are in `frontend/server/README.md` and `supabase/README.md`.
+
+Disposable live integration checks passed for two-account isolation, sign-in, recovery and command reuse rejection, private small and resumable large uploads, playback, selective deletion and duplicate-safe awards. This does not replace the outstanding qualified form-feedback benchmark or final visual production work.
+
 Architecture approved on 2026-10-07: the learner accepted the recommended stack and explicitly asked to begin implementation. The build supplement below derives implementation details from that approval. External providers, validated analysis, and final media remain dependency gates for their respective slices, not assumed completed decisions.
 
 ## How This Works, In Plain Language

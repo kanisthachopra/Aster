@@ -9,6 +9,8 @@ The learner approved the architecture and explicitly authorized starting impleme
 
 ## Slices
 
+2026-10-10 release update: account, recovery, private journal and transaction-based progression are implemented with Vercel/Supabase under the learner's revised hosting choice. Ten SQL tests, eleven API tests, six account-screen tests and 25 live Supabase checks pass. The exact migration is applied. Hosted secrets, DNS confirmation and a public-site walkthrough remain before marking the account/progression slices fully shipped. The older Django implementation wording below is superseded for these services by `spec.md > Account and hosting revision`.
+
 - [x] **1. Enter the world and reach an exercise station**
   Becomes usable: A playable desktop world with silent title, opening, exploration and discovery, dome arrival, robot, three stations, settings and a private local clip preview.
   Why now: Tests the browser's immersive experience and gives concrete visual feedback before committing to final asset production.

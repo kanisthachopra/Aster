@@ -15,6 +15,8 @@ import type { AnalysisReport } from './analysis/types';
 import dialogueScript from './game/dialogue.json';
 import MiniGames from './components/MiniGames';
 import { GAME_STATIONS, type MiniGameId } from './game/miniGames';
+import AccountPanel from './components/AccountPanel';
+import { apiRequest, saveReview, type AccountSession } from './account/client';
 
 type Overlay = 'settings' | 'robot' | 'onboarding' | 'tour' | 'review' | 'access' | 'journal' | 'missions' | 'games' | null;
 const ARRIVAL_LINES: Record<ArrivalBeat, { speaker: string; line: string; label: string }> = {
@@ -46,6 +48,36 @@ export default function App() {
   const [settings, setSettings] = useState(loadSettings);
   const [message, setMessage] = useState('');
   const [journey, setJourney] = useState(() => createJourney());
+  const [session, setSession] = useState<AccountSession | null>(null);
+  const sessionRef = useRef<AccountSession | null>(null);
+  const [accountMode, setAccountMode] = useState<'register' | 'login' | 'manage'>('login');
+  const [accountError, setAccountError] = useState('');
+  const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
+  const [saveProgress, setSaveProgress] = useState<number | null>(null);
+  const signedIn = session?.authenticated === true;
+  function storeSession(next: AccountSession) { sessionRef.current = next; setSession(next); }
+  async function refreshSession() {
+    setAccountError('');
+    try {
+      const next = await apiRequest<AccountSession>('session'); storeSession(next);
+      if (next.authenticated && next.profile) { setCallsign(next.profile.callsign); if (next.journey) setJourney(next.journey); }
+    } catch (reason) { setAccountError(reason instanceof Error ? reason.message : 'Account connection unavailable.'); }
+  }
+  useEffect(() => { void refreshSession(); }, []);
+  function openAccount(mode: 'register' | 'login' | 'manage') { setAccountMode(mode); setOverlay('access'); }
+  function authenticated(next: AccountSession) {
+    storeSession(next); setCallsign(next.profile?.callsign || '');
+    if (next.journey) setJourney(next.journey);
+    if (accountMode === 'manage') return;
+    setPhase('park'); setOverlay(next.profile?.onboardingComplete ? 'robot' : 'tour');
+    setMessage('You’re back. Your journal and progress are ready.');
+  }
+  function signedOut() {
+    storeSession({ configured: true, authenticated: false, emailAvailable: session?.emailAvailable ?? false });
+    setJourney(createJourney()); setCallsign(''); setOverlay(null); setPhase('title');
+    audio.current?.stopDialogue();
+  }
   const speakGuide = useCallback((key: string) => audio.current?.guide(key), []);
   const reviewSpeech = useMemo<ReviewSpeech>(() => ({
     getStatus: async () => audio.current ? audio.current.getSpeechStatus() : { available: false, message: 'Voice is still starting. Your written feedback is ready.' },
@@ -86,7 +118,16 @@ export default function App() {
     try { localStorage.setItem('aster.preferences', JSON.stringify(settings)); } catch { /* Preferences remain usable in memory. */ }
   }, [settings, ready]);
   useEffect(() => { world.current?.select(selected); }, [selected, phase, ready]);
-  useEffect(() => { const timer = setInterval(() => setJourney(previous => settleWeek(previous)), 60000); return () => clearInterval(timer); }, []);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (sessionRef.current?.authenticated) {
+        const owner = sessionRef.current.profile?.id;
+        if (!savingRef.current) void apiRequest<ReturnType<typeof createJourney>>('journey').then(next => {
+          if (owner === sessionRef.current?.profile?.id && !savingRef.current) setJourney(next);
+        }).catch(() => { /* The next explicit action shows a connection error. */ });
+      } else setJourney(previous => settleWeek(previous));
+    }, 60000); return () => clearInterval(timer);
+  }, []);
   useEffect(() => {
     if (!message) return;
     const timer = setTimeout(() => setMessage(''), 6500);
@@ -95,9 +136,11 @@ export default function App() {
 
   async function start() {
     try { await audio.current?.start(); } catch { setAudioFailure(true); }
-    setPhase('opening');
+    if (signedIn && session.profile?.onboardingComplete) { setPhase('park'); setOverlay('robot'); }
+    else setPhase('opening');
   }
   function closePanel() {
+    if (savingRef.current) { setMessage('Your review is still saving. Please wait a moment.'); return; }
     audio.current?.stopDialogue();
     if (overlay === 'review') {
       setPhase('park');
@@ -106,9 +149,16 @@ export default function App() {
     setOverlay(null);
   }
   function choose(id: ExerciseId) { setSelected(id); setOverlay(null); setMessage('Follow the blue markers. I’ll meet you at the station.'); }
-  function completeReview(report: AnalysisReport, file: File) {
+  async function completeReview(report: AnalysisReport, file: File, saveMedia = false) {
     if (report.status === 'insufficient') return;
-    const updated = finishReview(journey, report, file);
+    if (savingRef.current) return;
+    savingRef.current = true; setSaving(true);
+    const owner = sessionRef.current?.profile?.id;
+    let updated;
+    try {
+      updated = signedIn ? await saveReview(report, saveMedia ? file : null, setSaveProgress) : finishReview(journey, report, file);
+      if (signedIn && owner !== sessionRef.current?.profile?.id) throw new Error('Your account changed while saving. Sign in again before continuing.');
+    } finally { savingRef.current = false; setSaving(false); setSaveProgress(null); }
     setJourney(updated); setOverlay(null); setPhase('park');
     if (report.status === 'partial') {
       setMessage('Saved those observations in your journal. There’s not enough evidence for an activity credit yet; the recording tips explain what would help.');
@@ -116,8 +166,27 @@ export default function App() {
     }
     audio.current?.cue();
     const earned = Math.max(0, updated.regular - settleWeek(journey).regular);
-    setMessage(journey.activity.length === 0 ? `First mission complete. ${earned ? `+${earned} Energy Credits. ` : ''}Your review is in the Journal. Master Control lets you manage it.` : `Review added to your guest journal. ${earned ? `+${earned} Energy Credits.` : 'Today’s activity was already recorded.'}`);
+    setMessage(journey.activity.length === 0 ? `First mission complete. ${earned ? `+${earned} Energy Credits. ` : ''}Your review is in the Journal. Master Control lets you manage it.` : `Review added to your ${signedIn ? 'private' : 'guest'} journal. ${earned ? `+${earned} Energy Credits.` : 'Today’s activity was already recorded.'}`);
     speakGuide(journey.activity.length === 0 ? 'first-review' : 'analysis-ready');
+  }
+  async function deleteEntry(id: string, mediaOnly: boolean) {
+    if (!signedIn) { setJourney(previous => ({ ...previous, entries: mediaOnly ? previous.entries.map(entry => entry.id === id ? { ...entry, file: null } : entry) : previous.entries.filter(entry => entry.id !== id) })); return; }
+    const owner = sessionRef.current?.profile?.id;
+    const next = await apiRequest<ReturnType<typeof createJourney>>('journal/delete', { reviewId: id, mediaOnly });
+    if (owner === sessionRef.current?.profile?.id) setJourney(next);
+  }
+  async function protectMissedDay(day: string, allowReserve: boolean) {
+    if (!signedIn) { setJourney(previous => protectDay(previous, day)); return; }
+    const owner = sessionRef.current?.profile?.id;
+    const next = await apiRequest<ReturnType<typeof createJourney>>('protect', { day, allowReserve });
+    if (owner === sessionRef.current?.profile?.id) setJourney(next);
+  }
+  async function completeTour() {
+    if (signedIn && session.profile) {
+      try { const next = await apiRequest<{ profile: NonNullable<AccountSession['profile']> }>('profile', { onboardingComplete: true }); storeSession({ ...session, profile: next.profile }); }
+      catch { setMessage('You can explore now. Your introduction could not be saved, so we may show it again next time.'); }
+    }
+    setOverlay('robot');
   }
   const lookHint = lookMode === 'locked' ? 'MOUSE / Look · ESC / Release' : lookMode === 'free' ? 'HOLD + DRAG / Look · ESC / Release' : 'CLICK WORLD / Capture mouse';
 
@@ -131,7 +200,7 @@ export default function App() {
           <h1 aria-label="Aster Outpost 07"><span className="title-letters" aria-hidden="true">{'ASTER'.split('').map((letter, i) => <i key={i} style={{ animationDelay: `${i * 70}ms` }}>{letter}</i>)}</span><span>OUTPOST 07</span></h1>
           <div className="title-rule" />
           <nav className="title-menu" aria-label="Main menu">
-            <button disabled={!ready} onClick={() => void start()}><span className="menu-number">01</span>{ready ? 'Begin expedition' : 'Establishing connection…'}<span className="menu-arrow">↗</span></button>
+            <button disabled={!ready} onClick={() => void start()}><span className="menu-number">01</span>{ready ? signedIn ? 'Resume expedition' : 'Begin expedition' : 'Establishing connection…'}<span className="menu-arrow">↗</span></button>
             <button disabled={!ready} onClick={() => setOverlay('settings')}><span className="menu-number">02</span>Settings<span className="menu-arrow">↗</span></button>
           </nav>
         </div>
@@ -150,7 +219,7 @@ export default function App() {
       {phase === 'entry' && <section className="entry-panel">
         <p className="eyebrow">EARTHAN INTERGALACTIC EMPIRE / ARRIVALS</p><h2>Every journey<br />begins somewhere.</h2><p className="subtle">The outpost is waiting.</p>
         <button className="choice-button" onClick={() => setPhase('guided')}><span><small>01 / FIRST ARRIVAL</small>New to this world</span><b>↗</b></button>
-        <button className="choice-button" onClick={() => setOverlay('access')}><span><small>02 / RETURNING CITIZEN</small>Already a user</span><b>↗</b></button>
+        <button className="choice-button" onClick={() => openAccount('login')}><span><small>02 / RETURNING CITIZEN</small>Already a user</span><b>↗</b></button>
       </section>}
 
       {phase === 'guided' && <><div className="objective"><p className="eyebrow">SURFACE EXPEDITION</p><h2>{survey.discovered ? 'A shelter in the distance.' : 'Find what’s out there.'}</h2><p>{survey.discovered ? 'Find the entrance on the southern side of the dome.' : 'Explore the basin. Your survey picked up a faint signal.'}</p></div><div className="crosshair" aria-hidden="true">·</div>
@@ -176,24 +245,26 @@ export default function App() {
       <p className="dialogue-line">“Before I start calling you ‘hey, you’… what’s your name?”</p>
       <form onSubmit={event => { event.preventDefault(); setOverlay('tour'); }}>
         <label className="callsign-field">Your callsign<input autoComplete="off" maxLength={32} value={callsign} onChange={event => setCallsign(event.target.value)} placeholder="How should ORBIT address you?" /></label>
-        <p className="fine-print">Guest expedition: no account needed. Your callsign, recordings and progress stay in this visit and clear on reload.</p>
+        <p className="fine-print">{session?.configured ? 'Create an outpost ID to keep your journal and progress between visits. You can also explore as a guest.' : 'Guest expedition: your recordings and progress stay in this visit and clear on reload.'}</p>
+        {session?.configured && <button className="primary" type="button" onClick={() => openAccount('register')}>Create my outpost ID ↗</button>}
         <button className="primary" type="submit">{callsign.trim() ? 'Meet your guide' : 'Continue as traveller'} ↗</button>
       </form>
     </Panel>}
 
-    {overlay === 'tour' && <Panel title="Let me show you around." eyebrow="ORBIT / YOUR FIRST EXPEDITION" onClose={() => setOverlay('robot')}><RobotTour onDone={() => setOverlay('robot')} onSpeak={speakGuide} /></Panel>}
+    {overlay === 'tour' && <Panel title="Let me show you around." eyebrow="ORBIT / YOUR FIRST EXPEDITION" onClose={() => void completeTour()}><RobotTour onDone={() => void completeTour()} onSpeak={speakGuide} persistent={signedIn} /></Panel>}
 
     {overlay === 'robot' && <Panel title="There you are, traveller." eyebrow="ORBIT / YOUR OUTPOST COMPANION" onClose={closePanel}>
       <p className="dialogue-line">“{callsign.trim() || 'Traveller'}, pick something you’d like to work on. I’ll meet you there.”</p>
       <p className="subtle">Where shall we begin?</p>
       <div className="exercise-options">{EXERCISES.map(item => <button className="choice-button" key={item.id} onClick={() => choose(item.id)}><span><small>{item.number} / {item.label}</small>{item.name}</span><b>↗</b></button>)}</div>
       <button className="text-button" onClick={() => setOverlay('tour')}>Walk me through the outpost again</button>
-      <p className="preview-note">Your recording stays on this computer. At the station, select a clip and press Analyze movement to begin.</p>
+      <p className="preview-note">Analysis runs on this computer. {signedIn ? 'Your notes and progress save to your private account. Saving the video is optional.' : 'This guest visit clears on reload.'} At the station, choose a clip and press Analyze movement.</p>
     </Panel>}
 
     {overlay === 'review' && <Panel title={exercise.name} eyebrow={`TRAINING STATION ${exercise.number} / ${exercise.label}`} onClose={closePanel} wide>
-      <ClipPreview key={selected} exercise={exercise} onFinish={completeReview} onSpeak={speakGuide} speech={reviewSpeech} />
-      <div className="panel-footer"><span>Leaving early keeps today’s activity unchanged.</span><button className="secondary" onClick={closePanel}>Leave station <span>↗</span></button></div>
+      <ClipPreview key={selected} exercise={exercise} onFinish={completeReview} onSpeak={speakGuide} speech={reviewSpeech} persistent={signedIn} />
+      {saving && <p role="status">{saveProgress !== null ? `Saving your private recording: ${saveProgress}%` : 'Saving your review and progress…'}</p>}
+      <div className="panel-footer"><span>Leaving early keeps today’s activity unchanged.</span><button className="secondary" disabled={saving} onClick={closePanel}>Leave station <span>↗</span></button></div>
     </Panel>}
 
     {overlay === 'settings' && <Panel title="Make yourself at home." eyebrow="OUTPOST / SETTINGS" onClose={closePanel}>
@@ -204,18 +275,19 @@ export default function App() {
       <label className="setting-row"><span>Mouse sensitivity<small>Direct aim, without camera smoothing</small></span><input aria-label="Mouse sensitivity" type="range" min="0.3" max="2" step="0.1" value={settings.lookSensitivity} onChange={e => setSettings(s => ({ ...s, lookSensitivity: Number(e.target.value) }))} /><output>{settings.lookSensitivity.toFixed(1)}×</output></label>
       <label className="setting-row"><span>Reduced motion<small>Gentler scenery and camera movement; full introduction</small></span><input type="checkbox" checked={settings.reducedMotion} onChange={e => setSettings(s => ({ ...s, reducedMotion: e.target.checked }))} /></label>
       <p className="preview-note">Click the world to capture the mouse. Escape releases it. Traveller and ORBIT use recorded Deepgram voices. New feedback is spoken as your review finishes.</p>
+      <button className="secondary" onClick={() => openAccount(signedIn ? 'manage' : 'register')}>{signedIn ? 'My outpost ID & recovery' : 'Save my journey with an outpost ID'} ↗</button>
       <button className="primary" onClick={closePanel}>Return ↗</button>
     </Panel>}
 
-    {overlay === 'access' && <Panel title="Authorization terminal." eyebrow="EARTHAN INTERGALACTIC EMPIRE" onClose={closePanel}>
-      <p className="dialogue-line">“Your journey deserves a secure home.”</p><p className="subtle">Account creation, sign-in and recovery are not connected in this first world preview. No credentials are collected here.</p>
-      <button className="primary" onClick={() => { setOverlay(null); setPhase('guided'); }}>Explore the preview ↗</button>
-    </Panel>}
+    {overlay === 'access' && (session?.configured ? <AccountPanel key={accountMode} mode={accountMode} session={session} onAuthenticated={authenticated} onClose={closePanel} onLogout={signedOut} /> : <Panel title="Authorization terminal." eyebrow="EARTHAN INTERGALACTIC EMPIRE" onClose={closePanel}>
+      <p className="dialogue-line">“Your journey deserves a secure home.”</p><p className="subtle">{accountError || session?.message || 'Checking the account connection…'}</p>
+      <button className="secondary" onClick={() => void refreshSession()}>Check connection again</button><button className="primary" onClick={() => { setOverlay(null); setPhase('guided'); }}>Explore as a guest ↗</button>
+    </Panel>)}
 
     {overlay === 'journal' && <Panel title="Your field journal." eyebrow="OUTPOST / PERSONAL RECORDS" onClose={closePanel}>
-      <Journal entries={journey.entries} onSettings={() => setOverlay('settings')} onDelete={(id, mediaOnly) => setJourney(previous => ({ ...previous, entries: mediaOnly ? previous.entries.map(entry => entry.id === id ? { ...entry, file: null } : entry) : previous.entries.filter(entry => entry.id !== id) }))} /><button className="primary" onClick={closePanel}>Back to the park ↗</button>
+      <Journal entries={journey.entries} persistent={signedIn} onSettings={() => setOverlay('settings')} onDelete={deleteEntry} /><button className="primary" onClick={closePanel}>Back to the park ↗</button>
     </Panel>}
-    {overlay === 'missions' && <Panel title="A little better, each time." eyebrow={`ORBIT / MISSIONS / ${dayKey()}`} onClose={closePanel}><Missions journey={settleWeek(journey)} onProtect={day => setJourney(previous => protectDay(previous, day))} /><button className="primary" onClick={closePanel}>Back to the park ↗</button></Panel>}
+    {overlay === 'missions' && <Panel title="A little better, each time." eyebrow={`ORBIT / MISSIONS / ${dayKey()}`} onClose={closePanel}><Missions journey={signedIn ? journey : settleWeek(journey)} onProtect={protectMissedDay} persistent={signedIn} timezone={session?.profile?.timezone} /><button className="primary" onClick={closePanel}>Back to the park ↗</button></Panel>}
     {overlay === 'games' && <Panel title="Recreation deck." eyebrow="OUTPOST / OFF DUTY" onClose={closePanel} wide><MiniGames initialGame={selectedGame} onExit={closePanel} reducedMotion={settings.reducedMotion} /></Panel>}
   </main>;
 }

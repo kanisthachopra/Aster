@@ -1,6 +1,6 @@
 import type { AnalysisReport } from '../analysis/types';
 
-export interface JournalEntry { id: string; day: string; exercise: string; report: AnalysisReport; file: File | null; }
+export interface JournalEntry { id: string; day: string; exercise: string; report: AnalysisReport; file: File | null; mediaPath?: string | null; filename?: string | null; }
 export interface Journey { entries: JournalEntry[]; activity: string[]; protected: string[]; regular: number; reserve: number; week: string; }
 const AWARDS = [5, 5, 5, 2.5, 2.5];
 export function dayKey(now = new Date()) { return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`; }

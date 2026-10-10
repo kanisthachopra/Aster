@@ -15,7 +15,7 @@ function PoseOverlay({ frame }: { frame?: EvidenceFrame }) {
     {points.map((point, i) => i >= 11 && visible(point) && <circle key={i} cx={point.x} cy={point.y} r=".005" />)}
   </svg>;
 }
-export default function ClipPreview({ exercise, onFinish, onSpeak, speech }: { exercise: Exercise; onFinish: (report: AnalysisReport, file: File) => void; onSpeak: (key: string) => void; speech?: ReviewSpeech }) {
+export default function ClipPreview({ exercise, onFinish, onSpeak, speech, persistent = false }: { exercise: Exercise; onFinish: (report: AnalysisReport, file: File, saveMedia?: boolean) => void | Promise<void>; onSpeak: (key: string) => void; speech?: ReviewSpeech; persistent?: boolean }) {
   const [file, setFile] = useState<File | null>(null), [url, setUrl] = useState(''), [error, setError] = useState('');
   const [duration, setDuration] = useState<number | null>(null), [report, setReport] = useState<AnalysisReport | null>(null);
   const [progress, setProgress] = useState<AnalysisProgress | null>(null), [busy, setBusy] = useState(false), [acknowledged, setAcknowledged] = useState(false);
@@ -25,6 +25,14 @@ export default function ClipPreview({ exercise, onFinish, onSpeak, speech }: { e
   const liveCanvas = useRef<HTMLCanvasElement>(null);
   const [showTracking, setShowTracking] = useState(true);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [saveMedia, setSaveMedia] = useState(false), [finishing, setFinishing] = useState(false), [finishError, setFinishError] = useState('');
+  async function finish() {
+    if (!report || !file || finishing) return;
+    setFinishing(true); setFinishError('');
+    try { await onFinish(report, file, saveMedia); }
+    catch (reason) { setFinishError(reason instanceof Error ? reason.message : 'Your review did not save. Please try again.'); }
+    finally { setFinishing(false); }
+  }
   const coaching = report ? getCoachingReview(report) : null;
   const trackedJoints = progress?.frame?.landmarks.filter((point, i) => i >= 11 && visible(point)).length ?? 0;
   const scrollBehavior = (): ScrollBehavior => document.querySelector('.app.reduce-motion') || matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
@@ -32,7 +40,7 @@ export default function ClipPreview({ exercise, onFinish, onSpeak, speech }: { e
   useEffect(() => () => controller.current?.abort(), []);
   useEffect(() => { if (!file) { setUrl(''); return; } const objectUrl = URL.createObjectURL(file); setUrl(objectUrl); return () => URL.revokeObjectURL(objectUrl); }, [file]);
   function select(next?: File) {
-    if (!next) return;
+    if (!next || finishing) return;
     controller.current?.abort(); speech?.stop(); setBusy(false); setProgress(null); setReport(null); setDetailsOpen(false); setAcknowledged(false); setFrame(undefined); setShowPose(false); setError(''); setDuration(null);
     if (!['video/mp4', 'video/webm', 'video/quicktime'].includes(next.type)) { setFile(null); setError('Choose an MP4, WebM or MOV video. Your browser must support its video codec.'); return; }
     if (next.size > 150 * 1024 * 1024 || next.size === 0) { setFile(null); setError('Choose a non-empty video under 150 MB.'); return; }
@@ -46,7 +54,7 @@ export default function ClipPreview({ exercise, onFinish, onSpeak, speech }: { e
     if (reveal) video.current.scrollIntoView({ block: 'center', behavior: scrollBehavior() });
   }
   async function analyze() {
-    if (!file || busy) return;
+    if (!file || busy || finishing) return;
     // Activate audio while this click still counts as a browser user gesture.
     void speech?.prepare?.();
     const task = new AbortController(); controller.current?.abort(); controller.current = task;
@@ -96,7 +104,7 @@ export default function ClipPreview({ exercise, onFinish, onSpeak, speech }: { e
         {busy && <div className="analysis-progress" role="status" aria-live="polite"><strong>{progress?.stage === 'sampling' ? 'Watching your set…' : progress?.stage === 'summarizing' ? 'Putting your feedback together…' : 'Getting ready to watch…'}</strong><progress aria-label="Movement analysis progress" max={progress?.total || 1} value={progress?.completed || 0}/><button className="text-button" onClick={cancel}>Stop analysis</button></div>}
         {busy && <div className="tracking-explanation"><label><input type="checkbox" checked={showTracking} onChange={event => setShowTracking(event.target.checked)} /> Show movement tracking</label></div>}
         {error && <p role="alert" className="error-message">{error}</p>}
-        {!report && <p className="clip-privacy">Your video stays on this computer.</p>}
+        {!report && <p className="clip-privacy">{persistent ? 'Movement analysis runs on this computer. Saving a recording to your private journal is optional.' : 'Your video stays on this computer.'}</p>}
       </section>
     {report && coaching && <section ref={results} className="analysis-results" aria-label="Movement analysis results"><p className="eyebrow">ORBIT / LET’S TAKE A LOOK</p>
       <h3>{coaching.title}</h3><p className="result-summary">{coaching.summary}</p>
@@ -119,6 +127,9 @@ export default function ClipPreview({ exercise, onFinish, onSpeak, speech }: { e
       <div className="source-links"><span>Method & reference reading</span>{report.sources.map(source => <a key={source.url} href={source.url} target="_blank" rel="noreferrer">{source.title} ↗</a>)}</div>
       </details>
     </div>}
-    {report && (report.status !== 'insufficient' ? <div className="review-completion"><label><input type="checkbox" checked={acknowledged} onChange={event => setAcknowledged(event.target.checked)} /> I’ve listened to or read my feedback.</label><button className="primary" disabled={!acknowledged || !file} onClick={() => file && onFinish(report, file)}>{report.status === 'partial' ? 'Save review & return ↗' : 'Finish review & return ↗'}</button><small>{report.status === 'partial' ? 'Some of the movement was unclear. This review can be saved without workout credit.' : 'Your activity updates when you return to the park.'}</small></div> : <p className="status-note">Try another clip when you’re ready. This one won’t earn workout credit.</p>)}
+    {report && (report.status !== 'insufficient' ? <div className="review-completion"><label><input type="checkbox" checked={acknowledged} disabled={finishing} onChange={event => setAcknowledged(event.target.checked)} /> I’ve listened to or read my feedback.</label>
+      {persistent && <label><input type="checkbox" checked={saveMedia} disabled={finishing} onChange={event => setSaveMedia(event.target.checked)} /> Also save this recording to my private journal.<small>Uploads this video to your account’s private Supabase storage. Leave unchecked to save only your notes and progress.</small></label>}
+      {finishError && <p role="alert" className="status-note">{finishError}</p>}
+      <button className="primary" disabled={!acknowledged || !file || finishing} onClick={() => void finish()}>{finishing ? 'Saving your review…' : report.status === 'partial' ? 'Save review & return ↗' : 'Finish review & return ↗'}</button><small>{report.status === 'partial' ? 'Some of the movement was unclear. This review can be saved without workout credit.' : 'Your activity updates when you return to the park.'}</small></div> : <p className="status-note">Try another clip when you’re ready. This one won’t earn workout credit.</p>)}
   </div>;
 }
