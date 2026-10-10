@@ -73,6 +73,14 @@ test('health disclosures override partial practice guidance and recording encour
  expect(review.safetyFirst).toBe(true);expect(review.captureTip).toBeUndefined();expect(review.moments).toEqual([]);
  expect(review.spokenText).toContain('physiotherapist');expect(review.spokenText).not.toContain('kneeling or raised-hand');
 });
+
+test('changing to an assisted push-up removes an excluded hip-line fault and its caveat',()=>{
+ const input=report();input.frames.forEach(frame=>{frame.landmarks[23].y+=.17;});
+ const standard=getCoachingReview(input),assisted=getCoachingReview(input,{...DEFAULT_COACHING_CONTEXT,variant:'assisted'});
+ expect(standard.focus.id).toBe('pushup-hip-position');expect(standard.uncertainty).toContain('hip position');
+ expect(assisted.moments.some(moment=>moment.id==='pushup-hip-position')).toBe(false);
+ expect(assisted.uncertainty).not.toContain('hip position');
+});
 test('pain and recurrent instability override generic cues and rep prescriptions',()=>{
  const context={...DEFAULT_COACHING_CONTEXT,discomfort:'instability' as const},review=getCoachingReview(report(true),context);
  expect(review.safetyFirst).toBe(true);expect(review.moments).toHaveLength(0);expect(review.spokenText).toContain('physiotherapist');
