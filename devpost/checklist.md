@@ -167,5 +167,5 @@ The learner identified exercise-feedback voice failure while using the guest exp
 - [x] Explain guest written analysis and account-only spoken feedback before analysis.
 - [x] Keep the selected video and analyzed report mounted while account access opens; return to that review after sign-in or cancellation.
 - [x] Verify guest access, rejected/cancelled sign-in, preserved clip/report and resumed automatic feedback in the real app with stubbed services; check actual hosted Deepgram generation separately.
-- [ ] Verify the published guest-to-account review flow with actual Deepgram playback.
+- [x] Verify the published guest-to-account review flow with actual Deepgram playback. Fourteen hosted checks passed, including preserved video/report, completed automatic reading, audible browser waveform, replay, Stop and disposable-account cleanup.
 - [ ] Learner retries spoken feedback through the new account action.

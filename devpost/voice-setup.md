@@ -1,5 +1,13 @@
 # Connect ORBIT’s live voice
 
+## Hosted Aster: sign in for exercise feedback
+
+Live exercise feedback on `aster.kcmira.me` requires a signed-in outpost account. Guest visitors can analyze clips and read their feedback; the prerecorded opening and guide dialogue also work for guests. When the review offers **Sign in & hear my feedback**, use it to open account access. The uploaded clip and completed analysis stay on this computer while you sign in or cancel. Successful sign-in returns to that review and automatically plays its feedback. You can create an ID from the same account screen.
+
+The same account requirement applies to the local preview when Supabase accounts are configured. The standalone local speech service described below applies only when cloud accounts are not configured. Hosted synthesis uses persistent per-user/global budgets rather than the standalone service's in-memory cache and budget. Aster's voice client now shows authentication and service failures directly; see [the access repair verification](verification-voice-access.md). A working Deepgram key does not make guest requests authenticated.
+
+## Standalone local configuration
+
 Open `frontend/.env.local` in your editor. An empty key slot is already prepared:
 
 ```dotenv
