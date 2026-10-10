@@ -7,7 +7,7 @@ test('replay saved model observations with current local coaching',async({page,c
  test.skip(!enabled); const external:string[]=[];
  await context.route('**/*',async route=>{const u=new URL(route.request().url());if(u.origin!=='http://127.0.0.1:5174'||u.pathname.startsWith('/api/')){external.push(u.origin);await route.abort();return;}if(u.pathname==='/recovery-replay'){await route.fulfill({contentType:'text/html',body:'<!doctype html><title>Local replay</title>'});return;}await route.continue();});
  await page.goto('/recovery-replay');
- const hashes=Object.fromEntries(['movementReview','partialMovementReview','twoPointMovementReview','coaching'].map(n=>[n,createHash('sha256').update(readFileSync(`src/analysis/${n}.ts`)).digest('hex')]));
+ const hashes=Object.fromEntries(['movementReview','partialMovementReview','twoPointMovementReview','pullupVisibleMotion','movementKnowledge','coaching'].map(n=>[n,createHash('sha256').update(readFileSync(`src/analysis/${n}.ts`)).digest('hex')]));
  const summaries=[];
  for(const fixture of inputs){
   const base=fixture.privacy==='private'?'artifacts/private-evaluation/partial-movement-rerun':'artifacts/cropped-evaluation/results';

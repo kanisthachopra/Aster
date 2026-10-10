@@ -33,13 +33,45 @@ test('a supported coordination strength is specific feedback rather than a gener
  const review=getCoachingReview(report());
  expect(review.focus.kind).toBe('strength');expect(review.focus.detected).toBe(true);expect(review.moments.length).toBeGreaterThan(0);
  expect(review.spokenText).toContain('visible section');expect(review.spokenText).not.toContain('I don’t have a specific correction');
- expect(coachingReport(report(),review).knowledgeVersion).toBe('1.1.0');
+ expect(coachingReport(report(),review).knowledgeVersion).toBe('1.2.0');
 });
 test('missing shoulders or an interrupted track gives concrete capture help, not an invented correction',()=>{
  const input=report(true);input.status='partial';input.captureNotes=['Your shoulders are missing or obscured in much of this view.'];input.frames.forEach(frame=>frame.landmarks=[]);
  const review=getCoachingReview(input);expect(review.moments).toHaveLength(0);expect(review.uncertainty).toContain('shoulders');
  input.status='insufficient';expect(getCoachingReview(input).focus.cue).toContain('Move the camera back or tilt it up');
  input.captureNotes=['The tracked body shifts abruptly between sampled frames.'];expect(getCoachingReview(input).focus.cue).toContain('camera still and one person');
+});
+
+test('partial tracking keeps a useful practice cue separate from a recording tip and any detected fault',()=>{
+ const input=report();input.status='partial';input.estimatedRepetitions=0;
+ input.captureNotes=['The hip is difficult to locate in this recording.'];
+ input.frames.forEach(frame=>{frame.metrics=null;frame.landmarks.forEach((point,i)=>{if(![13,15].includes(i))point.visibility=0;});});
+ const before=JSON.stringify(input),review=getCoachingReview(input,{...DEFAULT_COACHING_CONTEXT,variant:'assisted'});
+ expect(review.focus.kind).toBe('practice');expect(review.focus.detected).toBe(false);expect(review.moments).toEqual([]);
+ expect(review.focus.cue).toContain('kneeling or raised-hand');expect(review.focus.observation).toContain('could not measure a specific fault');
+ expect(review.captureTip).toContain('wider view');expect(review.uncertainty).toContain('hips');
+ expect(review.spokenText).toContain('couldn’t follow enough');expect(review.spokenText).not.toContain('Use a wider view');
+ expect(review.sources.some(source=>source.url.endsWith('/13/bent-knee-push-up/'))).toBe(true);
+ const saved=coachingReport(input,review);expect(saved.status).toBe('partial');expect(saved.estimatedRepetitions).toBe(0);
+ expect(saved.findings[0].id).toBe('practice-pushup');expect(saved.findings[0].observation).toContain('not a detected form fault');
+ expect(JSON.stringify(input)).toBe(before);
+});
+
+test('missing people, wrong station and interrupted identity do not become partial technique coaching',()=>{
+ const input=report();input.status='partial';input.frames.forEach(frame=>frame.metrics=null);
+ for(const note of ['The tracked body shifts abruptly.','This does not consistently match this station.']){
+  input.captureNotes=[note];const review=getCoachingReview(input);expect(review.focus.kind).toBe('capture');expect(review.captureTip).toBeUndefined();
+ }
+ input.captureNotes=[];input.status='insufficient';input.poseFrames=0;input.frames.forEach(frame=>frame.landmarks=[]);
+ expect(getCoachingReview(input).focus.cue).toContain('Keep yourself in view');
+ expect(getCoachingReview(input).focus.kind).toBe('capture');
+});
+
+test('health disclosures override partial practice guidance and recording encouragement',()=>{
+ const input=report();input.status='partial';input.frames.forEach(frame=>frame.metrics=null);
+ const review=getCoachingReview(input,{...DEFAULT_COACHING_CONTEXT,variant:'assisted',discomfort:'instability'});
+ expect(review.safetyFirst).toBe(true);expect(review.captureTip).toBeUndefined();expect(review.moments).toEqual([]);
+ expect(review.spokenText).toContain('physiotherapist');expect(review.spokenText).not.toContain('kneeling or raised-hand');
 });
 test('pain and recurrent instability override generic cues and rep prescriptions',()=>{
  const context={...DEFAULT_COACHING_CONTEXT,discomfort:'instability' as const},review=getCoachingReview(report(true),context);

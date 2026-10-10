@@ -1,0 +1,21 @@
+{
+  "source": "https://www.dvidshub.net/video/465137/do-pull-up",
+  "sourceSha256": "9fed3d580b41a10363c85c69a2c41312415a3c7c97ee3281bfc4a138498e0f8c",
+  "independentFormLabels": 0,
+  "editedInstructionalVideo": true,
+  "samples": 195,
+  "status": "usable",
+  "observations": [],
+  "strengths": [],
+  "fingerprints": {
+    "analyzeVideo": "b44fcc374f8931a4955b72a90e5bff7badc2c03d752729e5dddfcb2781f16443",
+    "measurements": "32201bc1044b0c32e1dce0f25a3865c216db748fd38dd236d6848bb15d17af49",
+    "movementReview": "4798de527bca47e33415d0f92539c86d1ac506753e833fe171ac456d6dae48ed",
+    "partialMovementReview": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+    "twoPointMovementReview": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+    "pullupVisibleMotion": "0b13d68b474ff2995b848b7024df474ef6685f3769aacb4ce5576d4bf7d43574",
+    "movementKnowledge": "93db15e34f41d6d029e83cbadae3ce947ccd1f75f3f3f29584af30d0fa25977c"
+  },
+  "engineStable": true,
+  "externalRequests": 0
+}

@@ -1,6 +1,6 @@
 # Movement understanding
 
-Version: 1.1.0 · reviewed: 2026-10-10 · status: researched coaching specification, not a validated fault classifier.
+Version: 1.2.0 · reviewed: 2026-10-10 · status: researched coaching specification, not a validated fault classifier.
 
 This is the project's evolving **understanding.md**: what Aster may understand from exercise footage, what useful feedback should sound like, and what must be demonstrated before a new claim ships. [Movement sources](movement-sources.md) is the corresponding **research data.md** with inspected references, provider checks, and provenance. These files are knowledge artifacts; editing them does not automatically change application behavior or train a model.
 
@@ -85,6 +85,7 @@ The existing 600-video data has no independent form-fault labels. The earlier 0.
 | --- | --- | --- | --- |
 | 1.0.0 | 2026-10-10 | Initial evidence matrix, partial-view boundaries, provider investigation and update protocol | Inspected primary text/PDF/docs; current catalog metadata; bounded public-fixture provider checks. No private clips or new training. |
 | 1.1.0 | 2026-10-10 | Document implemented three-point and two-point limited-view observations; exact final vision-service request verified | Read current detector modules; one additional public-fixture request passed final validator. No coaching-accuracy claim. |
+| 1.2.0 | 2026-10-10 | Add a narrow visible pull-up return strength and preserve practice guidance when tracking is partial; compare independent trackers and Kimi image reasoning | Actual local recording/UI checks, public regressions and counterexamples. New trackers/generated advice withheld; no accuracy percentage. |
 
 ## 1.1 implementation update: useful observations from fewer points
 
@@ -102,6 +103,20 @@ The two-point module checks actual continuous timestamps, visible endpoints, pla
 The three-point branch is attempted first; two-point observations are a fallback when it provides none. These findings do not change the report's completion status or repetition count. A quiet scene, insufficient movement or unsupported crop can still produce no specific observation. The thresholds are fixed engineering hypotheses, not coach-defined universal limits or empirically calibrated confidence scores.
 
 Future descriptive replays must hash **all three** runtime modules: `movementReview.ts`, `partialMovementReview.ts` and `twoPointMovementReview.ts`. The older 0.9 coverage report predates these fallbacks and cannot be quoted as their measured coverage. Synthetic geometry tests establish rule behavior; independently labeled real footage is still required to measure whether an observation or cue is correct and useful.
+
+For 1.2, also hash `pullupVisibleMotion.ts`, `movementKnowledge.ts` and `coaching.ts`. The preceding three-module requirement describes the older implementation, not the complete current fingerprint.
+
+## 1.2 implementation: a visible return and an honest next step
+
+The new [pull-up return check](../frontend/src/analysis/pullupVisibleMotion.ts) uses continuously visible hand, shoulder and hip points after an observed rise. It can recognize those two body regions descending together even when the elbow chain is unavailable. The output is a linked **strength**, with one keep-doing cue. It is not a completed-repetition judgment, a detected fault, an assessment of the shoulder blades or a safe-hang prescription. It does not change completion status, repetitions or rewards.
+
+Existing visibility, continuity, size and stationary-hand gates remain. Both raw displacement relative to the hand and body-normalized displacement must support the movement. This rejects ideal uniform camera pan/zoom and scale changes that manufacture apparent travel; depth and perspective remain unresolved limitations. Tests also reject a reach, stationary hang, rise without return, hidden hip, tracking jump, wrong station, multiple-person note and a gap at the turn. The thresholds are engineering screens, not calibrated confidence probabilities.
+
+When a partial recording contains body detections but no accepted finding, the review now keeps **general practice guidance for the user-selected variation** available. Recording help is separate. A practice idea receives no invented timestamp, correction label or extra completion credit. No-person, insufficient, known identity discontinuity and station-mismatch cases retain capture guidance. The person can change their variation/goal after the review without uploading again; the cue, speech and saved notes update together. Injury disclosures still override exercise advice.
+
+The independent [partial-feedback audit](partial-feedback-candidates.md) explains why visible hips/knees cannot determine a hidden shoulder's motion. It also separates hand position from pressure and a visible near-surface position from definite weight-bearing contact. Those distinctions apply even when a language model supplies a plausible explanation.
+
+Further detector candidates and [Kimi motion experiments](../evaluation/cropped/vision-motion-experiment.md) remain experimental. Better person detection, more plausible points, a valid JSON response and an empathetic sentence do not by themselves establish a justified correction. The difficult cropped push-up still lacks a reliable measured correction. Broader pull-up corrections and independently reviewed partial-footage accuracy also remain open.
 
 The exact final vision-context service also passed a public-image request (2.528 seconds). It returns only context, never these local findings. Its inclusion of `hips` differed from the earlier successful contextual diagnostic on the same crops; a boundary region can be ambiguous. Provider-listed visibility must not override a missing/low-quality local point or expand a correction's evidence chain.
 

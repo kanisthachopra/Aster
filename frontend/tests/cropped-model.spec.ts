@@ -12,7 +12,7 @@ const publicManifest = 'artifacts/cropped-evaluation/manifest.json';
 const privateManifest = 'artifacts/cropped-evaluation/private-inputs.json';
 const cases: Fixture[] = enabled && existsSync(publicManifest) ? JSON.parse(readFileSync(publicManifest, 'utf8')) : [];
 if (enabled && process.env.ASTER_PRIVATE_CROPPED === '1' && existsSync(privateManifest)) cases.push(...JSON.parse(readFileSync(privateManifest, 'utf8')));
-const fingerprintPaths = ['public/models/pose_landmarker_full.task', 'public/mediapipe/pose-worker.js', 'src/analysis/analyzeVideo.ts', 'src/analysis/measurements.ts', 'src/analysis/summarize.ts', 'src/analysis/movementReview.ts', 'src/analysis/partialMovementReview.ts'];
+const fingerprintPaths = ['public/models/pose_landmarker_full.task', 'public/mediapipe/pose-worker.js', 'src/analysis/analyzeVideo.ts', 'src/analysis/measurements.ts', 'src/analysis/movementReview.ts', 'src/analysis/partialMovementReview.ts', 'src/analysis/twoPointMovementReview.ts', 'src/analysis/pullupVisibleMotion.ts', 'src/analysis/movementKnowledge.ts'];
 function fingerprint() { return Object.fromEntries(fingerprintPaths.filter(existsSync).map(path => [path, createHash('sha256').update(readFileSync(path)).digest('hex')])); }
 test('cropped real-model benchmark is opt-in and uses local fixtures', () => {
   test.skip(!enabled, 'Run evaluation/cropped/prepare.mjs and set ASTER_CROPPED_EVAL=1.');

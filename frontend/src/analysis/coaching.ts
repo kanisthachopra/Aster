@@ -5,12 +5,13 @@ import {evidenceScope,MOVEMENT_ANALYSIS_VERSION,MOVEMENT_KNOWLEDGE_VERSION,type 
 
 export interface CoachingMoment {id:string;title:string;timestamp:number;endTimestamp?:number;observation:string;cue:string;why:string;spokenText:string;sourceKey:string;}
 export interface CoachingFocus {id:string;title:string;observation:string;cue:string;why:string;sourceKey:string;detected:boolean;timestamp?:number;kind?:'correction'|'strength'|'practice'|'capture'|'health';}
-export interface CoachingReview {title:string;summary:string;moments:CoachingMoment[];uncertainty:string;spokenText:string;focus:CoachingFocus;strength:string;sources:{title:string;url:string}[];safetyFirst:boolean;}
+export interface CoachingReview {title:string;summary:string;moments:CoachingMoment[];uncertainty:string;spokenText:string;focus:CoachingFocus;strength:string;sources:{title:string;url:string}[];safetyFirst:boolean;captureTip?:string;}
 const SOURCE = {
  pushup:{title:'Push-up guidance · ACE',url:'https://www.acefitness.org/resources/everyone/exercise-library/41/push-up/'},
  pullup:{title:'Pull-up guidance · ACE',url:'https://www.acefitness.org/resources/everyone/exercise-library/191/pull-ups/'},
  squat:{title:'Squat guidance · ACE',url:'https://www.acefitness.org/resources/everyone/exercise-library/135/bodyweight-squat/'},
 };
+const KNEE_PUSHUP_SOURCE = {title:'Knee push-up guidance · ACE',url:'https://www.acefitness.org/resources/everyone/exercise-library/13/bent-knee-push-up/'};
 function captureAdvice(report:AnalysisReport){
  if((report.poseFrames ?? report.frames.filter(frame=>frame.landmarks.length).length)===0)return {why:'I couldn’t reliably find a person in this recording.',cue:'Keep yourself in view with light in front of you, and use a playable clip. The guide shows how to leave space around the movement.'};
  const text=(report.captureNotes??[]).join(' ');
@@ -37,21 +38,27 @@ export function getCoachingReview(report:AnalysisReport,context:CoachingContext=
  const selectedStrength=movement.strengths[0];
  const moments=safety?[]:(allowed.length?allowed.slice(0,2):selectedStrength?[selectedStrength]:[]).map(toMoment),first=moments[0];
  const isStrength=!!first&&!allowed.length;
- const unclear=(!first&&(report.status==='insufficient'||report.status==='partial'))||/shifts abruptly|change of tracked person/i.test((report.captureNotes??[]).join(' '));
+ const partialPractice=!first&&report.status==='partial'&&report.frames.some(frame=>frame.landmarks.some(point=>point.visibility>=.65&&Number.isFinite(point.x)&&Number.isFinite(point.y)&&point.x>0&&point.x<1&&point.y>0&&point.y<1))
+  &&! /shifts abruptly|change of tracked person|does not consistently match this station|do not consistently establish the selected exercise/i.test((report.captureNotes??[]).join(' '));
+ // A partial pose is not a detected fault or proof of exercise identity. Keep
+ // selected-variation education available, separately from capture guidance.
+ const unclear=(!first&&(report.status==='insufficient'||report.status==='partial')&&!partialPractice)||/shifts abruptly|change of tracked person/i.test((report.captureNotes??[]).join(' '));
  let focus:CoachingFocus=first?{...first,detected:true,kind:isStrength?'strength':'correction'}: {id:'practice-'+report.exercise,title:movement.practiceTip.title,observation:'A general practice cue, not a fault I detected in your clip.',cue:movement.practiceTip.cue,why:movement.practiceTip.why,sourceKey:movement.practiceTip.sourceKey,detected:false,kind:'practice'};
  if(report.exercise==='pullup'&&context.variant==='dynamic'&&!first)focus={...focus,title:'Keep the version you’re practicing clear',cue:'You said the momentum is intentional. I won’t treat swinging by itself as a mistake. A coach familiar with that variation can help assess it.',why:'Strict and momentum-based pull-ups have different goals. I can’t compare them as if they were the same exercise.'};
  if(report.exercise==='pushup'&&context.variant==='assisted'&&!first)focus={...focus,title:'Move together in your chosen version',cue:'In your kneeling or raised-hand version, practice bringing your hips and chest down and back up together, within a comfortable range.',why:'The aim is coordinated movement, not forcing your body into a full push-up before you’re ready.'};
+ if(partialPractice)focus={...focus,observation:'This is a practice idea for the version you chose. I could not measure a specific fault in this clip.'};
  if(unclear)focus={id:'capture',title:'Let’s use the part I can see',observation:capture.why,cue:capture.cue,why:'A continuous view of the relevant body parts helps me follow the movement. The whole body does not need to fit for every check.',sourceKey:'capture',detected:false,kind:'capture'};
  if(safety)focus={id:'comfort-first',title:'Let’s put your comfort first',observation:'You mentioned discomfort or instability in your check-in.',cue:safety,why:'A video cannot choose an injury-specific exercise plan.',sourceKey:'shoulder',detected:false};
  const strength=!safety&&!isStrength&&movement.strengths[0]?movement.strengths[0].observation:'';
- const summary=safety?'Thanks for telling me. Let’s pause the exercise advice and look after that first.':first?first.observation:unclear?'Let’s make your next recording useful.':'I don’t have a specific correction from this view. Let’s work on one practice cue.';
+ const summary=safety?'Thanks for telling me. Let’s pause the exercise advice and look after that first.':first?first.observation:unclear?'Let’s make your next recording useful.':partialPractice?'I couldn’t follow enough of this movement to pick a specific correction. Here’s one practice idea for the version you chose.':'I don’t have a specific correction from this view. Let’s work on one practice cue.';
  const relevantLimit=movement.limits.find(line=>/front-facing|continuous view|camera angle|only the linked moments|does not prove/.test(line));
  const contextNote=visual?visual.exerciseObserved===report.exercise?`The optional visual check recognized ${report.exercise==='pullup'?'pull-ups':report.exercise==='pushup'?'push-ups':'squats'} in these selected frames. It supports context, not a technique verdict.`:visual.exerciseObserved==='uncertain'?'The optional visual check could not confidently identify the exercise in the selected frames.':'The visual check and your chosen station disagree. Please check the station; I have kept the local evidence separate.':'';
  const uncertainty=safety?'Your injury check-in is excluded from Nebius requests. Spoken feedback uses the voice service, and saved notes stay in your private journal.':[first?`This checks ${evidenceScope(first.id)}.`:capture.why,relevantLimit,contextNote].filter(Boolean).join(' ');
- const opening=safety?'':first?'Thanks for showing me your set. I’ve got one place to start.':unclear?'I want to give you something you can use, but this clip leaves a gap.':'Thanks for showing me. Let’s keep the next step simple.';
+ const opening=safety?'':first?'Thanks for showing me your set. I’ve got one place to start.':unclear?'I want to give you something you can use, but this clip leaves a gap.':partialPractice?'I couldn’t follow enough of this clip to call a specific fault. We can still work on one practice idea for the version you chose.':'Thanks for showing me. Let’s keep the next step simple.';
  const closing=context.goal==='strength'?'For your strength goal, start with a rep you can repeat with control; this clip can’t choose your load or rep count.':context.goal==='comfortable'?'For your comfort goal, tell me how this felt. If it hurt or felt unstable, let’s change the advice before you try again.':'Try that cue in your next comfortable set, then tell me how it felt.';
  const spokenText=[opening,strength,first?`Around ${first.timestamp.toFixed(1)} seconds, ${first.observation}`:'',focus.cue,focus.why,!safety&&!unclear?closing:''].filter(Boolean).join(' ');
- return {title:focus.title,summary,moments,uncertainty,spokenText,focus,strength,sources:safety?[SHOULDER_SOURCE]:[SOURCE[report.exercise]],safetyFirst:!!safety};
+ return {title:focus.title,summary,moments,uncertainty,spokenText,focus,strength,sources:safety?[SHOULDER_SOURCE]:[SOURCE[report.exercise],...(report.exercise==='pushup'&&context.variant==='assisted'?[KNEE_PUSHUP_SOURCE]:[])],safetyFirst:!!safety,
+  ...(!safety&&partialPractice?{captureTip:capture.cue}:{})};
 }
 export function localCoachingReply(review:CoachingReview,context:CoachingContext,question:string):string{
  const safety=injuryResponse(context,question);if(safety)return safety;

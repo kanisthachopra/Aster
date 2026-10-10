@@ -35,6 +35,9 @@ export default function ClipPreview({ exercise, onFinish, onSpeak, speech, persi
   const [showTracking, setShowTracking] = useState(true);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [saveMedia, setSaveMedia] = useState(false), [finishing, setFinishing] = useState(false), [finishError, setFinishError] = useState('');
+  function updateContext(next:CoachingContext) {
+    speech?.stop(); setVisualContext(undefined); setAcknowledged(false); setContext(next);
+  }
   async function finish() {
     if (!report || !file || finishing) return;
     setFinishing(true); setFinishError('');
@@ -116,15 +119,17 @@ export default function ClipPreview({ exercise, onFinish, onSpeak, speech, persi
         {!report && <p className="clip-privacy">{persistent ? 'Movement analysis runs on this computer. Saving a recording to your private journal is optional.' : 'Your video stays on this computer.'}</p>}
         {!report && onSignIn && <p className="clip-privacy">Guest analysis includes written feedback. <button type="button" className="text-button" onClick={onSignIn}>Sign in for spoken feedback</button></p>}
       </section>
-    {!report && <CoachCheckIn exercise={exercise} value={context} onChange={setContext} disabled={busy || finishing} />}
+    {!report && <CoachCheckIn exercise={exercise} value={context} onChange={updateContext} disabled={busy || finishing} />}
     {report && coaching && <section ref={results} className="analysis-results" aria-label="Movement analysis results"><p className="eyebrow">ORBIT / LET’S TAKE A LOOK</p>
       <h3>{coaching.title}</h3><p className="result-summary">{coaching.summary}</p>
       <ReportVoice key={`${report.id}-${context.discomfort}-${persistent}`} report={report} review={coaching} speech={speech} showDetails={detailsOpen} onMoment={timestamp => focus(timestamp, report.frames, false)} onSignIn={onSignIn} />
       {coaching.moments.length > 0 && <div className="review-moments" aria-label="Moments to look at">{coaching.moments.slice(0, 2).map(moment => <button key={moment.id} className="review-moment" onClick={() => replay(moment.timestamp, moment.endTimestamp)}><span>▶ {moment.timestamp.toFixed(1)}s</span><strong>{moment.title}</strong></button>)}</div>}
       <div className="coach-focus"><span className="coach-focus-label">{coaching.safetyFirst ? 'YOUR CHECK-IN MATTERS' : coaching.focus.kind==='strength' ? 'ONE PART I COULD FOLLOW' : coaching.focus.detected ? 'ONE CHANGE TO TRY' : coaching.focus.id === 'capture' ? 'A CLEARER VIEW' : 'A PRACTICE CUE, NOT A DETECTED FAULT'}</span><p>{coaching.focus.cue}</p></div>
       <p className="review-uncertainty">{coaching.uncertainty}</p>
-      {file&&<VisualContextReview key={`visual-${report.id}`} file={file} report={report} context={context} persistent={persistent} onContext={setVisualContext}/>}
-      <CoachingConversation key={`conversation-${report.id}`} report={report} review={coaching} context={context} speech={speech} persistent={persistent} onDiscomfort={discomfort => { speech?.stop(); setContext(value => ({...value, discomfort})); }} />
+      {coaching.captureTip&&<details className="recording-tips"><summary>Help me review more of this movement</summary><p>{coaching.captureTip}</p><RecordingGuide exercise={exercise} reducedMotion={reducedMotion}/></details>}
+      <CoachCheckIn exercise={exercise} value={context} onChange={updateContext} disabled={finishing} stage="review" />
+      {file&&<VisualContextReview key={`visual-${report.id}-${context.variant}-${context.goal}`} file={file} report={report} context={context} persistent={persistent} onContext={setVisualContext}/>}
+      <CoachingConversation key={`conversation-${report.id}-${context.variant}-${context.goal}`} report={report} review={coaching} context={context} speech={speech} persistent={persistent} onDiscomfort={discomfort => updateContext({...context,discomfort})} />
       <button className="feedback-details-toggle" aria-expanded={detailsOpen} aria-controls="written-feedback" onClick={() => setDetailsOpen(value => !value)}>{detailsOpen ? 'Hide written feedback' : 'View written feedback'} <span aria-hidden="true">{detailsOpen ? '−' : '+'}</span></button>
     </section>}
     </div>

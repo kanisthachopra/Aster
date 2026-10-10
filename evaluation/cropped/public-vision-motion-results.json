@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Two exploratory public-frame requests; no independently labelled correction accuracy.",
+  "privateDataIncluded": false,
+  "independentFormLabels": 0,
+  "cases": [
+    {
+      "id": "kimi-public-result",
+      "requestedModel": "moonshotai/Kimi-K3",
+      "inputHashes": [
+        "8edd0fa4bf097bc07a1d80e9c73cfa923a43a804265b07a68c5bbd43cc701959",
+        "d020fca1982a0dc1870049d3af2f830e1a560a9b2b370301f3d0b56a9695a037",
+        "6cb7dd3a4053858cfa94bc7f2e6359e5ae51ab4d075a0ed47c7f91f730a38d8c",
+        "59807a020f2f45317c17dc3a05aab65cb47b38c08aa2855f3df4019b41acbbb8",
+        "6769f5475e22d1679310a37a21a38045aed23763416e10ab3c080a2cc1ff1e2a",
+        "f35a89959bdbacf15df32a06fe3e18a0b173a416a64b168bc922fa6ba3d49865"
+      ],
+      "promptHash": "358facf854dab9d15b3541947de8cacabc3249f50ec43cb1e1f34cf845001de3",
+      "timestamps": [
+        0.5,
+        1.5,
+        2.5,
+        3.5,
+        4.5,
+        5.5
+      ],
+      "status": 200,
+      "seconds": 27.701,
+      "usage": {
+        "completion_tokens": 2500,
+        "prompt_tokens": 1967,
+        "total_tokens": 4467,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 2310,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 64,
+          "image_tokens": 1482
+        },
+        "reasoning_tokens": 2310,
+        "prompt_cache_hit_tokens": 64,
+        "prompt_cache_miss_tokens": 1903
+      },
+      "finishReason": "length",
+      "completeJson": false
+    },
+    {
+      "id": "kimi-public-low-result",
+      "requestedModel": "moonshotai/Kimi-K3",
+      "inputHashes": [
+        "8edd0fa4bf097bc07a1d80e9c73cfa923a43a804265b07a68c5bbd43cc701959",
+        "d020fca1982a0dc1870049d3af2f830e1a560a9b2b370301f3d0b56a9695a037",
+        "6cb7dd3a4053858cfa94bc7f2e6359e5ae51ab4d075a0ed47c7f91f730a38d8c",
+        "59807a020f2f45317c17dc3a05aab65cb47b38c08aa2855f3df4019b41acbbb8",
+        "6769f5475e22d1679310a37a21a38045aed23763416e10ab3c080a2cc1ff1e2a",
+        "f35a89959bdbacf15df32a06fe3e18a0b173a416a64b168bc922fa6ba3d49865"
+      ],
+      "promptHash": "358facf854dab9d15b3541947de8cacabc3249f50ec43cb1e1f34cf845001de3",
+      "timestamps": [
+        0.5,
+        1.5,
+        2.5,
+        3.5,
+        4.5,
+        5.5
+      ],
+      "status": 200,
+      "seconds": 7.276,
+      "usage": {
+        "completion_tokens": 417,
+        "prompt_tokens": 1968,
+        "total_tokens": 2385,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 46,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 64,
+          "image_tokens": 1482
+        },
+        "reasoning_tokens": 46,
+        "prompt_cache_hit_tokens": 64,
+        "prompt_cache_miss_tokens": 1904
+      },
+      "finishReason": "stop",
+      "completeJson": true
+    }
+  ]
+}

@@ -11,6 +11,7 @@ export default function CoachingConversation({report,review,context,speech,persi
  const requestVersion=useRef(0),active=useRef(true);
  const reading=useRef<AbortController|null>(null);
  useEffect(()=>{active.current=true;return()=>{active.current=false;requestVersion.current++;reading.current?.abort();};},[]);
+ useEffect(()=>{requestVersion.current++;reading.current?.abort();setBusy(false);const medical=injuryResponse(context);setReply(medical??'');if(medical)setConsent(false);},[context.discomfort]);
  useEffect(()=>{let current=true;setAvailable(false);if(persistent)void apiRequest<{available:boolean}>('coach-config').then(value=>{if(current)setAvailable(value.available);}).catch(()=>{});return()=>{current=false;};},[persistent]);
  const answer=async(text:string)=>{
   if(!text.trim()||busy)return;

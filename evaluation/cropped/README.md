@@ -54,6 +54,18 @@ A developer can place a local-only `private-inputs.json` beside the ignored crop
 
 ## What these checks can establish
 
+### Visible-return refinement, 10 October 2026
+
+The 1.2 knowledge / `partial-review-0.11` engine adds `pullup-return-together`: a narrowly scoped strength requiring continuously visible hand, shoulder and hip after an observed rise. It does not require a measured elbow angle, award repetitions or assert a full rep, correct shoulder position or overall control. The unit/integration tests reject camera pan/zoom, reaching, stationary hangs, missing points, jumps, gaps and wrong-station/identity notes. The [understanding update](../../research/movement-understanding.md#12-implementation-a-visible-return-and-an-honest-next-step) describes the claim boundary.
+
+The final frozen fresh-model public run is exported separately as `public-results-return-v011-final.json`, preserving earlier inference/replay records. Eight original/cropped/interrupted/empty cases retain their previous movement IDs. A separate new public edited instructional source also produces no cue, recorded in `public-instructional-pullup-result.json`; it has no independent form labels. Passing these controls does not validate positive correction accuracy or broad coverage.
+
+The opt-in `cropped-coaching-ui.spec.ts` uses permitted local private fixtures, actual decoding and actual shipped pose inference. All external/API requests are blocked. The harness tests speech text and save/replay orchestration, not Deepgram output or cloud persistence. Run with `ASTER_PRIVATE_CROPPED=1`, `--trace=off` and an ignored artifact output directory. Personal screenshots, recordings and per-clip observations remain private.
+
+When tracking is partial but body evidence exists, the UI preserves selected-variation practice guidance without presenting it as a detected fault. Recording help is a separate collapsed control. No-person, insufficient and known station/identity conflict cases still receive capture guidance. Changes to variation/goal update voice text and saved notes and reset acknowledgement; injury disclosures override exercise cues. This usability change does not repair the unresolved difficult crop's missing measured correction.
+
+Further [YOLOX/RTMPose/ViTPose comparisons](next-tracker-experiment.md) and [Kimi motion reasoning](vision-motion-experiment.md) remain experimental. Their failed observations are retained rather than silently promoted to production advice.
+
 ### Latest rule replay and recovery experiment, 10 October 2026
 
 All eight saved public reports were replayed against the current three-point and two-point movement rules, including repeatable projected paths and continuous support observations. No new arm/leg/forearm/shin cue fired on these public cases. The movement IDs remain as in the table below. Existing measured strengths now appear as the primary coaching moment when no correction is available. `public-results.json` preserves the original inference fingerprints and adds `latestRuleReplay` with the current rule hashes, exact evidence timestamps and coaching focus. Reproduce the export with `node evaluation/cropped/summarize.mjs --replay` after running `cropped-replay.spec.ts`.

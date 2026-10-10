@@ -1,6 +1,6 @@
 # Movement research data and source ledger
 
-Version: 1.1.0 · inspected: 2026-10-10. Companion to [movement understanding](movement-understanding.md).
+Version: 1.2.0 · inspected: 2026-10-10. Companion to [movement understanding](movement-understanding.md).
 
 This is the project's evolving **research data.md**. It records what was actually inspected and distinguishes a technique reference, an engineering constraint, a model capability statement and an experimental result. A useful source is not automatically a detector label or proof of Aster's accuracy.
 
@@ -62,6 +62,14 @@ The catalog's Gemma prices at inspection were $0.10/M input and $0.30/M output t
 
 ## Validation and revision ledger
 
+The 1.2 source audit adds [ACE's knee push-up](https://www.acefitness.org/resources/everyone/exercise-library/13/bent-knee-push-up/) for user-selected knee-supported practice. Knee support is an intentional variation; the source's trunk-coordination advice is education unless the corresponding movement is actually measured. The [candidate audit](partial-feedback-candidates.md) records NASM and South Tees NHS corroboration, conflicting numerical technique instructions and reuse limits. No reference images are republished or used as training data.
+
+The next local model comparison used YOLOX-M HumanArt with RTMPose-M and ViTPose-B. Better person detection did not establish continuous, correctly assigned joints or a useful fault. Correcting an input-color mismatch improved inspected forearm points but did not close that gap. Model/runtime provenance, failed candidates, local timings and release decision are in [the comparison protocol](../evaluation/cropped/next-tracker-experiment.md). No model or package was added to the app.
+
+Six further Nebius image requests in the separate [Kimi motion experiment](../evaluation/cropped/vision-motion-experiment.md) follow the seven earlier requests below. Two use public Navy frames; four use the same explicitly approved twelve-image preview in two passes. This limited sharing consent does not authorize more private images, full recordings, shared training or publication. Model-generated personal descriptions remain ignored. Kimi has not replaced the production context model.
+
+An additional public source, [US Marine Corps/DVIDS: Do a Pull-Up](https://www.dvidshub.net/video/465137/do-pull-up), was inspected as an edited instructional video and processed locally once. The publisher supplies a public-domain mark; the [DVIDS copyright page](https://www.dvidshub.net/about/copyright) distinguishes official-duty US-government material from third-party material. Media stays evaluation-only. Its cuts and selected views are not independent expert form labels. The current candidate emitted no strength or correction on this source; [the public record](../evaluation/cropped/public-instructional-pullup-result.json) retains its source hash, model inputs and rule hashes. This is a coverage limitation, not evidence that every exercise in the video is correct.
+
 Technique-source agreement is not detector validation. The [coaching protocol](../evaluation/coaching-validation/protocol.md) specifies independent labels and assessor review. The [form-dataset audit](../evaluation/form-validation/README.md) records which public labels/media are genuinely obtainable and their licenses; some research-only datasets cannot become commercial product assets. The locked 600 videos lack form-fault ground truth, so cue coverage or exercise recognition cannot support an “80% correct corrections” claim.
 
 Each new source entry must retain: stable ID, canonical URL, organization/author qualifications, inspection date, actual text/video segment inspected, paraphrased claim, supported variations, contradictory evidence, license/reuse status, and the cue IDs it supports. Each experiment must retain input provenance/consent, dataset split, code/model/prompt/knowledge versions, metrics with denominators, limitations and release decision. Do not overwrite failed experiments when a later attempt succeeds.
@@ -70,6 +78,7 @@ Each new source entry must retain: stable ID, canonical URL, organization/author
 | --- | --- | --- |
 | 1.0.0 | 2026-10-10 | Initial inspected source ledger, current Nebius metadata and five bounded public-image diagnostics: Gemma route success with important phase-interpretation caveat; MiniCPM failures retained. |
 | 1.1.0 | 2026-10-10 | One further exact-service public-image verification; current limited-view rule scope and source-hash requirements documented. |
+| 1.2.0 | 2026-10-10 | Add variant-specific source audit, further tracker comparison and a separately consented Kimi motion experiment; withhold unsupported generated advice. |
 
 ## 1.1 exact-service verification and rule audit
 

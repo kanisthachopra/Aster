@@ -169,3 +169,14 @@ The learner identified exercise-feedback voice failure while using the guest exp
 - [x] Verify guest access, rejected/cancelled sign-in, preserved clip/report and resumed automatic feedback in the real app with stubbed services; check actual hosted Deepgram generation separately.
 - [x] Verify the published guest-to-account review flow with actual Deepgram playback. Fourteen hosted checks passed, including preserved video/report, completed automatic reading, audible browser waveform, replay, Stop and disposable-account cleanup.
 - [ ] Learner retries spoken feedback through the new account action.
+
+## Core feedback refinement 0.11
+
+- [x] Add an actual-frame-linked visible pull-up return strength using hand/shoulder/hip evidence without requiring hidden elbow points.
+- [x] Keep partial-clip practice guidance separate from measured corrections and recording tips.
+- [x] Let the person change their version/goal after review; update speech/notes and reset acknowledgement without uploading again.
+- [x] Preserve injury overrides and prevent stale explanations after the check-in changes.
+- [x] Audit alternative trackers and explicitly consented Kimi still-image tests; keep unsupported model advice out of the product.
+- [x] Verify synthetic counterexamples, public fresh-model regressions and the actual permitted local recordings through the review UI.
+- [ ] Recover a reliable specific correction on the difficult cropped push-up and broader actionable partial-view corrections.
+- [ ] Independently label and review actual movement observations and useful cues before claiming an accuracy percentage.

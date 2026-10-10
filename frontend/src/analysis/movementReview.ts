@@ -1,6 +1,7 @@
 import type { AnalysisReport, EvidenceFrame, Landmark } from './types';
 import { getPartialMovementReview } from './partialMovementReview';
 import { phaseHasDwell } from './twoPointMovementReview';
+import { getPullupVisibleMotion } from './pullupVisibleMotion';
 
 export const MOVEMENT_SOURCES = {
   'ace-pushup': { title: 'ACE push-up guide', url: 'https://www.acefitness.org/resources/everyone/exercise-library/41/push-up/' },
@@ -119,7 +120,12 @@ function broadFrontView(r: AnalysisReport): boolean {
 }
 
 export function getMovementReview(r: AnalysisReport): MovementReview {
-  const out: MovementReview = { ...getPartialMovementReview(r), practiceTip: practiceTip(r) };
+  const partial = getPartialMovementReview(r), pullup = getPullupVisibleMotion(r);
+  const out: MovementReview = {
+    observations: [...partial.observations, ...pullup.observations],
+    strengths: [...pullup.strengths, ...partial.strengths],
+    limits: [...partial.limits, ...pullup.limits], practiceTip: practiceTip(r),
+  };
   const notes = (r.captureNotes ?? []).join(' ');
   if (/shifts abruptly|change of tracked person|does not consistently match this station/i.test(notes + ' ' + r.summary)) {
     out.limits.push('I cannot follow one consistent exercise clearly enough to give a movement-specific cue.'); return out;
