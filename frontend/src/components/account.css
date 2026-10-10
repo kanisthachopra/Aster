@@ -28,6 +28,8 @@
 .account-password input { padding-right:64px; }
 .account-password button { position:absolute; right:6px; top:5px; bottom:5px; padding:0 9px; border:0; background:transparent; color:#afd8db; font-size:11px; border-radius:3px; }
 .account-panel .primary { width:100%; margin:4px 0 0; min-height:48px; border-radius:8px; font-size:15px; font-weight:600; background:#c2ece1; color:#0b2b31; }
+.account-panel .primary { display:flex; align-items:center; justify-content:center; gap:8px; isolation:isolate; }
+.account-submit-label { position:relative; z-index:1; color:#0b2b31; }
 .account-secondary { padding:10px 14px; min-height:42px; border:1px solid #a8d4db4d; border-radius:4px; background:#a4d5d807; color:#d8eaea; font-size:12px; }
 .account-link { border:0; background:transparent; color:#b8dfdf; padding:6px 0; font-size:13px; text-align:left; text-decoration:underline; text-underline-offset:4px; text-decoration-color:#b8dfdf50; }
 .account-bottom { border-top:1px solid #b0d5df25; margin-top:23px; padding-top:16px; display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px 20px; align-items:center; }
