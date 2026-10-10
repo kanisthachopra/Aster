@@ -1,0 +1,108 @@
+{
+  "evaluatedAt": "2026-10-10T08:11:13.574Z",
+  "experimentalOnly": true,
+  "productionIntegrated": false,
+  "privateDataIncluded": false,
+  "independentFormLabels": 0,
+  "model": "MoveNet SinglePose Thunder v4",
+  "modelSource": "https://tfhub.dev/google/tfjs-model/movenet/singlepose/thunder/4",
+  "license": "Apache-2.0 per official model card",
+  "runtime": {
+    "tensorflowJs": "4.22.0",
+    "poseDetection": "2.1.3",
+    "backend": "WebGL",
+    "smoothing": true,
+    "hashes": {
+      "tensorflowJs": "300dfae273d20b4046f46a06d735688f03675a807561e9bcb5f664eb2f3d2831",
+      "poseDetection": "eedb38254421de21571e88db202382104b98f36de221a94f956d7bd01f43abcd"
+    }
+  },
+  "criterion": "Existing 0.65 downstream gate retained conservatively; MoveNet confidence is not calibrated as MediaPipe visibility. The official 0.3 keypoint default is not a validated coaching threshold.",
+  "limitations": [
+    "SinglePose cannot independently reject multiple-person ambiguity.",
+    "The model can predict occluded joints; in-bounds confidence alone is not visual ground truth.",
+    "Only 12 actual shoulder/elbow/wrist/hip/knee/ankle outputs are mapped; other slots have zero confidence.",
+    "Two public controls do not establish general accuracy, calibration, or inability to track cropped people."
+  ],
+  "cases": [
+    {
+      "id": "navy-original",
+      "sourceGroup": "navy-buds-pushup-81-88",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Navy-seal-buds-training-push-ups.ogv",
+      "transformation": "unmodified development control",
+      "sourceSha256": "fe7f665c241a48e2b953eac83ec2c5e722a1b4b56d761991bd2eb55a14852396",
+      "samples": 28,
+      "seconds": 9.571,
+      "status": "usable",
+      "visibleChainFrames": {
+        "left": 21,
+        "right": 24
+      },
+      "visiblePairFrames": {
+        "left": 23,
+        "right": 24
+      },
+      "observationIds": [
+        "pushup-hip-position"
+      ],
+      "strengthIds": [
+        "pushup-together"
+      ],
+      "evidenceWindows": [
+        {
+          "id": "pushup-hip-position",
+          "start": 1.559334888888889,
+          "end": 2.8421139629629626
+        },
+        {
+          "id": "pushup-together",
+          "start": 0.7896674444444445,
+          "end": 6.690451185185185
+        }
+      ],
+      "fingerprints": {
+        "src/analysis/measurements.ts": "32201bc1044b0c32e1dce0f25a3865c216db748fd38dd236d6848bb15d17af49",
+        "src/analysis/movementReview.ts": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+        "src/analysis/partialMovementReview.ts": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+        "src/analysis/twoPointMovementReview.ts": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+        "src/analysis/coaching.ts": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46",
+        "artifacts/recovery-models/movenet-thunder/group1-shard1of3.bin": "58dd47fd600a4849c342ce14e2ec32102744ca3d5f7fd9e6888d284f7f922cba",
+        "artifacts/recovery-models/movenet-thunder/group1-shard2of3.bin": "08da980bc00886854f29b49b9c14528cd41626c0498c67b450de394713f1d0bc",
+        "artifacts/recovery-models/movenet-thunder/group1-shard3of3.bin": "c1c6b712e33456aa95aa556b6425528d04fe8730ce9b92de38ec58e947fede34",
+        "artifacts/recovery-models/movenet-thunder/model.json": "0e3acd45088054f5ae64bede16f1bd48f083cdf0a93a8af5102cc8a6e14b48de"
+      }
+    },
+    {
+      "id": "empty-scene",
+      "sourceGroup": null,
+      "sourceUrl": null,
+      "transformation": "generated flat-color no-person negative; not a real exercise video",
+      "sourceSha256": "8891b7b97acb0a8fe19b46df51d158c5fd2158f252856f32522b4947c43a35df",
+      "samples": 20,
+      "seconds": 2.446,
+      "status": "insufficient",
+      "visibleChainFrames": {
+        "left": 0,
+        "right": 0
+      },
+      "visiblePairFrames": {
+        "left": 0,
+        "right": 0
+      },
+      "observationIds": [],
+      "strengthIds": [],
+      "evidenceWindows": [],
+      "fingerprints": {
+        "src/analysis/measurements.ts": "32201bc1044b0c32e1dce0f25a3865c216db748fd38dd236d6848bb15d17af49",
+        "src/analysis/movementReview.ts": "39d55f00cbe0e75a9d3ed1d81a5adb87554439d35e9e6c3150d3200f58e35828",
+        "src/analysis/partialMovementReview.ts": "341d877aeead6e8e8ad16f12255c31f28986833140503140d58daebecdc950e7",
+        "src/analysis/twoPointMovementReview.ts": "cfcb21b8767e18cfc0e3b1673266ac27dfb63a3b55512628bc5393731865f610",
+        "src/analysis/coaching.ts": "388050fc767c5ce2a36f20f531f969a81419e6025c53253754afc79e997a9b46",
+        "artifacts/recovery-models/movenet-thunder/group1-shard1of3.bin": "58dd47fd600a4849c342ce14e2ec32102744ca3d5f7fd9e6888d284f7f922cba",
+        "artifacts/recovery-models/movenet-thunder/group1-shard2of3.bin": "08da980bc00886854f29b49b9c14528cd41626c0498c67b450de394713f1d0bc",
+        "artifacts/recovery-models/movenet-thunder/group1-shard3of3.bin": "c1c6b712e33456aa95aa556b6425528d04fe8730ce9b92de38ec58e947fede34",
+        "artifacts/recovery-models/movenet-thunder/model.json": "0e3acd45088054f5ae64bede16f1bd48f083cdf0a93a8af5102cc8a6e14b48de"
+      }
+    }
+  ]
+}

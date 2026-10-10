@@ -33,3 +33,26 @@ The completed run had five passing test cases and one source-stability failure w
 
 Final decision: keep IMAGE/padding and Heavy outside production. The alternatives did not recover an additional local limb cue on this development set. Heavy also increased measured runtime on these public cases (Navy control 5.0→24.5 seconds, interrupted crop 6.9→19.4 seconds); runs were not controlled hardware benchmarks, so the ratios should not be generalized. Improving confidence coverage is insufficient justification to replace the model.
 
+## Independent MoveNet Thunder candidate
+
+MoveNet SinglePose Thunder v4 is a separate TensorFlow model, evaluated with TensorFlow.js 4.22.0 and pose-detection 2.1.3. The [official API documentation](https://github.com/tensorflow/tfjs-models/blob/master/pose-detection/src/movenet/README.md) describes the local model URL and timestamp configuration. Its [official model card](https://storage.googleapis.com/movenet/MoveNet.SinglePose%20Model%20Card.pdf) licenses it under Apache-2.0 and documents both occluded-joint prediction and the single-person limitation.
+
+Install isolated test dependencies from the repository root; this does not modify application dependencies or its lockfile:
+
+```powershell
+npm install --prefix .tools/movenet-evaluation --no-audit --no-fund --ignore-scripts @tensorflow/tfjs@4.22.0 @tensorflow-models/pose-detection@2.1.3
+node evaluation/cropped/prepare-movenet.mjs
+```
+
+The preparation script downloads the fixed official model JSON and its three known shards into ignored artifacts, validates exact size and SHA256, and rejects changed contents. Only the JSON trailing newline is normalized to CRLF to reproduce the inspected artifact. `node evaluation/cropped/prepare-movenet.mjs --verify-only` checks cached files without network access. It never reads recordings or diagnostic files.
+
+From `frontend`, set `ASTER_MOVENET_EVAL=1` and run `npx playwright test tests/cropped-movenet.spec.ts --output=artifacts/test-cropped-movenet-v2 --trace=off`. The actual browser detector uses WebGL, smoothing and the original sample timestamps. All model/script/media assets are supplied locally; external origins and API routes are blocked. A developer's explicitly authorized private manifest may add local reproduction cases, whose outputs remain ignored and are never included in the public exporter.
+
+Only the 12 predicted shoulder, elbow, wrist, hip, knee and ankle coordinates are mapped to the analysis adapter. Head, hand/foot extras and all missing slots remain confidence zero. Out-of-frame points are suppressed, unsupported outputs become empty arrays, and detector pose counts are recorded separately from the count of points meeting the evidence criterion. No invisible joint is synthesized. Model-specific confidence is temporarily carried in the adapter's visibility field, without claiming those quantities are calibrated equivalently.
+
+The existing **0.65 evidence gate was retained as a conservative comparison criterion**. MoveNet's documented 0.3 keypoint default is not independently validated as a threshold for exercise coaching. This experiment does not prove that MoveNet cannot track cropped bodies, nor that lowering its gate is necessarily incorrect; it establishes only the observed result under this declared criterion, with no threshold mining.
+
+The public Navy control retains `pushup-hip-position` and `pushup-together`, with 24/28 best-side arm chains in the final run. The empty control has no supported pose or cue. A selected Navy pixel overlay approximately follows the visible arm, while a knee prediction can drift within clothing. This is not landmark ground truth or form labeling. SinglePose cannot provide an independent multi-person ambiguity check, and the model card permits predictions of occluded joints. It remains experimental.
+
+From the repository root, `node evaluation/cropped/summarize-movenet.mjs` exports only the explicitly allowlisted Navy and empty public summaries to `public-movenet-results.json`. The exporter allows only model/analysis/runtime hashes and never opens private summaries, private-derived protocol/comparison files, or per-frame data. The public record includes pinned runtime versions, script hashes, model hashes and exact cue spans. It establishes neither population accuracy nor a validated recovery strategy.
+
